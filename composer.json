@@ -2,6 +2,7 @@
     "name": "rozdol/bi",
     "description": "Business Integrator - Rapid Business Process Prototyping",
     "license": "MIT",
+    "type": "library",
     "authors": [
         {
             "name": "Alex Titoff",
