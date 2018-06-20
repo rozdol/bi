@@ -1,0 +1,32 @@
+{
+    "name": "rozdol/bi",
+    "description": "Business Integrator - Rapid Business Process Prototyping",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Titoff",
+            "email": "rozdol@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Rozdol\\": "src",
+            "Rozdol\\App\\": "src/Bi",
+            "Rozdol\\Router\\": "src/Bi",
+            "Rozdol\\Db\\": "src/Bi",
+            "Rozdol\\Data\\": "src/Bi",
+            "Rozdol\\Dates\\": "src/Utils",
+            "Rozdol\\Utils\\": "src/Utils",
+            "Rozdol\\Html\\": "src/Utils"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\Rozdol\\": "tests"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
