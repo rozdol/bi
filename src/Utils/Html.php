@@ -947,7 +947,7 @@ class Html
             echo "\n\t</body>\n</html>";
         } else {
             if (!$GLOBALS[settings][hide_footer_info]) {
-                $content['footer']="<a href='#top'>⟰</a> | app:$GLOBALS[project] | db:".$GLOBALS[db][name]." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | Version: <font color='#aa0000'><b>$GLOBALS[app_version]</b></font> | PID:$GLOBALS[project] | $GLOBALS[status]";
+                $content['footer']="<a href='#top'>⟰</a> | app:$GLOBALS[project] | db:".$_ENV['DB_NAME']." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | Version: <font color='#aa0000'><b>$GLOBALS[app_version]</b></font> | PID:$GLOBALS[project] | $GLOBALS[status]";
             }
             //$content['footer'].= $this->pre_display($GLOBALS,"result");
             //unset($content['footer']);
@@ -1045,7 +1045,7 @@ class Html
 
     public function putLogin($content = array())
     {
-        $info="ip:".$GLOBALS[ip]." | db:".$GLOBALS[db][name]." | app:".APP_NAME;
+        $info="ip:".$GLOBALS[ip]." | db:".$_ENV['DB_NAME']." | app:".APP_NAME;
 
         if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&($GLOBALS['settings']['use_mfa'])) {
             $content['html'].='<label> </label>

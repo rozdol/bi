@@ -39,11 +39,11 @@ class Db
        LC_CTYPE = 'en_US.UTF-8'
        CONNECTION LIMIT = -1;";
 
-            $default_conn = @pg_connect("host=".$GLOBALS['db']['server']."
-                             port=".$GLOBALS['db']['port']."
+            $default_conn = @pg_connect("host=".$_ENV['DB_SERVER']."
+                             port=".$_ENV['DB_PORT']."
                              dbname='postgres'
-                             user=".$GLOBALS['db']['user']."
-                             password=".$GLOBALS['db']['pass']);
+                             user=".$_ENV['DB_USER']."
+                             password=".$_ENV['DB_PASS']);
             if ((!$default_conn)) {
                 die("SQL:Can not create $dbname database. SQL:<br><pre>$sql</pre>");
             }
