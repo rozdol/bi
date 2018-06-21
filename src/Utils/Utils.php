@@ -40,7 +40,7 @@ class Utils
     {
         if ($GLOBALS['settings']['use_tbl2csv']>0) {
             $csv.="\n";
-            $file=FW_DIR.'/vendor/simple_html_dom.php';
+            $file=FW_DIR.'/classes/simple_html_dom.php';
             if (!file_exists($file)) {
                 die("No file $file");
             }
@@ -507,9 +507,9 @@ class Utils
     }
     public function chart_js2($chart = 'MSLine', $w = 800, $h = 250, $strParam = "caption=Title;xAxisName=X;yAxisName=Y;numberPrefix=$", $data = array('one'=>1,'two'=>2))
     {
-        include_once(FW_DIR.'/vendor/FusionChart.class.php');
+        include_once(FW_DIR.'/classes/FusionChart.class.php');
         $FC = new FusionCharts($chart, $w, $h);
-        $FC->setSWFPath(FW_DIR.'/vendor/FusionCharts/');
+        $FC->setSWFPath(FW_DIR.'/classes/FusionCharts/');
         $FC->setChartParams($strParam);
 
         $datasets=$data[datasets];
@@ -542,7 +542,7 @@ class Utils
     }
     public function chart_js($chart = 'Line', $w = 800, $h = 250, $strParam = "caption=Title;xAxisName=X;yAxisName=Y;numberPrefix=$", $data = array('one'=>1,'two'=>2))
     {
-        include_once(FW_DIR.'/vendor/FusionChart.class.php');
+        include_once(FW_DIR.'/classes/FusionChart.class.php');
         $FC = new FusionCharts($chart, $w, $h);
         $FC->setSWFPath(APP_URI.'/assets/swf/');
         $FC->setChartParams($strParam);
@@ -560,7 +560,7 @@ class Utils
 
     public function chart_js_new($chart = 'line', $w = 800, $h = 250, $id = 'chart-1', $jsonEncodedData)
     {
-        include_once(FW_DIR.'/vendor/fusioncharts.php');
+        include_once(FW_DIR.'/classes/fusioncharts.php');
         $FC = new \FusionCharts($chart, "$id", $w, $h, "fcid_$id", "json", $jsonEncodedData);
         //ob_flush();flush();
         $out="<div id='fcid_$id'></div>";
@@ -978,7 +978,7 @@ class Utils
             foreach ($lines as $line) {
                 array_push($dataArray, str_getcsv($line, "\t"));
             }
-            require_once FW_DIR.'/vendor/PHPExcel/Classes/PHPExcel.php';
+            require_once FW_DIR.'/classes/PHPExcel/Classes/PHPExcel.php';
             $objPHPExcel = new PHPExcel();
             $objPHPExcel->getProperties()->setCreator("IS")
                                          ->setLastModifiedBy("IS")
@@ -2105,7 +2105,7 @@ class Utils
         $amountdec=floor($amount);
         $amountfloat=round(($amount-$amountdec)*100, 0);
         if ($nw=='') {
-            include_once(FW_DIR.'/vendor/Numbers/Words.php');
+            include_once(FW_DIR.'/classes/Numbers/Words.php');
             $nw = new \Numbers_Words();
         }
         $amountsaydec=$nw->toWords($amountdec);
@@ -2389,7 +2389,7 @@ class Utils
         }
         $data=array();
         $header = null;
-        require_once FW_DIR.'/vendor/PHPExcel/Classes/PHPExcel/IOFactory.php';
+        require_once FW_DIR.'/classes/PHPExcel/Classes/PHPExcel/IOFactory.php';
 
 
         $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
@@ -2487,7 +2487,7 @@ class Utils
             exit(pathinfo($inputFileName, PATHINFO_BASENAME)." not found.");
         }
         //include 'PHPExcel/IOFactory.php';
-        require_once FW_DIR.'/vendor/PHPExcel/Classes/PHPExcel/IOFactory.php';
+        require_once FW_DIR.'/classes/PHPExcel/Classes/PHPExcel/IOFactory.php';
         $inputFileName = APP_DIR.'data/Входные данные_2.xlsx';
         $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
         echo 'File ',pathinfo($inputFileName, PATHINFO_BASENAME),' has been identified as an ',$inputFileType,' file<br />';
@@ -2552,7 +2552,7 @@ class Utils
 
         /** Include PHPExcel_IOFactory */
         //require_once dirname(__FILE__) . '/../Classes/PHPExcel/IOFactory.php';
-        require_once FW_DIR.'/vendor/PHPExcel/Classes/PHPExcel/IOFactory.php';
+        require_once FW_DIR.'/classes/PHPExcel/Classes/PHPExcel/IOFactory.php';
 
         $file=APP_DIR.'data/test.xlsx';
 
@@ -2623,7 +2623,7 @@ class Utils
     public function test_xlsx()
     {
             //require_once '../core/PHPExcel/Classes/PHPExcel.php';
-            require_once FW_DIR.'/vendor/PHPExcel/Classes/PHPExcel.php';
+            require_once FW_DIR.'/classes/PHPExcel/Classes/PHPExcel.php';
             $objPHPExcel = new PHPExcel();
             $objPHPExcel->getProperties()->setCreator("IS")
                                          ->setLastModifiedBy("IS")

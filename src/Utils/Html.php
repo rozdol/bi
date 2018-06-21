@@ -2377,7 +2377,7 @@ class Html
 
     function qrcode($url = '')
     {
-        include(FW_DIR.'/vendor/BarcodeQR.php');
+        include(FW_DIR.'/classes/BarcodeQR.php');
         $qr = new BarcodeQR();
         $qr->url($url);
         $qr->draw();
