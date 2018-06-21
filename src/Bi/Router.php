@@ -363,27 +363,27 @@ class Router
             }
         }
 
-        $procedure_init_file=FW_DIR.DS.'routes'.DS.$function.DS.'_init.php';
+        $procedure_init_file=FW_DIR.DS.'actions'.DS.$function.DS.'_init.php';
         if (file_exists($procedure_init_file)) {
             require $procedure_init_file;
         }
-        $procedure_init_file=APP_DIR.DS.'routes'.DS.$function.DS.'_init.php';
+        $procedure_init_file=APP_DIR.DS.'actions'.DS.$function.DS.'_init.php';
         if (file_exists($procedure_init_file)) {
             require $procedure_init_file;
         }
-        $procedure_file=APP_DIR.DS.'routes'.DS.$function.DS.strtolower(str_replace("\\", "/", $what)). '.php';
+        $procedure_file=APP_DIR.DS.'actions'.DS.$function.DS.strtolower(str_replace("\\", "/", $what)). '.php';
         if (file_exists($procedure_file)) {
             require $procedure_file;
         } else {
-            $procedure_file=FW_DIR.DS.'routes'.DS.$function.DS.strtolower(str_replace("\\", "/", $what)). '.php';
+            $procedure_file=FW_DIR.DS.'actions'.DS.$function.DS.strtolower(str_replace("\\", "/", $what)). '.php';
             if (file_exists($procedure_file)) {
                 require $procedure_file;
             } else {
-                $procedure_file=APP_DIR.DS.'routes'.DS.$function.DS.'_default.php';
+                $procedure_file=APP_DIR.DS.'actions'.DS.$function.DS.'_default.php';
                 if (file_exists($procedure_file)) {
                     require $procedure_file;
                 } else {
-                    $procedure_file=FW_DIR.DS.'routes'.DS.$function.DS.'_default.php';
+                    $procedure_file=FW_DIR.DS.'actions'.DS.$function.DS.'_default.php';
                     if (file_exists($procedure_file)) {
                         require $procedure_file;
                     } else {
@@ -393,12 +393,12 @@ class Router
                 }
             }
         }
-        $procedure_out_file=APP_DIR.DS.'routes'.DS.$function.DS.'_out.php';
+        $procedure_out_file=APP_DIR.DS.'actions'.DS.$function.DS.'_out.php';
         if (file_exists($procedure_out_file)) {
             require $procedure_out_file;
         }
 
-        $procedure_out_file=FW_DIR.DS.'routes'.DS.$function.DS.'_out.php';
+        $procedure_out_file=FW_DIR.DS.'actions'.DS.$function.DS.'_out.php';
         if (file_exists($procedure_out_file)) {
             require $procedure_out_file;
         }
