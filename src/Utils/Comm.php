@@ -345,7 +345,7 @@ class Comm
         } else {
             $data = file_get_contents($qry);
         }
-        $data=$this->clean_content($data);
+        $data=$this->utils->clean_content($data);
         //DB_log("SENT SMS:$number:$text");
         return $data;
     }
@@ -374,7 +374,7 @@ class Comm
         } else {
             $data = file_get_contents($qry);
         }
-        $page=$this->clean_content($page);
+        $page=$this->utils->clean_content($page);
         $json = strip_tags($data);
         $res = json_decode($json);
         $current=$res->data->current_condition[0]->weatherDesc[0]->value;
@@ -416,7 +416,7 @@ class Comm
         } else {
             $data = @ file_get_contents($url);
         }
-        $data=clean_content($data);
+        $data=$this->utils->clean_content($data);
 
         if (!$data) {
             throw new Exception('Could not connect');
@@ -456,7 +456,7 @@ class Comm
         } else {
             $buffer = file_get_contents($url);
         }
-        $buffer=clean_content($buffer);
+        $buffer=$this->utils->clean_content($buffer);
 
         preg_match_all('/name=(\"|\')conversion-date(\"|\') value=(\"|\')(.*)(\"|\')>/i', $buffer, $match);
         $date=preg_replace('/name=(\"|\')conversion-date(\"|\') value=(\"|\')(.*)(\"|\')>/i', '$4', $match[0][0]);
@@ -477,7 +477,7 @@ class Comm
         } else {
             $buffer = file_get_contents($url);
         }
-        $buffer=clean_content($buffer);
+        $buffer=$this->utils->clean_content($buffer);
         preg_match_all('/<span class=\"converted-result\">(.*)<\/span>/i', $buffer, $match);
         $match[0]=preg_replace('/<span class=\"converted-result\">(.*)<\/span>/i', '$1', $match[0]);
         //return $buffer;

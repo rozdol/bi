@@ -325,7 +325,7 @@ class Data
             if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&($GLOBALS['settings']['use_mfa'])&&$user['ga']!='') {
                 //if(1!=1){
                 require_once FW_DIR.'vendor'.DS.'PHPGangsta'.DS.'GoogleAuthenticator.php';
-                $ga = new PHPGangsta_GoogleAuthenticator();
+                $ga = new \PHPGangsta_GoogleAuthenticator();
                 $secret = $user['ga'];
                 $oneCode=$this->html->readRQ('otp');
                 $checkResult = $ga->verifyCode($secret, $oneCode, 0);    // 2 = 2*30sec clock tolerance
@@ -383,7 +383,7 @@ class Data
             $from=$GLOBALS['is_mail'];
             $subject="System alert (Brute force attempt)";
             if (($to!='')&&($from!='')) {
-                $mail=$this->utils->sendmail_html($to, $from, $subject, $text);
+                $mail=$this->comm->sendmail_html($to, $from, $subject, $text);
             }
         }
         if ($times==6) {
@@ -399,7 +399,7 @@ class Data
             $from=$GLOBALS['is_mail'];
             $subject="System alert (Brute force attempt)";
             if (($to!='')&&($from!='')) {
-                $mail=$this->utils->sendmail_html($to, $from, $subject, $text);
+                $mail=$this->comm->sendmail_html($to, $from, $subject, $text);
             }
         }
     }
@@ -1795,7 +1795,7 @@ class Data
         }
         $after=$data;
 
-        $treewalker = new TreeWalker(["returntype"=>"array"]);
+        $treewalker = new \TreeWalker(["returntype"=>"array"]);
 
         $diff=$treewalker->getdiff($after, $before, true); // false -> with slashs
 
@@ -2408,7 +2408,7 @@ class Data
         }
 
         $start_date_rate=$this->db->GetVal("select date from rates_local where curr_id=$currid order by date asc limit 1");
-        if ($this->utils->is_earlier($date, $start_date_rate)) {
+        if ($this->dates->is_earlier($date, $start_date_rate)) {
             $rate_cur=$this->get_rate($currid, $date);
             $rate_eur=$this->get_rate(601, $date);
             $rate=$rate_cur/$rate_eur;
@@ -2951,7 +2951,7 @@ class Data
                             $text="Remainder:".$row[name]." ".$row[descr];
                             $mobile=$this->db->GetVal("select mobile from users where id=$userid");
                             if ($mobile!='') {
-                                $this->utils->sendsms($mobile, $text);
+                                $this->comm->sendsms($mobile, $text);
                             }
                             //exit;
                         }
@@ -2964,7 +2964,7 @@ class Data
                             //echo "$text";
                             $subject="System alert [Reminder]";
                             if (($to!='')&&($from!='')) {
-                                $mail=$this->utils->sendmail_html($to, $from, $subject, $text);
+                                $mail=$this->comm->sendmail_html($to, $from, $subject, $text);
                             }
                             //exit;
                         }
@@ -3040,14 +3040,14 @@ class Data
         }//end daily procedure
         $email=$GLOBALS['settings']['system_email'];
         if ($message!='') {
-            $this->utils->sendmail_html($email, $email, "Common Daily Routine Run", $message);
+            $this->comm->sendmail_html($email, $email, "Common Daily Routine Run", $message);
         }
     }
 
     function ECB_rates()
     {
         $date=$GLOBALS[today];
-        $rates = $this->utils->getResultFromECB('USD');
+        $rates = $this->comm->getResultFromECB('USD');
         foreach ($rates as $curr => $rate) {
             $currid=$this->db->GetVal("select id from listitems where list_id=6 and lower(name)=lower('$curr')")*1;
             $count=$this->db->GetVal("select rate from rates where currency=$currid and date='$date'")*1;
@@ -3500,7 +3500,7 @@ class Data
                 $text="$descr. $username";
                 //$out.= "$text<br>";
                 if ($mobile!='') {
-                    $click=$this->utils->sendsms($mobile, $text);
+                    $click=$this->comm->sendsms($mobile, $text);
                 }
                 //$out.= "$click ($docname)-$mobile";
             }
@@ -3521,7 +3521,7 @@ class Data
 
                 $message="Dear $user_data[firstname] $user_data[surname],<br><br>".$descr. "<br>Ref.: ".ucfirst($tablename)." <a href='https://$_SERVER[SERVER_NAME]/?act=details&what=$tablename&id=$refid'>$link</a><br><br><br>Best regards,<br>$me[firstname] $me[surname]";
                 //$from=htmlspecialchars_decode($system_email, ENT_QUOTES);
-                $this->utils->sendmail_html($to, $from, $subject, $message);
+                $this->comm->sendmail_html($to, $from, $subject, $message);
                 //echo "$to,$from,$subject,$message<br>";exit;
             }
         }
