@@ -39,9 +39,16 @@ class Router
 
         $project_class=APP_DIR.DS.'classes'.DS.'project.php';
         if (file_exists($project_class)) {
-            require(APP_DIR.DS.'classes'.DS.'project.php');
+            require($project_class);
             $this->project = Project::getInstance($this->db);
         }
+        $numbers_class=CLASSES_DIR.DS.'Numbers'.DS.'Words.php';
+        if (file_exists($numbers_class)) {
+            require($numbers_class);
+            $this->nw = new \Numbers_Words();
+        }
+
+
 
         $this->crypt = Crypt::getInstance();
         $this->html = Html::getInstance();

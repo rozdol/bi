@@ -978,7 +978,7 @@ class Utils
             foreach ($lines as $line) {
                 array_push($dataArray, str_getcsv($line, "\t"));
             }
-            require_once FW_DIR.'/classes/PHPExcel/Classes/PHPExcel.php';
+            require_once CLASSES_DIR.'/PHPExcel/Classes/PHPExcel.php';
             $objPHPExcel = new PHPExcel();
             $objPHPExcel->getProperties()->setCreator("IS")
                                          ->setLastModifiedBy("IS")
@@ -996,7 +996,7 @@ class Utils
             header('Content-Disposition: attachment;filename="report.xls"');
             header('Cache-Control: max-age=0');
 
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
             $objWriter->save('php://output');
             exit;
         } return "XLS export turned off.";
@@ -2389,13 +2389,13 @@ class Utils
         }
         $data=array();
         $header = null;
-        require_once FW_DIR.'/classes/PHPExcel/Classes/PHPExcel/IOFactory.php';
+        require_once CLASSES_DIR.'/PHPExcel/Classes/PHPExcel/IOFactory.php';
 
 
-        $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+        $inputFileType = \PHPExcel_IOFactory::identify($inputFileName);
         //$out.= 'File ',pathinfo($inputFileName,PATHINFO_BASENAME),' has been identified as an ',$inputFileType,' file<br />';
 
-        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
         $objReader->setLoadSheetsOnly($sheetname);
         $input = $objReader->load($inputFileName);
 
@@ -2408,7 +2408,7 @@ class Utils
             $worksheetTitle     = $worksheet->getTitle();
             $highestRow         = $worksheet->getHighestRow(); // e.g. 10
             $highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
-            $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+            $highestColumnIndex = \PHPExcel_Cell::columnIndexFromString($highestColumn);
             $nrColumns = ord($highestColumn) - 64;
             if (count($range)==0) {
                 $range=array(0,$highestRow,'A',$highestColumn);
@@ -2420,8 +2420,8 @@ class Utils
                 $range[1]=(int)$highestRow;
             }
 
-            $first=PHPExcel_Cell::columnIndexFromString($range[2])-1;
-            $last=PHPExcel_Cell::columnIndexFromString($range[3]);
+            $first=\PHPExcel_Cell::columnIndexFromString($range[2])-1;
+            $last=\PHPExcel_Cell::columnIndexFromString($range[3]);
             if ($first>$highestColumnIndex) {
                 $first=0;
             }
@@ -2487,12 +2487,12 @@ class Utils
             exit(pathinfo($inputFileName, PATHINFO_BASENAME)." not found.");
         }
         //include 'PHPExcel/IOFactory.php';
-        require_once FW_DIR.'/classes/PHPExcel/Classes/PHPExcel/IOFactory.php';
+        require_once CLASSES_DIR.'/PHPExcel/Classes/PHPExcel/IOFactory.php';
         $inputFileName = APP_DIR.'data/Входные данные_2.xlsx';
-        $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+        $inputFileType = \PHPExcel_IOFactory::identify($inputFileName);
         echo 'File ',pathinfo($inputFileName, PATHINFO_BASENAME),' has been identified as an ',$inputFileType,' file<br />';
 
-        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
         //$objReader->setPreCalculateFormulas(FALSE);
         $input = $objReader->load($inputFileName);
 
@@ -2505,7 +2505,7 @@ class Utils
             $worksheetTitle     = $worksheet->getTitle();
             $highestRow         = $worksheet->getHighestRow(); // e.g. 10
             $highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
-            $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+            $highestColumnIndex = \PHPExcel_Cell::columnIndexFromString($highestColumn);
             $nrColumns = ord($highestColumn) - 64;
 
             echo "<h3 class='foldered'><i class='icon-th-large tooltip-test addbtn' data-original-title=''></i>$worksheetTitle</h3>";
@@ -2552,7 +2552,7 @@ class Utils
 
         /** Include PHPExcel_IOFactory */
         //require_once dirname(__FILE__) . '/../Classes/PHPExcel/IOFactory.php';
-        require_once FW_DIR.'/classes/PHPExcel/Classes/PHPExcel/IOFactory.php';
+        require_once CLASSES_DIR.'/PHPExcel/Classes/PHPExcel/IOFactory.php';
 
         $file=APP_DIR.'data/test.xlsx';
 
@@ -2566,7 +2566,7 @@ class Utils
         //echo date('H:i:s') , " Load from Excel2007 file" , EOL;
         $callStartTime = microtime(true);
 
-        $objPHPExcel = PHPExcel_IOFactory::load($file);
+        $objPHPExcel = \PHPExcel_IOFactory::load($file);
 
         $callEndTime = microtime(true);
         $callTime = $callEndTime - $callStartTime;
@@ -2581,7 +2581,7 @@ class Utils
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="test.xlsx"');
         header('Cache-Control: max-age=0');
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         //$objWriter->save(str_replace('.php', '.xlsx', __FILE__));
         $objWriter->save('php://output');
 
@@ -2623,7 +2623,7 @@ class Utils
     public function test_xlsx()
     {
             //require_once '../core/PHPExcel/Classes/PHPExcel.php';
-            require_once FW_DIR.'/classes/PHPExcel/Classes/PHPExcel.php';
+            require_once CLASSES_DIR.'/PHPExcel/Classes/PHPExcel.php';
             $objPHPExcel = new PHPExcel();
             $objPHPExcel->getProperties()->setCreator("IS")
                                          ->setLastModifiedBy("IS")
@@ -2647,7 +2647,7 @@ class Utils
             header('Content-Disposition: attachment;filename="test.xlsx"');
             header('Cache-Control: max-age=0');
 
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
             $objWriter->save('php://output');
             exit;
     }

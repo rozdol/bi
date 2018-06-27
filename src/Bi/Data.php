@@ -3271,7 +3271,7 @@ class Data
                 $row[todate]="31.12.$year";
             }
 
-            $wdays=$this->utils->get_working_days($row[fromdate], $row[todate]);
+            $wdays=$this->dates->get_working_days($row[fromdate], $row[todate]);
             $wdays2=$this->dates->F_datediff($row[fromdate], $row[todate])+1;
             $days=$days+$wdays;
             //$out.= "From:$row[fromdate] To:$row[todate] ($wdays/$wdays2)<br>";
