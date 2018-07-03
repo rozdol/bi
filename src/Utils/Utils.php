@@ -1078,6 +1078,7 @@ class Utils
         }
         session_start();
         $_SESSION['cart'] = $cart;
+        //echo $this->pre_display($cart,"cart");
         session_write_close();
         //$_SESSION['cart']=$cart;
     }
