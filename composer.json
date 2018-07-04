@@ -12,8 +12,7 @@
     "require": {
         "vlucas/phpdotenv": "^2.4",
         "phpoffice/phpword": "v0.13.*",
-        "lukascivil/treewalker": "dev-master",
-        "lajosbencz/geth-php": "dev-master",
+        "lukascivil/treewalker": "@dev",
         "sendgrid/sendgrid": "~6.2"
     },
     "minimum-stability": "dev",
