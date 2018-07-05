@@ -1559,7 +1559,7 @@ class Data
         $year=substr($date, 8, 2);
         $yearfull=substr($date, 6, 4);
         $month2=$month;
-        $lastday=$this->utils->days_in_month($month2, $year);
+        $lastday=$this->dates->days_in_month($month2, $year);
         $orderby="date_trunc('day', date) desc, name desc, id desc";
 
 
@@ -2861,7 +2861,7 @@ class Data
         }
         $month=substr($date, 3, 2);
         $year=substr($date, 8, 2);
-        $lastday=$this->utils->days_in_month($month, $year);
+        $lastday=$this->dates->days_in_month($month, $year);
         $sql="select count(*) from documents where date>='01.$month.$year' and date<='$lastday.$month.$year';-- LD:$lastday, M:$month, Y:$year";
         //$out.= "<br>$sql";
         $cntr=$this->db->GetVal($sql);
