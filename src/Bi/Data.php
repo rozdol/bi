@@ -95,7 +95,7 @@ class Data
     function auth()
     {
         global $logged, $uid, $gid, $cart,$issystemactive, $access;
-        session_start();
+        session_start(); //auth
         //echo "Auth Time:".microtime(true)."<br>";
         //echo "Cookie:".$_COOKIE['login']." Session:".$_SESSION['login']."<br>";
         if (isset($_COOKIE['login']) && isset($_SESSION['login'])) {
@@ -228,6 +228,8 @@ class Data
         $limit=$userrec[rows];
         $maxdescr=$userrec[maxdescr];
         session_write_close();
+        ob_flush();
+        flush();
         //$access['main_access']=0;
         $this->force_access();
         if (!$access['main_access']) {
@@ -285,7 +287,7 @@ class Data
     {
         //echo "login Time:".microtime(true)."<br>";
         global $uid, $reflink;
-        session_start();
+        session_start(); //login
         $username=$this->html->readRQ('username');
         $password=$this->html->readRQ('password');
         unset($_POST[password]);
@@ -355,11 +357,13 @@ class Data
     {
         global $timeout,$uid;
         $n=$this->db->UpdateObject('id ='.$uid, 'users', array('sessionid','token_hash'), array('sessionid'=>'--','token_hash'=>'--'));
-        session_start();
+        session_start(); //log out
         setcookie("database", "", time()+60000000);
         setcookie("reflink", "", time()+60000000);
         setcookie("login", "", time()+60000000);
         session_destroy();
+        ob_flush();
+        flush();
         $this->html->set_reflink('?act=');
         return $this->html->refreshpage('?act=', 2, "See you soon, $GLOBALS[user]!");
     }
@@ -1072,7 +1076,7 @@ class Data
         //if($chars==0)$sql="select name from $table where id=$id";
         //if($chars>0)$sql="select substr(name,1,$chars)||'...' ||substr(name,char_length(name)-5,6) from $table where id=$id";
         $field=($this->field_exists($table, 'name'))?'name':'id';
-        $sql="select $field from $table where id=$id;--detalize";
+        $sql="select $field from $table where id=$id; --detalize";
         if ($noname=='') {
             $name=$this->db->GetVal($sql);
         } else {
@@ -1200,7 +1204,7 @@ class Data
     {
         $id=$id*1;
         if ($this->field_exists($table, 'name')) {
-            $sql="select name from $table where id=$id;--get_name";
+            $sql="select name from $table where id=$id; --get_name";
             $name=$this->db->GetVal($sql);
             if ($words>0) {
                 $name=trim($name);

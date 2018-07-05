@@ -765,7 +765,7 @@ class Html
         if (strlen($reflink)>500) {
             $reflink='';
         }
-        session_start();
+        session_start(); // set reflink
         setcookie("reflink", $reflink, time()+86400);
         $_SESSION['reflink'] = $reflink;
         session_write_close();

@@ -1076,11 +1076,15 @@ class Utils
                 $cart = $newcart;
                 break;
         }
-        session_start();
+        session_start(); //Cart
         $_SESSION['cart'] = $cart;
         //echo $this->pre_display($cart,"cart");
         session_write_close();
         //$_SESSION['cart']=$cart;
+        //echo $this->pre_display($_SESSION,"_SESSION");
+        ob_flush();
+        flush();
+        //exit;
     }
     public function show_run_time($txt)
     {
