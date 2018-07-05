@@ -3448,7 +3448,7 @@ class Data
         $result=$amount/$rate;
         return $result;
     }
-    function convert_currency_local($amount = 100, $from = 602, $to = 601, $date)
+    function convert_currency_local($amount = 100, $from = 602, $to = 601, $date='')
     {
         if ($date=='') {
             $date=$GLOBALS[today];

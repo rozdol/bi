@@ -604,12 +604,17 @@ class Html
         if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='invoices:DOWNLOADX')) {
             $GLOBALS[plain]=1;
         }
+        if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='shoppingcart')) {
+            $GLOBALS[plain]=1;
+        }
+
         if (($GLOBALS[act]=='details')&&($GLOBALS[what]=='uploads')) {
             $GLOBALS[plain]=1;
         }
         if ($this->readRQ('nowrap')!='') {
             $GLOBALS[plain]=1;
         }
+
         if ((in_array($GLOBALS[act], array('show','details','report','r','v','d')))&&($GLOBALS[plain]=='')&&(!in_array($GLOBALS[what], array('groupaccess')))) {
             $this->set_reflink();
         }
@@ -1952,6 +1957,16 @@ class Html
         }
         return $addbutton;
     }
+
+    function add_button2($what = '', $morelink = '')
+    {
+        $suffix=substr($what, 0, 3);
+        if (!($suffix=='vw_')) {
+            $addbutton="<a href='?act=add&what=$what$morelink'><i class='icon-plus-sign tooltip-test addbtn' data-original-title='Create new'></i></a>";
+        }
+        return $addbutton;
+    }
+
     function title($title = '', $srchbtn = '')
     {
         return "<h3 class='foldered'>$srchbtn".ucfirst($title)."</h3>";
