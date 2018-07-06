@@ -357,6 +357,7 @@ class Dates
         $tz = 'Europe/Nicosia';
         $timestamp = time();
         $dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
+        date_timezone_set($tz);
         $dt->setTimestamp($timestamp); //adjust the object to correct timestamp
         //echo $dt->format('d.m.Y, H:i:s');
 

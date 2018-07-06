@@ -952,7 +952,14 @@ class Html
             echo "\n\t</body>\n</html>";
         } else {
             if (!$GLOBALS[settings][hide_footer_info]) {
-                $content['footer']="<a href='#top'>⟰</a> | app:$GLOBALS[project] | db:".$_ENV['DB_NAME']." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | Version: <font color='#aa0000'><b>$GLOBALS[app_version]</b></font> | PID:$GLOBALS[project] | $GLOBALS[status]";
+
+                $git_file = APP_DIR.DS.'.git';
+                if (file_exists($git_file)) {
+                    $tz = 'Europe/Nicosia';
+                    date_default_timezone_set($tz);
+                    $modified= " - ". date ("Y.m.d H:i:s", filemtime($git_file));
+                }
+                $content['footer']="<a href='#top'>⟰</a> | app:$GLOBALS[project] | db:".$_ENV['DB_NAME']." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | Version: <font color='#aa0000'><b>$GLOBALS[app_version]</b></font> $modified | PID:$GLOBALS[project] | $GLOBALS[status]";
             }
             //$content['footer'].= $this->pre_display($GLOBALS,"result");
             //unset($content['footer']);
