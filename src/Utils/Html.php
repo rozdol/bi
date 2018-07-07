@@ -433,7 +433,7 @@ class Html
         $res=str_replace("\0", "", $val);
         return $res;
     }
-    public function readRQcsv($request = '', $default = '', $is_numeric = 1)
+    public function readRQcsv($request = '', $default = '', $is_numeric = 1, $as_list = 1)
     {
 //parce csv
         $val=$this->readRQ($request);
@@ -446,9 +446,14 @@ class Html
         if ($is_numeric>0) {
             $array=array_filter($array, 'is_numeric');
         }
-        $res=implode(',', $array);
+        if ($as_list>0) {
+            $res=implode(',', $array);
+        } else {
+            $res=$array;
+        }
         return $res;
     }
+
     public function readRQ($request = '', $default = '')
     {
 //strip tags
@@ -952,12 +957,11 @@ class Html
             echo "\n\t</body>\n</html>";
         } else {
             if (!$GLOBALS[settings][hide_footer_info]) {
-
                 $git_file = APP_DIR.DS.'.git';
                 if (file_exists($git_file)) {
                     $tz = 'Europe/Nicosia';
                     date_default_timezone_set($tz);
-                    $modified= " - ". date ("Y.m.d H:i:s", filemtime($git_file));
+                    $modified= " - ". date("Y.m.d H:i:s", filemtime($git_file));
                 }
                 $content['footer']="<a href='#top'>⟰</a> | app:$GLOBALS[project] | db:".$_ENV['DB_NAME']." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | Version: <font color='#aa0000'><b>$GLOBALS[app_version]</b></font> $modified | PID:$GLOBALS[project] | $GLOBALS[status]";
             }
@@ -2190,11 +2194,17 @@ class Html
 
     function array_display2DPlain($array = [], $title = '')
     {
+        if (is_object($array)) {
+            $array=get_object_vars($array);
+        }
         //echo $this->pre_display($array, $title);
         $i=0;
 
         $tbl.="<table>";
         foreach ($array as $key => $val) {
+            if (is_object($val)) {
+                $val=get_object_vars($val);
+            }
             $tbl.="<tr><td>$key</td><td>$val</td></tr>";
 
             $i++;
