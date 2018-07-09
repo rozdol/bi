@@ -786,7 +786,7 @@ class Dates
         return $NonWorkingDays;
     }
 
-    public function getWorkingDays($startDate, $endDate, $holidays)
+    public function getWorkingDays($startDate='', $endDate='', $holidays=[])
     {
         // do strtotime calculations just once
         $endDate = strtotime($endDate);
