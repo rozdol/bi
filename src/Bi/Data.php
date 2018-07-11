@@ -229,7 +229,7 @@ class Data
         $maxdescr=$userrec[maxdescr];
         session_write_close();
         ob_flush();
-        flush();
+        //flush();
         //$access['main_access']=0;
         $this->force_access();
         if (!$access['main_access']) {
@@ -1615,7 +1615,7 @@ class Data
         return $name;
         //$out.= "N:$name<br>"; exit;
     }
-    function listitems($field_name, $value, $alias, $class, $all = 'none')
+    function listitems($field_name='', $value='', $alias='', $class='', $all = 'none')
     {
 
         $listid=$this->db->GetVal("select id from lists where lower(alias)=lower('$alias') order by id asc limit 1")*1;
