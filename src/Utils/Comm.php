@@ -5,6 +5,8 @@ use Rozdol\Html\Html;
 use Rozdol\Utils\Utils;
 use Rozdol\Dates\Dates;
 
+//use \Sendgrid\Sendgrid;
+
 class Comm
 {
     private static $hInstance;
@@ -25,6 +27,43 @@ class Comm
     }
 
     public function sendgrid($from = 'name:name@example.com', $to = 'name:name@example.com', $subject = 'email', $body = '', $subscription_id = 'OneTimeLetter')
+    {
+        $bits_from=explode(":", $from);
+        $bits_to=explode(":", $to);
+        $plain_from=$bits_from[1];
+        $plain_to=$bits_to[1];
+
+        $source_file= APP_DIR . DS .'helpers'. DS .'mail.html';
+        if (file_exists($source_file)) {
+            $html=file_get_contents($source_file);
+            $html = str_replace("<%body%>", $body, $html);
+            $html = str_replace("<%subscription_id%>", $subscription_id, $html);
+            $html = str_replace("<%site_url%>", $GLOBALS[URL], $html);
+            $html = str_replace("<%brand_name%>", $GLOBALS[settings][brand_name], $html);
+        }
+
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom($bits_from[1], $bits_from[0]);
+        $email->setSubject($subject);
+        $email->addTo($bits_to[1], $bits_to[0]);
+        //$email->addContent("text/plain", "and easy to do anywhere, even with PHP");
+        $email->addContent(
+            "text/html",
+            $html
+        );
+        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+        try {
+            $response = $sendgrid->send($email);
+            // echo $this->html->pre_display($response->statusCode(), "statusCode");
+            // echo $this->html->pre_display($response->headers(), "headers");
+            // echo $this->html->pre_display($response->body(), "body");
+            return 1;
+        } catch (Exception $e) {
+            return 'Caught exception: '.  $e->getMessage();
+        }
+    }
+
+    public function sendgrid2($from = 'name:name@example.com', $to = 'name:name@example.com', $subject = 'email', $body = '', $subscription_id = 'OneTimeLetter')
     {
         $apiKey = getenv('SENDGRID_API_KEY');
 
