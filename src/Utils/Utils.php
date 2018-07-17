@@ -1674,7 +1674,7 @@ class Utils
     }
         /////==============To resove with HTML class=========\\\\\\\
 
-    public function tablehead($what, $qry, $order, $addbutton, $fields, $sort, $tips)
+    public function tablehead($what='', $qry='', $order='', $addbutton='', $fields=[], $sort=[], $tips=[])
     {
             $out.="
                 <table class='table table-bordered table-striped-tr table-morecondensed tooltip-demo  table-notfull' id='sortableTable'>
@@ -2200,6 +2200,49 @@ class Utils
         $arr=array($r0[1],$r1[1],$r0[0],$r1[0]);
         return $arr;
     }
+
+    function SQLite3_error($sql = '')
+    {
+        $this->error('SQLite3: '.$this->sql->lastErrorMsg().' in:<br>'.$sql);
+    }
+
+    function sql3_display($sql = 'select 1', $title = '')
+    {
+
+        $result = $this->sql->query($sql) or $this->SQLite3_error($sql);
+        $result->fetchArray(SQLITE3_NUM);
+        $fieldnames = [];
+        $fieldtypes = [];
+        for ($colnum=0; $colnum<$result->numColumns(); $colnum++) {
+            $fieldnames[] = $result->columnName($colnum);
+            $fieldtypes[] = $result->columnType($colnum);
+        }
+        $fields=$fieldnames;
+        array_unshift($fields, "#");
+        $tbl=$this->tablehead('', '', '', '', $fields);
+        $result->reset();
+        while ($row = $result->fetchArray(SQLITE3_NUM)) {
+            $i++;
+            $tbl.= "<tr class='$class'>";
+            $tbl.= "<td>$i</td>";
+            $j=0;
+            foreach ($fieldnames as $fieldname) {
+                $class=($fieldtypes[$j]==2)?"n":"";
+                $tbl.= "<td class='$class'>$row[$j]</td>";
+                $j++;
+            }
+
+            $tbl.= "</tr>";
+        }
+        $tbl.="</table>";
+
+        if ($title!='') {
+            $out.=$this->tag($title, 'foldered');
+        }
+        $result->finalize();
+        return $out.$tbl;
+    }
+
     public function sql_to_array($sql = 'select 1', $key = '')
     {
         $result = $this->sql->query($sql) or $this->error('SQLite3: '.$this->sql->lastErrorMsg().' in:<br>'.$sql);

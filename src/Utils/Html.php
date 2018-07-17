@@ -2458,10 +2458,7 @@ class Html
         return $href;
     }
 
-    function SQLite3_error($sql = '')
-    {
-        $this->error('SQLite3: '.$this->funcs_sql->lastErrorMsg().' in:<br>'.$sql);
-    }
+
 
     function SQL_error($sql = '')
     {
@@ -2498,42 +2495,47 @@ class Html
          exit;
     }
 
-    function sql_display($sql = 'select 1', $title = '')
-    {
+    // function SQLite3_error($sql = '')
+    // {
+    //     $this->error('SQLite3: '.$this->sql->lastErrorMsg().' in:<br>'.$sql);
+    // }
 
-        $result = $this->funcs_sql->query($sql) or $this->SQLite3_error($sql);
-        $result->fetchArray(SQLITE3_NUM);
-        $fieldnames = [];
-        $fieldtypes = [];
-        for ($colnum=0; $colnum<$result->numColumns(); $colnum++) {
-            $fieldnames[] = $result->columnName($colnum);
-            $fieldtypes[] = $result->columnType($colnum);
-        }
-        $fields=$fieldnames;
-        array_unshift($fields, "#");
-        $tbl=$this->tablehead('', '', '', '', $fields);
-        $result->reset();
-        while ($row = $result->fetchArray(SQLITE3_NUM)) {
-            $i++;
-            $tbl.= "<tr class='$class'>";
-            $tbl.= "<td>$i</td>";
-            $j=0;
-            foreach ($fieldnames as $fieldname) {
-                $class=($fieldtypes[$j]==2)?"n":"";
-                $tbl.= "<td class='$class'>$row[$j]</td>";
-                $j++;
-            }
+    // function sql_display($sql = 'select 1', $title = '')
+    // {
 
-            $tbl.= "</tr>";
-        }
-        $tbl.="</table>";
+    //     $result = $this->sql->query($sql) or $this->SQLite3_error($sql);
+    //     $result->fetchArray(SQLITE3_NUM);
+    //     $fieldnames = [];
+    //     $fieldtypes = [];
+    //     for ($colnum=0; $colnum<$result->numColumns(); $colnum++) {
+    //         $fieldnames[] = $result->columnName($colnum);
+    //         $fieldtypes[] = $result->columnType($colnum);
+    //     }
+    //     $fields=$fieldnames;
+    //     array_unshift($fields, "#");
+    //     $tbl=$this->tablehead('', '', '', '', $fields);
+    //     $result->reset();
+    //     while ($row = $result->fetchArray(SQLITE3_NUM)) {
+    //         $i++;
+    //         $tbl.= "<tr class='$class'>";
+    //         $tbl.= "<td>$i</td>";
+    //         $j=0;
+    //         foreach ($fieldnames as $fieldname) {
+    //             $class=($fieldtypes[$j]==2)?"n":"";
+    //             $tbl.= "<td class='$class'>$row[$j]</td>";
+    //             $j++;
+    //         }
 
-        if ($title!='') {
-            $out.=$this->tag($title, 'foldered');
-        }
-        $result->finalize();
-        return $out.$tbl;
-    }
+    //         $tbl.= "</tr>";
+    //     }
+    //     $tbl.="</table>";
+
+    //     if ($title!='') {
+    //         $out.=$this->tag($title, 'foldered');
+    //     }
+    //     $result->finalize();
+    //     return $out.$tbl;
+    // }
 
     function dropzoneJS($formdata = '', $text = 'Drop files here')
     {
