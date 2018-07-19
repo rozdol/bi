@@ -1663,11 +1663,14 @@ class Data
                 if ($GLOBALS['workgroup']['administrator_id']>0) {
                     $sql = "$sql and  (topartnerid='".$GLOBALS['workgroup']['administrator_id']."' or executor='".$GLOBALS['uid']."' or receivedby='".$GLOBALS['uid']."')";
                 }
+                $sql_run="select count(*) from clientrequests where approvedby=0 and not (suspendedby>0 and date<=now() - INTERVAL '15 days') $sql";
 
-                $requestsnotapproved=$this->db->GetVal("select count(*) from clientrequests where approvedby=0 $sql");
+                $requestsnotapproved=$this->db->GetVal($sql_run);
                 $requestsnotcomplete=$this->db->GetVal("select count(*) from clientrequests where approvedby>0 and confirmedby=0 $sql");
-                $requestsnotrevisedbyme=$this->db->getval("select count(*) from clientrequests where revisedby=0 and confirmedby>0 and id in (select ref_id from watchlist where ref_table='clientrequests' and user_id=$GLOBALS[uid])  $sql")*1;
                 $requeststoberevisedbyme=$this->db->getval("select count(*) from clientrequests where revisedby=0 and confirmedby=0 and id in (select ref_id from watchlist where ref_table='clientrequests' and user_id=$GLOBALS[uid])  $sql")*1;
+                $sql_run="select count(*) from clientrequests where revisedby=0 and confirmedby>0 and id in (select ref_id from watchlist where ref_table='clientrequests' and user_id=$GLOBALS[uid])  $sql";
+                $requestsnotrevisedbyme =$this->db->getval($sql_run)*1;
+                //echo $this->html->pre_display($sql_run,"data");
 
                 $requestsnotapproved=$requestsnotapproved>0?"<a href='?act=show&what=clientrequests&nopager=1&notapproved=1'><span class='badge red' onMouseover=\"showhint('New not approved', this, event, '');\">$requestsnotapproved</span></a>":"-";
                 $requestsnotcomplete=$requestsnotcomplete>0?"<a href='?act=show&what=clientrequests&nopager=1&approved=1&notconfirmed=1'><span class='badge' onMouseover=\"showhint('Approved incomplete', this, event, '');\">$requestsnotcomplete</span></a>":"-";
