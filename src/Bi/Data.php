@@ -1333,7 +1333,7 @@ class Data
         return $res;
     }
 
-    function partner_form($field, $value, $title, $html)
+    function partner_form($field='', $value='', $title='', $html='')
     {
         if ($html=='0') {
             $html='';
