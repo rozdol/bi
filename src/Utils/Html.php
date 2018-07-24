@@ -913,7 +913,7 @@ class Html
             <script src="'.APP_URI.'/assets/js/app/calendar1.js"></script>
             <script src="'.APP_URI.'/assets/js/app/funcs.js"></script>
             <script src="'.APP_URI.'/assets/js/application.js"></script>
-            <script src="'.APP_URI.'/assets/js/ffupload/js/vendor/jquery.ui.widget.js"></script>
+            <script src="'.APP_URI.'/assets/js/ffupload/js/jquery.ui.widget.js"></script>
 
             <script src="'.APP_URI.'/assets/fusioncharts/js/fusioncharts.js"></script>
             <script src="'.APP_URI.'/assets/fusioncharts/js/themes/fusioncharts.theme.fint.js"></script>
@@ -2282,6 +2282,50 @@ class Html
 
         //$out="<table class='table table-bordered table-morecondensed table-notfull' ><tr><td class='n'>Test</td></tr></table>";
         return $out;
+    }
+
+    function array_nested_form($array = [],$table='', $field='', $id=0, $parent='',$js='')
+    {
+        $inline_edit=1;
+        if($parent=='')$parent=$table;
+        $out= "<table class='table table-bordered table-morecondensed table-notfull' >";
+        foreach ($array as $key => $value) {
+            $out.= "<tr><td class='n'>{$key}:</td><td>";
+            //$parent=$key;
+            //$trail="$trail->{$key}";
+            $domain="$parent->$key";
+            $domain_js=str_ireplace('->','-',$domain);
+            if (is_array($value)) {
+                $res=$this->array_nested_form($value,$table,$field, $id, $domain,$js1);
+                $out.=$res[out];
+                $js1.=$res[js];
+            } else {
+
+                if ($inline_edit>0) {
+                    $submitdata=array(
+                        'table'=>$table,
+                        'field'=>$field,
+                        'is_json'=>1,
+                        'domain'=>$domain,
+                        'id'=>$id,
+                    );
+
+                    $class="#$domain_js";
+                    $js1.=$this->utils->inline_js($class, $submitdata);
+                    $value= "<span class='bold' id='$domain_js'>$value</span>";
+                }else{
+
+                }
+                $out.= "<b>$value</b>";
+            }
+            $out.= "</td></tr>";
+        }
+        $out.= "</table>";
+            $result[out]=$out;
+            $result[js]=$js1;
+
+        //$out="<table class='table table-bordered table-morecondensed table-notfull' ><tr><td class='n'>Test</td></tr></table>";
+        return $result;
     }
 
     function array_display($array = [], $title = '', $rounding = '')
