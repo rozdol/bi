@@ -1853,7 +1853,9 @@ class Html
         <h3 id='{$modal_id}Label'>$data[header]</h3>
       </div>
       <div class='modal-body'>
+        <p>$data[before]</p>
         <p>$data[html]</p>
+        <p>$data[after]</p>
       </div>
       <div class='modal-footer'>
         <button class='btn' data-dismiss='modal' aria-hidden='true'>Close</button>
