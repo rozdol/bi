@@ -477,7 +477,7 @@ class Html
             // $val=str_ireplace(" ","",$val);
         }
 
-        $res=$val*1;
+        $res=(int)$val;
         if (($res==0)&&($default!=0)) {
             $res=$default*1;
         }
