@@ -190,9 +190,9 @@ class Comm
     }
     public function send_announcement_mail($to = 'email@example.com', $from = 'it@example.com', $subject = 'Announcement', $description = '', $body = '', $attachments = [])
     {
-        require_once FW_DIR.'vendor/PHPMailer/PHPMailerAutoload.php';
+        require_once FW_DIR.DS.'classes/PHPMailer/PHPMailerAutoload.php';
 
-        $mail = new PHPMailer;
+        $mail = new \PHPMailer;
         $mail->isSendmail();
         $mail->setFrom($from, '');
         $mail->addReplyTo($from, '');
@@ -200,7 +200,8 @@ class Comm
         $mail->Subject = $subject;
 
         //$source_file= DATA_DIR . DS .'templates'. DS .'email2.html';
-        $source_file= APP_DIR . DS .'helpers'. DS .'mail.html';
+        $source_file= APP_DIR . DS .'helpers'. DS .'email.html';
+        if(!file_exists($source_file))die("Template $source_file does not exist.");
         $html=file_get_contents($source_file);
         $final_msg = $html;
 
@@ -236,7 +237,7 @@ class Comm
 
 
         //source_file= DATA_DIR . DS .'templates'. DS .'email.html';
-        $source_file= APP_DIR . DS .'helpers'. DS .'mail.html';
+        $source_file= APP_DIR . DS .'helpers'. DS .'email.html';
         if (file_exists($source_file)) {
             $html=file_get_contents($source_file);
             //echo "$source_file:$html<br>"; exit;
