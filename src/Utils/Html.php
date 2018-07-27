@@ -2368,7 +2368,7 @@ class Html
             }
 
             if ($i==0) {
-                //echo $this->html->pre_display($fields, 'fields');
+                //echo $this->pre_display($fields, 'fields');
                 $head=$this->tablehead('', '', '', '', $fields);
             }
 
@@ -2382,11 +2382,11 @@ class Html
             //$sql_insert.=$sql_insert_values;
             //$sql_insert=rtrim($sql_insert,",");
             //$sql_insert.=");\n";
-            //$this->sql->exec($sql_insert) or $this->html->error('SQLite3: '.$this->sql->lastErrorMsg().' in:<br>'.$sql_insert);
-            //echo $this->html->pre_display($sql_insert,'sql_insert');
+            //$this->sql->exec($sql_insert) or $this->error('SQLite3: '.$this->sql->lastErrorMsg().' in:<br>'.$sql_insert);
+            //echo $this->pre_display($sql_insert,'sql_insert');
             //$sql_inserts.=$sql_insert;
             $i++;
-            //echo $this->html->pre_display($row,$row_key);
+            //echo $this->pre_display($row,$row_key);
         }
 
         $end="</table>";
@@ -2557,9 +2557,9 @@ class Html
         $mail_text.="<b>IP:</b>".$GLOBALS['ip'].'<hr>';
         $mail_text.="<b>User:</b>".$GLOBALS['username'].'<hr>';
 
-        $mail_text.=$this->html->pre_display($_GET, 'GET').'<hr>';
-        $mail_text.=$this->html->pre_display($_POST, 'POST').'<hr>';
-        $mail_text.=$this->html->pre_display($_REQUEST, 'REQUEST').'<hr>';
+        $mail_text.=$this->pre_display($_GET, 'GET').'<hr>';
+        $mail_text.=$this->pre_display($_POST, 'POST').'<hr>';
+        $mail_text.=$this->pre_display($_REQUEST, 'REQUEST').'<hr>';
 
         $mail=$this->sendmail_html($email, $email, $subject, $mail_text);
     }
