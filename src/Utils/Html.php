@@ -2534,11 +2534,72 @@ class Html
             $mail_text.=$this->pre_display($_POST, 'POST').'<hr>';
             $mail_text.=$this->pre_display($_REQUEST, 'REQUEST').'<hr>';
 
-            $mail=$this->comm->mail2admin('SQL error by '.$GLOBALS['username'].', APP:'.$GLOBALS['app_name'].', IP:'.$GLOBALS['ip'], $mail_text);
+            $mail=$this->mail2admin('SQL error by '.$GLOBALS['username'].', APP:'.$GLOBALS['app_name'].', IP:'.$GLOBALS['ip'], $mail_text);
 
             echo $this->message('There was an error in SQL statement<br>Contact system administrator', 'ERROR', 'alert-error');
         }
          exit;
+    }
+
+    public function mail2admin($subject, $msg)
+    {
+        $subject=$GLOBALS['app_name'].": $subject";
+        $email=$GLOBALS['settings']['admin_mail'];
+        if ($email=='') {
+            $email=$GLOBALS['settings']['system_email'];
+        }
+        if ($email=='') {
+            $email='it@example.com';
+        }
+        $mail_text=$msg;
+        $mail_text.="<hr>";
+        $mail_text.="<b>APP:</b>".$GLOBALS['app_name'].'<hr>';
+        $mail_text.="<b>IP:</b>".$GLOBALS['ip'].'<hr>';
+        $mail_text.="<b>User:</b>".$GLOBALS['username'].'<hr>';
+
+        $mail_text.=$this->html->pre_display($_GET, 'GET').'<hr>';
+        $mail_text.=$this->html->pre_display($_POST, 'POST').'<hr>';
+        $mail_text.=$this->html->pre_display($_REQUEST, 'REQUEST').'<hr>';
+
+        $mail=$this->sendmail_html($email, $email, $subject, $mail_text);
+    }
+
+    public function sendmail_html($to, $from, $subject, $message)
+    {
+        if ($from=='') {
+            // $from_user=$this->data->get_row('users',$GLOBALS[uid]);
+            // $from_username="$from_user[firstname] $from_user[surname]";
+            // $from=$from_user[email];
+            // $from_username="IS";
+            // $from="info@example.com";
+        }
+        $headers = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+        $headers  .= "From: $from\r\n";
+            //options to send to cc+bcc
+            //$headers .= "Cc: [email]maa@p-i-s.cXom[/email]\r\n";
+            //$headers .= "Bcc: [email]email@maaking.cXom[/email]\r\n";
+        $color="#DCEEFC";
+        if ($this->utils->contains('sql', strtolower($subject))) {
+            $color="#FF8585";
+        }
+        if ($this->utils->contains('error', strtolower($subject))) {
+            $color="#FF8585";
+        }
+        $message = "<html>
+            <body bgcolor=\"$color\">
+            <h3>$subject</h3>
+            <p>
+            $message
+            </p>
+            </body>
+            </html>";
+        //echo $message;
+        if ($GLOBALS['settings']['no_mail']!=1) {
+            mail($to, $subject, $message, $headers);
+        }
+        //DB_log("SENT MAIL: $to, SUBJ:$subject, MESG:$message");
+        return true;
     }
 
     // function SQLite3_error($sql = '')
