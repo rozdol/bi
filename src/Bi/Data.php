@@ -2792,7 +2792,7 @@ class Data
     }
 
 
-    function DB_get_event($alias, $date, $reference, $refid)
+    function DB_get_event($alias='', $date='', $reference='', $refid=0)
     {
         $date=$this->dates->F_date($date, 1);
         $type=$this->db->getval("SELECT id from listitems where alias='$alias' order by id limit 1");
