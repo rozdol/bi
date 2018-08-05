@@ -963,7 +963,7 @@ class Html
                     date_default_timezone_set($tz);
                     $modified= " - ". date("Y.m.d H:i:s", filemtime($git_file));
                 }
-                $content['footer']="<a href='#top'>⟰</a> | app:$GLOBALS[project] | db:".$_ENV['DB_NAME']." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | Version: <font color='#aa0000'><b>$GLOBALS[app_version]</b></font> $modified | PID:$GLOBALS[project] | $GLOBALS[status]";
+                $content['footer']="<a href='#top'>⟰</a> | app:$GLOBALS[project] | db:".$GLOBALS['DB']['DB_NAME']." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | Version: <font color='#aa0000'><b>$GLOBALS[app_version]</b></font> $modified | PID:$GLOBALS[project] | $GLOBALS[status]";
             }
             //$content['footer'].= $this->pre_display($GLOBALS,"result");
             //unset($content['footer']);
@@ -1061,7 +1061,7 @@ class Html
 
     public function putLogin($content = array())
     {
-        $info="ip:".$GLOBALS[ip]." | db:".$_ENV['DB_NAME']." | app:".APP_NAME;
+        $info="ip:".$GLOBALS[ip]." | db:".$GLOBALS['DB']['DB_NAME']." | app:".APP_NAME;
 
         if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&($GLOBALS['settings']['use_mfa'])) {
             $content['html'].='<label> </label>
@@ -2286,23 +2286,24 @@ class Html
         return $out;
     }
 
-    function array_nested_form($array = [],$table='', $field='', $id=0, $parent='',$js='')
+    function array_nested_form($array = [], $table = '', $field = '', $id = 0, $parent = '', $js = '')
     {
         $inline_edit=1;
-        if($parent=='')$parent=$table;
+        if ($parent=='') {
+            $parent=$table;
+        }
         $out= "<table class='table table-bordered table-morecondensed table-notfull' >";
         foreach ($array as $key => $value) {
             $out.= "<tr><td class='n'>{$key}:</td><td>";
             //$parent=$key;
             //$trail="$trail->{$key}";
             $domain="$parent->$key";
-            $domain_js=str_ireplace('->','-',$domain);
+            $domain_js=str_ireplace('->', '-', $domain);
             if (is_array($value)) {
-                $res=$this->array_nested_form($value,$table,$field, $id, $domain,$js1);
+                $res=$this->array_nested_form($value, $table, $field, $id, $domain, $js1);
                 $out.=$res[out];
                 $js1.=$res[js];
             } else {
-
                 if ($inline_edit>0) {
                     $submitdata=array(
                         'table'=>$table,
@@ -2315,8 +2316,7 @@ class Html
                     $class="#$domain_js";
                     $js1.=$this->utils->inline_js($class, $submitdata);
                     $value= "<span class='bold' id='$domain_js'>$value</span>";
-                }else{
-
+                } else {
                 }
                 $out.= "<b>$value</b>";
             }

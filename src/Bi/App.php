@@ -24,11 +24,11 @@ class App
     {
 
         $this->db = DB::getInstance(
-            $_ENV['DB_SERVER'],
-            $_ENV['DB_USER'],
-            $_ENV['DB_PASS'],
-            $_ENV['DB_NAME'],
-            $_ENV['DB_PORT']
+            $GLOBALS['DB']['DB_SERVER'],
+            $GLOBALS['DB']['DB_USER'],
+            $GLOBALS['DB']['DB_PASS'],
+            $GLOBALS['DB']['DB_NAME'],
+            $GLOBALS['DB']['DB_PORT']
         );
         $this->db->ShowErrors();
         $res=$this->db->GetVar("SET DateStyle = 'German';");

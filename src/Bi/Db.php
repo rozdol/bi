@@ -27,7 +27,7 @@ class Db
             if (!$this->conn) {
                 $this->conn = @pg_connect("host=$host port=$port dbname=template1 user=$login password=$pass");
                 if (!$this->conn) {
-                    die("No $dbname or any default database at host://$host:$port");
+                    die("No $dbname or any default database at host://$host:$port"."<br>host=$host port=$port dbname=$dbname user=$login password=$pass");
                 }
             }
             echo "Setting up database $dbname ...<br>";
@@ -39,11 +39,11 @@ class Db
        LC_CTYPE = 'en_US.UTF-8'
        CONNECTION LIMIT = -1;";
 
-            $default_conn = @pg_connect("host=".$_ENV['DB_SERVER']."
-                             port=".$_ENV['DB_PORT']."
+            $default_conn = @pg_connect("host=".$GLOBALS['DB']['DB_SERVER']."
+                             port=".$GLOBALS['DB']['DB_PORT']."
                              dbname='postgres'
-                             user=".$_ENV['DB_USER']."
-                             password=".$_ENV['DB_PASS']);
+                             user=".$GLOBALS['DB']['DB_USER']."
+                             password=".$GLOBALS['DB']['DB_PASS']);
             if ((!$default_conn)) {
                 die("SQL:Can not create $dbname database. SQL:<br><pre>$sql</pre>");
             }
