@@ -895,9 +895,9 @@ class Dates
         if ($workingonly>0) {
             $holidays=array('01.01.2013','02.01.2013');
             $tmpdate=$this->F_dateadd($date, $days);
-            echo"tmpdate:$tmpdate<br>";
+            //echo"tmpdate:$tmpdate<br>";
             $workingdays=$this->getWorkingDays($date, $tmpdate, $holidays)-1;
-            echo"workingdays:$workingdays ($date,$tmpdate)<br>";
+            //echo"workingdays:$workingdays ($date,$tmpdate)<br>";
             $diffdays=$days-$workingdays;
             $days+=$diffdays;
         }
