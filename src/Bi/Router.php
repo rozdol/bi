@@ -37,7 +37,7 @@ class Router
         $this->utf8 = utf8::getInstance();
         $this->data = Data::getInstance($this->db);
 
-        $project_class=APP_DIR.DS.'classes'.DS.'project.php';
+        $project_class=APP_DIR.DS.'classes'.DS.'Project.php';
         if (file_exists($project_class)) {
             require($project_class);
             $this->project = Project::getInstance($this->db);
