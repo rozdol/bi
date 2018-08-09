@@ -32,9 +32,8 @@ class Db
             }
             echo "Setting up database $dbname ...<br>";
             $sql="CREATE DATABASE $dbname
-  WITH OWNER = postgres
+  WITH OWNER = $login
        ENCODING = 'UTF8'
-       TABLESPACE = pg_default
        LC_COLLATE = 'en_US.UTF-8'
        LC_CTYPE = 'en_US.UTF-8'
        CONNECTION LIMIT = -1;";
