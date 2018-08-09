@@ -1301,7 +1301,7 @@ class Data
     function partner_form2($field, $value, $title, $html)
     {
         $res[wait]='
-            $("#partner_'.$field.'").html("<img src=\''.APP_URI.'/assets/img/loadingsmall.gif\'>");
+            $("#partner_'.$field.'").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>");
             ';
         $res[load]='
             $.ajaxq ("queue'.$field.'", {
@@ -1339,7 +1339,7 @@ class Data
             $html='';
         }
         $res[wait]='
-            $("#partner_'.$field.'").html("<img src=\''.APP_URI.'/assets/img/loadingsmall.gif\'>");
+            $("#partner_'.$field.'").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>");
             ';
         $res[load]='
             $.ajaxq ("queue'.$field.'", {
@@ -1402,7 +1402,7 @@ class Data
             $html='';
         }
         $res[wait]='
-            $("#object_'.$field.'").html("<img src=\''.APP_URI.'/assets/img/loadingsmall.gif\'>");
+            $("#object_'.$field.'").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>");
             ';
 
         $res[load]='
@@ -1471,7 +1471,7 @@ class Data
             </fieldset>";
 
         $res[wait]='
-            $("#'.$tablefield.'").html("<img src=\''.APP_URI.'/assets/img/loadingsmall.gif\'>1");
+            $("#'.$tablefield.'").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>1");
             ';
         $res[load]='
             $.ajaxq ("queue'.$tablefield.'", {
@@ -1511,9 +1511,9 @@ class Data
             </fieldset>";
         $res[out]=$out;
         $res[wait]='
-            $("#partner_'.$field.'").html("<img src=\''.APP_URI.'/assets/img/loadingsmall.gif\'>1");
-            $("#'.$role.'_acc_id_").html("<img src=\''.APP_URI.'/assets/img/loadingsmall.gif\'>2");
-            $("#curr_'.$role.'_acc_id").html("<img src=\''.APP_URI.'/assets/img/loadingsmall.gif\'>3");
+            $("#partner_'.$field.'").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>1");
+            $("#'.$role.'_acc_id_").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>2");
+            $("#curr_'.$role.'_acc_id").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>3");
             ';
         $res[load]='
             $.ajaxq ("queue'.$queue.'", {
@@ -2008,8 +2008,8 @@ class Data
     function sw_active($table, $id)
     {
         global $uid;
-        //<img src='".APP_URI."/assets/img/custom/ok.png'>
-        //<img src='".APP_URI."/assets/img/custom/warn.png'>
+        //<img src='".ASSETS_URI."/assets/img/custom/ok.png'>
+        //<img src='".ASSETS_URI."/assets/img/custom/warn.png'>
         //<a href='?csrf=$GLOBALS[csrf]&act=save&what=boolean&field=complete&ref_table=$what&ref_id=$row[id]'>$row[completeimg]</a>
 
         //<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'>
@@ -2018,9 +2018,9 @@ class Data
         $sql="select * from favorites where refid=$id and reference='$table' and userid=$uid";
         $count=$this->db->GetVal($sql)*1;
         if ($count>0) {
-            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".APP_URI."/assets/img/custom/fav-in.png' title='Remove from favorites'> Favorite</a>";
+            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-in.png' title='Remove from favorites'> Favorite</a>";
         } else {
-            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".APP_URI."/assets/img/custom/fav-out.png' title='Add to favorites'> Favorite</a>";
+            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-out.png' title='Add to favorites'> Favorite</a>";
         }
         return $result;
     }
@@ -2030,9 +2030,9 @@ class Data
         $sql="select * from favorites where refid=$id and reference='$table' and userid=$uid";
         $count=$this->db->GetVal($sql)*1;
         if ($count>0) {
-            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".APP_URI."/assets/img/custom/fav-in.png' title='Remove from favorites'> Favorite</a>";
+            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-in.png' title='Remove from favorites'> Favorite</a>";
         } else {
-            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".APP_URI."/assets/img/custom/fav-out.png' title='Add to favorites'> Favorite</a>";
+            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-out.png' title='Add to favorites'> Favorite</a>";
         }
         return $result;
     }
@@ -2048,7 +2048,7 @@ class Data
         $helprow[descr]=str_replace("\r\n", "<br>", $helprow[descr]);
         $text="<h3>$helprow[name]</h3>$helprow[descr]";
         //$text="$sql";
-        $text="<img src='".APP_URI."/assets/img/custom/help.png' height=12 width=12 onMouseover=\"showhint('$text', this, event, '400px');\">";
+        $text="<img src='".ASSETS_URI."/assets/img/custom/help.png' height=12 width=12 onMouseover=\"showhint('$text', this, event, '400px');\">";
         return $text;
     }
     function isallowed($what, $id, $project = '')
@@ -2475,7 +2475,7 @@ class Data
             <head>
             <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
         <title>PHP Calendar</title>
-        <link type='text/css' rel='stylesheet' media='all' href='".APP_URI."/assets/css/cal_style.css' />
+        <link type='text/css' rel='stylesheet' media='all' href='".ASSETS_URI."/assets/css/cal_style.css' />
         </head>
         <body>
         $year
@@ -2691,13 +2691,13 @@ class Data
             $whattag='p';
         }
         if (($GLOBALS['access']['edit_'.$what])&&($_POST[noedit]!=1)) {
-            $edit=":: <a href='?act=edit&table=$what&id=$id'><img src='".APP_URI."/assets/img/custom/edit.png'> Edit </a>";
+            $edit=":: <a href='?act=edit&table=$what&id=$id'><img src='".ASSETS_URI."/assets/img/custom/edit.png'> Edit </a>";
         }
         if (($GLOBALS['access']['edit_'.$what])&&($_POST[nodelete]!=1)) {
             $del_btn.= ":: <i class='icon-trash withpointer' onclick=\"confirmation('?csrf=$GLOBALS[csrf]&act=delete&what=$what&id=$id','$text')\" onMouseOver=\"this.className='icon-trash icon-white withpointer black'\" onMouseOut=\"this.className='icon-trash withpointer'\"></i> Delete ";
         }
         $qr="<a href='?act=pdf&what=pdf_qr&acttag=d&whattag=$whattag&id=$id'><i class='icon-qrcode withpointer'></i> QR</a>";
-        $out.="<div class='alert alert-info'>$fav $edit :: <a href='?act=edit&table=notify&refid=$id&tablename=$what'><img src='".APP_URI."/assets/img/custom/MailSend.png'> Notify </a> :: $qr $del_btn | $more $isnotified</div>";
+        $out.="<div class='alert alert-info'>$fav $edit :: <a href='?act=edit&table=notify&refid=$id&tablename=$what'><img src='".ASSETS_URI."/assets/img/custom/MailSend.png'> Notify </a> :: $qr $del_btn | $more $isnotified</div>";
         return "<span media='print' class='noPrint'>$out</span>";
     }
     function readconfig($what)
@@ -3223,9 +3223,9 @@ class Data
         $ub=substr($ubday, 0, 5);
         $td=substr($today, 0, 5);
         //echo "BD:$ub - $td<br>"; exit;
-        //if($gid<20)$out.= "<img src='".APP_URI."/assets/img/custom/NY2011.png'>";
+        //if($gid<20)$out.= "<img src='".ASSETS_URI."/assets/img/custom/NY2011.png'>";
         if ($ub == $td) {
-            $out.= "<img src='".APP_URI."/assets/img/custom/Happy-Birthday2.gif'><br>($ub == $td [$ubday:$uid])";
+            $out.= "<img src='".ASSETS_URI."/assets/img/custom/Happy-Birthday2.gif'><br>($ub == $td [$ubday:$uid])";
         }
         return $out;
     }
@@ -3346,7 +3346,7 @@ class Data
                 $output2[] = '<td>'.$table.'</td>';
                 $output2[] = '<td>'.$id.'</td>';
                 $output2[] = '<td>'.$name.'</td>';
-                $output2[] = '<td><a href="?act=save&what=shoppingcart&func=delete&id='.$table.':'.$id.'" class="r"><img src="'.APP_URI.'/assets/img/custom/delete.gif"></a></td>';
+                $output2[] = '<td><a href="?act=save&what=shoppingcart&func=delete&id='.$table.':'.$id.'" class="r"><img src="'.ASSETS_URI.'/assets/img/custom/delete.gif"></a></td>';
                 //$output[] = '<td><input type="text" name="qty'.$id.'" value="'.$qty.'" size="3" maxlength="3" /></td>';
                 //$output[] = '<td>&pound;'.($price * $qty).'</td>';
                 $total += 1;

@@ -532,7 +532,7 @@ class Utils
             }
         }
 
-        $out.=  "   <script src='".APP_URI."/assets/js/FusionCharts/FusionCharts.js'></script>
+        $out.=  "   <script src='".ASSETS_URI."/assets/js/FusionCharts/FusionCharts.js'></script>
             <script>FusionCharts.setCurrentRenderer('javascript');</script>";
         //ob_flush();flush();
 
@@ -544,12 +544,12 @@ class Utils
     {
         include_once(FW_DIR.'/classes/FusionChart.class.php');
         $FC = new FusionCharts($chart, $w, $h);
-        $FC->setSWFPath(APP_URI.'/assets/swf/');
+        $FC->setSWFPath(ASSETS_URI.'/assets/swf/');
         $FC->setChartParams($strParam);
         foreach ($data as $key => $value) {
             $FC->addChartData($value, "label=$key");
         }
-        $out.=  "   <script src='".APP_URI."/assets/js/FusionCharts/FusionCharts.js'></script>
+        $out.=  "   <script src='".ASSETS_URI."/assets/js/FusionCharts/FusionCharts.js'></script>
             <script>FusionCharts.setCurrentRenderer('javascript');</script>";
         //ob_flush();flush();
 
@@ -939,7 +939,7 @@ class Utils
                 select : true,
                 submitdata : $json_submitdata,
                 $buttons
-                indicator : '<img src=\"".APP_URI."/assets/img/ajax-loader-bar.gif\">',
+                indicator : '<img src=\"".ASSETS_URI."/assets/img/ajax-loader-bar.gif\">',
                 tooltip   : 'Double Click to edit...',
                 event     : 'dblclick',
                 style  : 'inherit',
@@ -2388,7 +2388,7 @@ class Utils
         $url="http://integra.lan/?act=show&what=deals&offline_token=1234&no_wrap=1";
         $phantomjs="/usr/local/bin/phantomjs";
         $params="--web-security=false";
-        $js_file=APP_URI."/assets/js/rasterize.js"; //"/data/integra/tmp/rasterize.js";
+        $js_file=ASSETS_URI."/assets/js/rasterize.js"; //"/data/integra/tmp/rasterize.js";
         $options="960px*{$height}px";
         $command="$phantomjs $params $js_file \"$url\" \"$file\" \"$options\"";
         exec($command);
