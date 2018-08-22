@@ -2856,7 +2856,7 @@ class Data
         }
         return $res;
     }
-    function get_new_docname($date)
+    function get_new_docname($date='')
     {
 
         if ($date=='') {
