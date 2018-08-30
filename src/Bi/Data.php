@@ -2929,7 +2929,7 @@ class Data
                         }
                     }
                 }
-                $reference=$this->db->GetVal("SELECT name from $row[tablename] where id=$row[refid]; -- from scheduler");
+                if($this->field_exists($row[tablename], 'name'))$reference=$this->db->GetVal("SELECT name from $row[tablename] where id=$row[refid]; -- from scheduler");
                 $type=$this->db->GetVal("SELECT name from listitems where id=$row[type]");
                 $user=$this->db->GetVal("SELECT username from users where id=$row[userid]");
                 //////////////-->echo "$row[name]($row[nextdate]-$row[interval]-$nextdate)$row[type]($row[usersinvolved])<br>";
@@ -3580,13 +3580,14 @@ class Data
 
     function scramble_data()
     {
-        $sql = "select * from partners where type=201";
+        $sql = "select * from partners where (type in (201,202) or physical='t') order by id";
         if (!($cur = pg_query($sql))) {
             $this->html->SQL_error($sql);
         }
         while ($row = pg_fetch_array($cur)) {
             $name=$this->utils->scramble($row[name]);
-            //$this->db->GetVal("update partners set name='$name' where id=$row[id]");
+            echo "$name<br>";
+            $this->db->GetVal("update partners set name='$name' where id=$row[id]");
             $vals=array('name'=>$name);
             $this->db->update_db('partners', $row[id], $vals);
         }
