@@ -554,7 +554,7 @@ class Comm
         curl_close($curl);
         // No HTTP error authorized
         if ($http_code != 200) {
-            $this->error('HTTP status code ' . $http_code."<br>$curl");
+            echo $this->html->message('HTTP status code ' . $http_code."<br>$curl",__FUNCTION__,'alert-error');
         }
 
         // Converting to an array
@@ -563,9 +563,9 @@ class Comm
         array_shift($xml_rates);
         // Returning associative array (currencies -> rates)
         $result = array_combine($xml_rates[0], $xml_rates[1]);
-        // Checking for error
+        // Checking for Error
         if (empty($result)) {
-            $this->error('empty result');
+            echo $this->html->message('empty result',__FUNCTION__,'alert-error');
         }
         // Adding EUR = 1
         $result = array('EUR' => 1) + $result;
