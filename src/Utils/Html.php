@@ -695,36 +695,54 @@ class Html
     }
     function HT_Error($msg = '')
     {
-        echo $this->message($msg, 'ERROR', 'alert-error');
-        exit;
+        echo $this->error($msg);
     }
     function error($msg = '')
     {
-        echo $this->message($msg, 'ERROR', 'alert-error');
-        exit;
+        if($GLOBALS[offline_mode]){
+            $this->message($msg, 'ERROR');
+        }else{
+            echo $this->message($msg, 'ERROR', 'alert-error');
+            exit;
+        }
+
+
     }
     function warn($msg = '')
     {
-        echo $this->message($msg, '', 'alert-error');
+        if($GLOBALS[offline_mode]){
+            $GLOBALS[offline_messages][]=strip_tags("WARN: $msg");
+        }else{
+            echo $this->message($msg, '', 'alert-error');
+        }
+
     }
 
     function message($msg = '', $title = '', $class = 'alert-info')
     {
-        if ($this->utils->contains('alert-', $class)>0) {
-            $class="alert $class";
+        if($GLOBALS[offline_mode]){
+            $GLOBALS[offline_messages][]=strip_tags("$title: $msg");
+        }else{
+            if ($this->utils->contains('alert-', $class)>0) {
+                $class="alert $class";
+            }
+            if ($title!='') {
+                $header="<h2>$title</h2>";
+            }
+            return "<div class='$class'>$header$msg</div>";
         }
-        if ($title!='') {
-            $header="<h2>$title</h2>";
-        }
-        return "<div class='$class'>$header$msg</div>";
     }
 
     function shout($html = '')
     {
+        if($GLOBALS[offline_mode]){
+            $GLOBALS[offline_messages][]=strip_tags($html);
+        }else{
             echo $html;
             ob_flush();
-        flush();
-            return true;
+            flush();
+        }
+        return true;
     }
     function pre_display($text = '', $title = '', $class = '', $code = 0)
     {

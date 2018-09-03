@@ -429,7 +429,7 @@ class Router
     }
 
 
-    function show_docs2obj($ref_id, $ref_table)
+    function show_docs2obj($ref_id=1, $ref_table='')
     {
         $count=$this->db->GetVal("select count(*) from docs2obj where ref_id=$ref_id and ref_table='$ref_table'")*1;
         if ($count>0) {
@@ -442,7 +442,7 @@ class Router
             return $this->show('documents');
         }
     }
-    function show_listitems2obj($ref_id, $ref_table, $title = 'Items')
+    function show_listitems2obj($ref_id=0, $ref_table='', $title = 'Items')
     {
         $count=$this->db->GetVal("select count(*) from listitem2obj where ref_id=$ref_id and ref_table='$ref_table'")*1;
         if ($count>0) {
@@ -456,32 +456,39 @@ class Router
         }
     }
 
-    public function livestatus($html)
+    public function livestatus($html='')
     {
-        echo '<script>$("#livestatus").html("'.$html.'");</script>'."\n";
-        ob_flush();
-        flush();
+        if($GLOBALS[offline_mode]){
+            $GLOBALS[offline_messages][]=strip_tags($html);
+        }else{
+            echo '<script>$("#livestatus").html("'.$html.'");</script>'."\n";
+            ob_flush();
+            flush();
+        }
         return true;
     }
 
-    public function progress($start_time, $rows, $i, $text)
+    public function progress($start_time=0, $rows=1, $i=1, $text='')
     {
-        $lapse_time=$this->utils->get_microtime()-$start_time;
-        $time_left=round(($lapse_time/$i)*($rows-$i), 0);
-        $t_fract=ceil(($rows-$i)/($time_left/1));
-        $lapse_time=round($lapse_time, 2);
-        if ($t_fract>$GLOBALS[progress_delay]) {
-            $GLOBALS[progress_delay]=$t_fract;
+        if($GLOBALS[offline_mode]){
+            # $GLOBALS[offline_messages][]=strip_tags($html);
+        }else{
+            $lapse_time=$this->utils->get_microtime()-$start_time;
+            $time_left=round(($lapse_time/$i)*($rows-$i), 0);
+            $t_fract=ceil(($rows-$i)/($time_left/1));
+            $lapse_time=round($lapse_time, 2);
+            if ($t_fract>$GLOBALS[progress_delay]) {
+                $GLOBALS[progress_delay]=$t_fract;
+            }
+            if (($GLOBALS[progress_delay]==INF)||($GLOBALS[progress_delay]==NAN)||($GLOBALS[progress_delay]==0)||($i<2)) {
+                $GLOBALS[progress_delay]=1;
+                return true;
+            }
+            if (!($i % $GLOBALS[progress_delay])) {
+                $this->livestatus("$text<br>".str_replace("\"", "'", $this->html->draw_progress($i/$rows*100))."TL:$lapse_time secs.: TTE: $time_left secs. ($GLOBALS[progress_delay])");
+            }
+            //if($lapse_time>600){die("<br>Running over $lapse_time seconds. Terminated.<br> or use [\$start_time=\$this->utils->get_microtime();]");}
         }
-        if (($GLOBALS[progress_delay]==INF)||($GLOBALS[progress_delay]==NAN)||($GLOBALS[progress_delay]==0)||($i<2)) {
-            $GLOBALS[progress_delay]=1;
-            return true;
-        }
-
-        if (!($i % $GLOBALS[progress_delay])) {
-            $this->livestatus("$text<br>".str_replace("\"", "'", $this->html->draw_progress($i/$rows*100))."TL:$lapse_time secs.: TTE: $time_left secs. ($GLOBALS[progress_delay])");
-        }
-        //if($lapse_time>600){die("<br>Running over $lapse_time seconds. Terminated.<br> or use [\$start_time=\$this->utils->get_microtime();]");}
         return true;
     }
 }
