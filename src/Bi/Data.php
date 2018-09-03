@@ -1545,7 +1545,7 @@ class Data
             ';
         return $res;
     }
-    function get_new_name($table, $date, $addsql, $prefix, $opt)
+    function get_new_name($table='', $date='', $addsql='', $prefix='', $opt='')
     {
         if ($opt=='by_id') {
             $name=$prefix.$this->db->getval("SELECT max(id) from $table")*1;
