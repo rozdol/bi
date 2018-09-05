@@ -174,9 +174,19 @@ class Utils
 
     public function log($data = '')
     {
-        $log  = date("d.m.y G:i").' - '.$_SERVER['REMOTE_ADDR'].' - '.$data.PHP_EOL;
-        file_put_contents('./log_'.APP_NAME.'_'.date("d.m.y").'.log', $log, FILE_APPEND);
-        return true;
+        $log_folder = $GLOBALS[data_dir_tmp];
+        if (!file_exists($log_folder))
+        {
+            mkdir($log_folder, 0777, true);
+        }
+        $log_filename=$log_folder.'/log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
+        $log  = date("d.m.y G:i").' - '.$_SERVER['REMOTE_ADDR'].' - '.$GLOBALS[username].' - '.$data.PHP_EOL;
+        if(file_put_contents($log_filename, $log, FILE_APPEND)){
+            return true;
+        }else{
+            return "ERROR:Can not write to $log_filename";
+        }
+
     }
 
 
