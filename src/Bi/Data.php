@@ -1396,7 +1396,7 @@ class Data
         return $res;
     }
 
-    function object_form($table, $field, $value, $title, $html)
+    function object_form($table='', $field='', $value='', $title='', $html='')
     {
         if ($html=='0') {
             $html='';
@@ -1460,7 +1460,7 @@ class Data
         return $res;
     }
 
-    function object_form2($table, $field, $value, $title, $type_id)
+    function object_form2($table='', $field='', $value='', $title='', $type_id=0)
     {
         $tablefield=$table.'_'.$field;
         $out="<fieldset class='lookup'>
