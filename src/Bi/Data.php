@@ -2102,21 +2102,37 @@ class Data
                 $allowed=$this->db->GetVar($sql)*1;
 
                 if ($GLOBALS[allowed_pids]!='') {
-                    $sql = "SELECT count(*) FROM docs2obj where ref_table='partners' and doc_id=$id";
-                    $partners=$this->db->GetVar($sql)*1;
-
-                    if ($partners>0) {
-                        if ($GLOBALS[allowed_related_pids]!='') {
-                            $sql = "SELECT count(*) FROM documents where id=$id and id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids],$GLOBALS[allowed_related_pids]))";
-                        } else {
-                            $sql = "SELECT count(*) FROM documents where id=$id and id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids]))";
-                        }
-
+                    $allowed=0;
+                    if ($GLOBALS[allowed_related_pids]!='') {
+                        $sql = "SELECT count(*) FROM documents d where id=$id and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids],$GLOBALS[allowed_related_pids])) or (have_partners='f' and executor=$GLOBALS[uid]) )";
                         $allowed=$this->db->GetVar($sql)*1;
                     } else {
-                        $allowed=1;
+                        $sql = "SELECT count(*) FROM documents d where id=$id and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids])) or (have_partners='f' and executor=$GLOBALS[uid]))";
+                        $allowed=$this->db->GetVar($sql)*1;
+                    }
+                    if ($type==1658) {
+                        $sql = "SELECT count(*) FROM documents d where id=$id and (d.executor=$GLOBALS[uid] or d.creator=$GLOBALS[uid] or d.id in (select a1.docid from documentactions a1 where a1.executor=$GLOBALS[uid]))";
+                        $allowed=$this->db->GetVar($sql)*1;
                     }
                 }
+
+                // if ($GLOBALS[allowed_pids]!='') {
+                //     $allowed=0;
+                //     $sql = "SELECT count(*) FROM docs2obj where ref_table='partners' and doc_id=$id";
+                //     $partners=$this->db->GetVar($sql)*1;
+
+                //     if ($partners>0) {
+                //         if ($GLOBALS[allowed_related_pids]!='') {
+                //             $sql = "SELECT count(*) FROM documents where id=$id and id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids],$GLOBALS[allowed_related_pids]))";
+                //         } else {
+                //             $sql = "SELECT count(*) FROM documents where id=$id and id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids]))";
+                //         }
+
+                //         $allowed=$this->db->GetVar($sql)*1;
+                //     } else {
+                //         $allowed=1;
+                //     }
+                // }
             }
             if (($GLOBALS['regdate'] <> '01.01.1999')&&(($res['type']==1602)||($res['type']==1652))) {
                 $allowed=0;
@@ -2315,15 +2331,7 @@ class Data
         }
         if ($what=='invoices') {
             $allowed=0;
-            if ($GLOBALS[allowed_pids]!='') {
-                $res=$this->db->GetRow("select * from $what where id=$id and topartner_id in ($GLOBALS[allowed_pids])");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
-                    $allowed=1;
-                }
-            } else {
-                $allowed=1;
-            }
+
             if ($GLOBALS['history_tail']>0) {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and due_date>=now() - INTERVAL '$GLOBALS[history_tail] days'");
@@ -2332,6 +2340,18 @@ class Data
                     $allowed=1;
                 }
             }
+
+            if ($GLOBALS[allowed_pids]!='') {
+                $allowed=0;
+                $res=$this->db->GetRow("select * from $what where id=$id and topartner_id in ($GLOBALS[allowed_pids])");
+                $res[id]=$res[id]*1;
+                if ($res[id]>0) {
+                    $allowed=1;
+                }
+            } else {
+                $allowed=1;
+            }
+
             if ($GLOBALS['regdate'] <> '01.01.1999') {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and  date>='".$GLOBALS['regdate']."'");
@@ -2340,14 +2360,14 @@ class Data
                     $allowed=1;
                 }
             }
-            if ($GLOBALS['workgroup']['administrator_id']>0) {
-                $allowed=0;
-                $res=$this->db->GetRow("select * from $what where id=$id and (frompartner_id='".$GLOBALS['workgroup']['administrator_id']."' or topartner_id='".$GLOBALS['workgroup']['administrator_id']."')");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
-                    $allowed=1;
-                }
-            }
+            // if ($GLOBALS['workgroup']['administrator_id']>0) {
+            //     $allowed=0;
+            //     $res=$this->db->GetRow("select * from $what where id=$id and (frompartner_id='".$GLOBALS['workgroup']['administrator_id']."' or topartner_id='".$GLOBALS['workgroup']['administrator_id']."')");
+            //     $res[id]=$res[id]*1;
+            //     if ($res[id]>0) {
+            //         $allowed=1;
+            //     }
+            // }
         }
 
         if (($access['main_admin'])&&($allowed==0)) {
