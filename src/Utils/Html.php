@@ -981,7 +981,7 @@ class Html
                     date_default_timezone_set($tz);
                     $modified= " - ". date("Y.m.d H:i:s", filemtime($git_file));
                 }
-                $content['footer']="<a href='#top'>⟰</a> | app:$GLOBALS[project] | db:".$GLOBALS['DB']['DB_NAME']." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | Version: <font color='#aa0000'><b>$GLOBALS[app_version]</b></font> $modified | PID:$GLOBALS[project] | $GLOBALS[status]";
+                $content['footer']="<a href='#top'>⟰</a> | app:$GLOBALS[project] | db:".$GLOBALS['DB']['DB_NAME']."| dm:".$GLOBALS['DB']['DB_DOMAIN']." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | Version: <font color='#aa0000'><b>$GLOBALS[app_version]</b></font> $modified | PID:$GLOBALS[project] | $GLOBALS[status]";
             }
             //$content['footer'].= $this->pre_display($GLOBALS,"result");
             //unset($content['footer']);
@@ -1079,7 +1079,7 @@ class Html
 
     public function putLogin($content = array())
     {
-        $info="ip:".$GLOBALS[ip]." | db:".$GLOBALS['DB']['DB_NAME']." | app:".APP_NAME;
+        $info="ip:".$GLOBALS[ip]." | db:".$GLOBALS['DB']['DB_NAME']." | dm:".$GLOBALS['DB']['DB_DOMAIN']." | app:".APP_NAME;
 
         if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&($GLOBALS['settings']['use_mfa'])) {
             $content['html'].='<label> </label>
