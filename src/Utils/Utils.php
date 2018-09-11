@@ -2955,4 +2955,76 @@ class Utils
         $out.= $this->pre_display($arr, 'Servers variables');
         return $out;
     }
+
+    function get_action_list(){
+        $action='form';
+        $list=$this->get_file_list(APP_DIR.'actions/'.$action,'php',1);
+        $out.= "<h2>APP:$action</h2>";
+        $out.= "<ol>";
+        foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
+        $out.= "</ol><hr>";
+
+        $action='show';
+        $list=$this->get_file_list(APP_DIR.'actions/'.$action,'php',1);
+        $out.= "<h2>APP:$action</h2>";
+        $out.= "<ol>";
+        foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
+        $out.= "</ol><hr>";
+
+        $action='report';
+        $list=$this->get_file_list(APP_DIR.'actions/'.$action,'php',1);
+        $out.= "<h2>APP:$action</h2>";
+        $out.= "<ol>";
+        foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
+        $out.= "</ol><hr>";
+
+        $action='search';
+        $list=$this->get_file_list(APP_DIR.'actions/'.$action,'php',1);
+        $out.= "<h2>APP:$action</h2>";
+        $out.= "<ol>";
+        foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
+        $out.= "</ol><hr>";
+
+        $action='tools';
+        $list=$this->get_file_list(APP_DIR.'actions/'.$action,'php',1);
+        $out.= "<h2>APP:$action</h2>";
+        $out.= "<ol>";
+        foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
+            $out.= "</ol><hr>";
+            $action='form';
+            $list=$this->get_file_list(FW_DIR.'actions/'.$action,'php',1);
+            $out.= "<h2>FW:$action</h2>";
+            $out.= "<ol>";
+            foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
+            $out.= "</ol><hr>";
+
+            $action='show';
+            $list=$this->get_file_list(FW_DIR.'actions/'.$action,'php',1);
+            $out.= "<h2>FW:$action</h2>";
+            $out.= "<ol>";
+            foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
+            $out.= "</ol><hr>";
+
+            $action='report';
+            $list=$this->get_file_list(FW_DIR.'actions/'.$action,'php',1);
+            $out.= "<h2>FW:$action</h2>";
+            $out.= "<ol>";
+            foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
+            $out.= "</ol><hr>";
+
+            $action='search';
+            $list=$this->get_file_list(FW_DIR.'actions/'.$action,'php',1);
+            $out.= "<h2>FW:$action</h2>";
+            $out.= "<ol>";
+            foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
+            $out.= "</ol><hr>";
+
+            $action='tools';
+            $list=$this->get_file_list(FW_DIR.'actions/'.$action,'php',1);
+            $out.= "<h2>FW:$action</h2>";
+            $out.= "<ol>";
+            foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
+            $out.= "</ol><hr>";
+        return $out;
+    }
 }
