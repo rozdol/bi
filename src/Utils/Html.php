@@ -609,6 +609,9 @@ class Html
         if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='invoices:DOWNLOADX')) {
             $GLOBALS[plain]=1;
         }
+        if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='docs:DOWNLOADX')) {
+            $GLOBALS[plain]=1;
+        }
         if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='shoppingcart')) {
             $GLOBALS[plain]=1;
         }
