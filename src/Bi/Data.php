@@ -55,7 +55,16 @@ class Data
         }
         */
         if ($this->table_exists('workgroup_pids')) {
-            $workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
+            if($_ENV['AUTO_DOMAIN']){
+                $sql="SELECT id from workgroups where lower(name)=lower('".$GLOBALS[DB][DB_DOMAIN]."');";
+                //$this->html->error($sql);
+                $workgroup_id=$this->db->getval($sql)*1;
+                if($workgroup_id==0)$workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
+
+            }else{
+                $workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
+            }
+            //$this->html->error($workgroup_id);
             $GLOBALS['workgroup']=$this->get_row('workgroups', $workgroup_id);
             $GLOBALS['workgroup_id']=$workgroup_id;
             $GLOBALS['allowed_pids']=$this->get_list_csv("SELECT partner_id from workgroup_pids where workgroup_id=$workgroup_id and type_id=10800");
