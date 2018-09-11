@@ -541,7 +541,7 @@ class Comm
 
     public function getResultFromECB($base = 'EUR')
     {
-        $source="http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+        $source="https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL             => $source,
