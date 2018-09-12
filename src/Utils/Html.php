@@ -2064,6 +2064,7 @@ class Html
     function refreshpage($where = '', $time = 0, $message = '')
     {
         global $refreshtime,$reflink;
+        if(($_GET[act]=='api')||($_POST[act]=='api')) return json_encode(['refresh'=>strip_tags($message)]);
         if ($GLOBALS[no_refresh]!=1) {
             if ($time>0) {
                 $refreshtime=$time;

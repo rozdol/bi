@@ -554,7 +554,8 @@ class Comm
         curl_close($curl);
         // No HTTP error authorized
         if ($http_code != 200) {
-            echo $this->html->message('HTTP status code ' . $http_code."<br>$curl",__FUNCTION__,'alert-error');
+            echo $this->html->message('HTTP status code ' . $http_code." <br>$curl ",__FUNCTION__,'alert-error');
+            return null;
         }
 
         // Converting to an array
@@ -566,6 +567,7 @@ class Comm
         // Checking for Error
         if (empty($result)) {
             echo $this->html->message('empty result',__FUNCTION__,'alert-error');
+            return null;
         }
         // Adding EUR = 1
         $result = array('EUR' => 1) + $result;

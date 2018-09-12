@@ -241,9 +241,10 @@ class Data
         //flush();
         //$access['main_access']=0;
         $this->force_access();
+        //die(json_encode($GLOBALS[access]));
         if (!$access['main_access']) {
             $this->logout();
-            echo $this->html->refreshpage('', 60, "<div class='alert alert-error'><h1 style='color:#dd0000;'>ACCESS DENIED</h1>$fullname, permission not granted by administrator.<br><a href='?'>Back to login</a></div>");
+            echo $this->html->refreshpage('', 60, "<div class='alert alert-error'><h1 style='color:#dd0000;'>ACCESS DENIED</h1> $fullname, permission not granted by administrator ($uid).<br><a href='?'>Back to login</a></div>");
             exit;
         }
         //$uid=3;
