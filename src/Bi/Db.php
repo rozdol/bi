@@ -44,16 +44,16 @@ class Db
                              user=".$GLOBALS['DB']['DB_USER']."
                              password=".$GLOBALS['DB']['DB_PASS']);
             if ((!$default_conn)) {
-                die("SQL:Can not create $dbname database. SQL:<br><pre>$sql</pre>");
+                die("SQL:Can not create $dbname database. SQL1:<br><pre>$sql</pre>");
             }
 
             if (!($cursor = pg_query($default_conn, $sql))) {
-                die("SQL:Can not create $dbname database. SQL:<br><pre>$sql</pre>");
+                die("SQL:Can not create $dbname database. SQL2:<br><pre>$sql</pre>");
             }
 
                     $result = @pg_query($conn, $sql);
             if (!$result) {
-                die("SQL:Can not create $dbname database. SQL:<br><pre>$sql</pre>");
+                die("SQL:Can not create $dbname database. SQL3:<br><pre>$sql</pre>");
             }
 
             $this->conn = @pg_connect("host=$host port=$port dbname=$dbname user=$login password=$pass");
