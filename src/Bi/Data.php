@@ -60,6 +60,8 @@ class Data
                 //$this->html->error($sql);
                 $workgroup_id=$this->db->getval($sql)*1;
                 if($workgroup_id==0)$workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
+                $administrator_id=$this->get_val('workgroups','administrator_id',$workgroup_id);
+                if($administrator_id>0)$GLOBALS[is_owner_id]=$administrator_id;
 
             }else{
                 $workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
@@ -89,7 +91,8 @@ class Data
         }
 
         //if($GLOBALS['is_owner_id']*1==0)
-        $GLOBALS['is_owner_id']=$this->get_val('users', 'owner_id', $GLOBALS['uid']);
+
+        if ($GLOBALS['is_owner_id']==0) $GLOBALS['is_owner_id']=$this->get_val('users', 'owner_id', $GLOBALS['uid']);
         if ($GLOBALS['is_owner_id']>0) {
             $GLOBALS['is_currency_id']=$this->get_val('partners', 'a_currency', $GLOBALS['is_owner_id']);
         }
@@ -858,7 +861,14 @@ class Data
                 if ($children>0) {
                     $out.="<li class='$class'><span class='dir' onclick='null'>$title</span>";
                 } else {
-                    $out.="<li class='$class'><a href='$link'>$title</a>";
+                    if(($GLOBALS[access][main_admin])&&($GLOBALS[access][view_debug])){
+
+                        $edit="<a href='?act=details&what=menus&id=$row[id]' style='display: inline; font-size: .2vw;'>⚙️</a>";
+                        $out.="<li class='$class' style='font-size: .5vw;'><span>$edit<a href='$link' style='display: inline;'>$title</a></span>";
+                    }else{
+                        $out.="<li class='$class'><a href='$link'>$title</a>";
+                    }
+
                 }
                 $out.=$submenu;
                 $out.="</li>";
@@ -1733,8 +1743,8 @@ class Data
             }
 
 
-
-            $logininfo='<i class="icon-user icon-white"></i> <a href="?act=report&what=myprofile" ><span style="color:#fff;">'.$username.'</span></a>'.$docs.$reqs.$alrts.$rate;
+            if($GLOBALS[workgroup][id]>0)$workgroup_name="@".strtolower($GLOBALS[workgroup][name]).":".$GLOBALS[is_owner_id];
+            $logininfo='<i class="icon-user icon-white"></i> <a href="?act=report&what=myprofile" ><span style="color:#fff;">'.$username.$workgroup_name.'</span></a>'.$docs.$reqs.$alrts.$rate;
         } else {
             $logoutbtn="";
             $logininfo='';
