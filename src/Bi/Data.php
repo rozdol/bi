@@ -863,8 +863,8 @@ class Data
                 } else {
                     if(($GLOBALS[access][main_admin])&&($GLOBALS[access][view_debug])){
 
-                        $edit="<a href='?act=details&what=menus&id=$row[id]' style='display: inline; font-size: .2vw;'>⚙️</a>";
-                        $out.="<li class='$class' style='font-size: .5vw;'><span>$edit<a href='$link' style='display: inline;'>$title</a></span>";
+                        $edit="<a href='?act=details&what=menus&id=$row[id]' style='display: inline; '>⚙️</a>";
+                        $out.="<li class='$class' style='font-size: .4vw;'><span>$edit<a href='$link' style='display: inline;'>$title</a></span>";
                     }else{
                         $out.="<li class='$class'><a href='$link'>$title</a>";
                     }
@@ -2204,9 +2204,9 @@ class Data
                 $allowed=0;
             }
 
-            if ($GLOBALS[gid]<4) {
-                $allowed=1;
-            }
+            // if ($GLOBALS[gid]<4) {
+            //     $allowed=1;
+            // }
 
             if ($GLOBALS['history_tail']>0) {
                 $allowed=0;
