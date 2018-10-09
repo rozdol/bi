@@ -2124,8 +2124,12 @@ class Data
                 if ($GLOBALS[allowed_pids]!='') {
                     $allowed=0;
                     if ($GLOBALS[allowed_related_pids]!='') {
-                        $sql = "SELECT count(*) FROM documents d where id=$id and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids],$GLOBALS[allowed_related_pids])) or (have_partners='f' and executor=$GLOBALS[uid]) )";
+                        $sql = "SELECT count(*) FROM documents d where id=$id and docgroup in (1503,1512,1506,1507,1511) and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_related_pids])) or (have_partners='f' and executor=$GLOBALS[uid]) )";
                         $allowed=$this->db->GetVar($sql)*1;
+                        if($allowed==0){
+                            $sql = "SELECT count(*) FROM documents d where id=$id and  (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids])) or (have_partners='f' and executor=$GLOBALS[uid]) )";
+                            $allowed=$this->db->GetVar($sql)*1;
+                        }
                     } else {
                         $sql = "SELECT count(*) FROM documents d where id=$id and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids])) or (have_partners='f' and executor=$GLOBALS[uid]))";
                         $allowed=$this->db->GetVar($sql)*1;
