@@ -204,6 +204,18 @@ class Router
     {
         global $access;
         $accessitemchk="edit_$what";
+
+        $tables=explode(',', $GLOBALS[tables_chk_access]);
+        if (in_array($what, $tables)) {
+            $id=$this->html->readRQn('id');
+            $GLOBALS['allow_details']=$this->data->isallowed($what, $id);
+            if (($GLOBALS['allow_details']==0)) {
+                echo $this->html->notFound("You have no access.");
+                $this->data->DB_log("TRIED view details restricted on $what id=$id");
+                exit;
+            }
+        }
+
         if (($access[$accessitemchk])) {
             return $this->dispatch($what, __FUNCTION__, $accessitemchk);
         } else {
@@ -255,6 +267,18 @@ class Router
     {
         global $access;
         $accessitemchk="edit_$what";
+
+        $tables=explode(',', $GLOBALS[tables_chk_access]);
+        if (in_array($what, $tables)) {
+            $id=$this->html->readRQn('id');
+            $GLOBALS['allow_details']=$this->data->isallowed($what, $id);
+            if (($GLOBALS['allow_details']==0)) {
+                echo $this->html->notFound("You have no access.");
+                $this->data->DB_log("TRIED view details restricted on $what id=$id");
+                exit;
+            }
+        }
+
         if (($access[$accessitemchk])) {
             return $this->dispatch($what, __FUNCTION__, $accessitemchk);
         } else {
@@ -458,7 +482,7 @@ class Router
 
     public function livestatus($html='')
     {
-        if($GLOBALS[offline_mode]){
+        if(($GLOBALS[offline_mode])||($GLOBALS[pdf_mode])){
             $GLOBALS[offline_messages][]=strip_tags($html);
         }else{
             echo '<script>$("#livestatus").html("'.$html.'");</script>'."\n";
@@ -470,9 +494,15 @@ class Router
 
     public function progress($start_time=0, $rows=1, $i=1, $text='')
     {
-        if($GLOBALS[offline_mode]){
+        if(($GLOBALS[offline_mode])||($GLOBALS[pdf_mode])){
             # $GLOBALS[offline_messages][]=strip_tags($html);
         }else{
+            if($start_time==0){
+                if($GLOBALS[start_time]*1==0){
+                    $GLOBALS[start_time]=$this->utils->get_microtime();
+                }
+                $start_time=$GLOBALS[start_time];
+            }
             $lapse_time=$this->utils->get_microtime()-$start_time;
             $time_left=round(($lapse_time/$i)*($rows-$i), 0);
             $t_fract=ceil(($rows-$i)/($time_left/1));
