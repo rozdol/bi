@@ -2545,7 +2545,7 @@ class Html
         $errors=implode("\n", $_errors);
 
         $msg=$this->pre_display($sql."\n".$errors, 'SQL error', 'red');
-        if (($GLOBALS['access']['main_admin'])||($GLOBALS['settings']['dev_mode'])) {
+        if (($GLOBALS['access']['main_admin'])||($GLOBALS['settings']['dev_mode'])||($GLOBALS['settings']['show_sql_errors'])) {
             //echo $this->message($msg,'ERROR','alert-error');
             echo $msg;
         } else {
