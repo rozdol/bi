@@ -2221,7 +2221,17 @@ class Data
                 }
             }
         }
-
+        if ($what=='employees') {
+            $allowed=0;
+            if ($GLOBALS[allowed_pids]!='') {
+                $sql = "$sql and employer=$GLOBALS[is_owner_id]";
+            }
+            $res=$this->db->GetRow("select * from $what where id=$id $sql");
+            $res[id]=$res[id]*1;
+            if ($res[id]>0) {
+                $allowed=1;
+            }
+        }
         if ($what=='clientrequests') {
             $allowed=0;
             if ($GLOBALS[allowed_pids]!='') {
@@ -2396,7 +2406,6 @@ class Data
 
         if (($access['main_admin'])&&($allowed==0)) {
             echo $this->html->message("NOT ALLOWED for not admins", 'warn', 'orange');
-            ;
             //$allowed=1;
         }
         //$allowed=0;
