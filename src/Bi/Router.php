@@ -205,16 +205,16 @@ class Router
         global $access;
         $accessitemchk="edit_$what";
 
-        $tables=explode(',', $GLOBALS[tables_chk_access]);
-        if (in_array($what, $tables)) {
-            $id=$this->html->readRQn('id');
-            $GLOBALS['allow_details']=$this->data->isallowed($what, $id);
-            if (($GLOBALS['allow_details']==0)) {
-                echo $this->html->notFound("You have no access.");
-                $this->data->DB_log("TRIED view details restricted on $what id=$id");
-                exit;
-            }
-        }
+        // $tables=explode(',', $GLOBALS[tables_chk_access]);
+        // if (in_array($what, $tables)) {
+        //     $id=$this->html->readRQn('id');
+        //     $GLOBALS['allow_details']=$this->data->isallowed($what, $id);
+        //     if (($GLOBALS['allow_details']==0)) {
+        //         echo $this->html->notFound("You have no access.");
+        //         $this->data->DB_log("TRIED view details restricted on $what id=$id");
+        //         exit;
+        //     }
+        // }
 
         if (($access[$accessitemchk])) {
             return $this->dispatch($what, __FUNCTION__, $accessitemchk);
