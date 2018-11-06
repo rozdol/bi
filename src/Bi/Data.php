@@ -55,7 +55,8 @@ class Data
         }
         */
         if ($this->table_exists('workgroup_pids')) {
-            if($_ENV['AUTO_DOMAIN']){
+            $user_workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
+            if(($_ENV['AUTO_DOMAIN'])&&($user_workgroup_id==3)){
                 $sql="SELECT id from workgroups where lower(name)=lower('".$GLOBALS[DB][DB_DOMAIN]."');";
                 //$this->html->error($sql);
                 $workgroup_id=$this->db->getval($sql)*1;
@@ -65,6 +66,8 @@ class Data
 
             }else{
                 $workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
+                $administrator_id=$this->get_val('workgroups','administrator_id',$workgroup_id);
+                if($administrator_id>0)$GLOBALS[is_owner_id]=$administrator_id;
             }
             //$this->html->error($workgroup_id);
             $GLOBALS['workgroup']=$this->get_row('workgroups', $workgroup_id);
