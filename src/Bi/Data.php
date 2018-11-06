@@ -2134,9 +2134,12 @@ class Data
                         $sql = "SELECT count(*) FROM documents d where id=$id and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids])) or (have_partners='f' and executor=$GLOBALS[uid]))";
                         $allowed=$this->db->GetVar($sql)*1;
                     }
-                    if ($type==1658) {
+                    if ($res[type]==1658) {
                         $sql = "SELECT count(*) FROM documents d where id=$id and (d.executor=$GLOBALS[uid] or d.creator=$GLOBALS[uid] or d.id in (select a1.docid from documentactions a1 where a1.executor=$GLOBALS[uid]))";
                         $allowed=$this->db->GetVar($sql)*1;
+                    }
+                    if ($res[type]==1652) {
+                        $allowed=0;
                     }
                 }
 
