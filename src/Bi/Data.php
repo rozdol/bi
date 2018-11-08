@@ -82,6 +82,8 @@ class Data
 
 
         $access['edit_sw']=1;
+        //if($GLOBALS[settings][no_projects]!=0)
+        $GLOBALS['no_projects']=1; //Forsced
         if ($GLOBALS['no_clients']) {
             $GLOBALS['no_projects']=1;
             $GLOBALS['stealth']=1;
