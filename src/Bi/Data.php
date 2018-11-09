@@ -83,7 +83,8 @@ class Data
 
         $access['edit_sw']=1;
         //if($GLOBALS[settings][no_projects]!=0)
-        $GLOBALS['no_projects']=1; //Forsced
+        //$GLOBALS['no_projects']=1; //Forced
+        //$GLOBALS['no_clients']=1; //Forced
         if ($GLOBALS['no_clients']) {
             $GLOBALS['no_projects']=1;
             $GLOBALS['stealth']=1;
@@ -852,6 +853,7 @@ class Data
             if (($GLOBALS['hide_hidden_menu'])&&($menuitem['hidden']=='t')) {
                 $print=0;
             }
+            if($row[sort]<0)$print=0;
             //echo "($group_id)LINK:$link<br>ACCESS:$access_item<br>PRINT:$print<hr>";
             if ($print==1) {
                 $i++;
