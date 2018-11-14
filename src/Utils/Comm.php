@@ -558,6 +558,18 @@ class Comm
             return null;
         }
 
+        //echo $this->html->pre_display($result,"result");
+
+        $xml = simplexml_load_string($result);
+        //echo $this->html->pre_display($xml,"xml");
+        $json = json_encode($xml);
+        //echo $this->html->pre_display($json,"json");
+        $array = json_decode($json,TRUE);
+        //echo $this->html->pre_display($array,"array");
+        $time=$array[Cube][Cube]['@attributes'][time];
+        //echo $this->html->pre_display($time,"time");
+        $date=$this->dates->F_date($time);
+        //echo $this->html->pre_display($time,"time3");
         // Converting to an array
         $pattern = "{<Cube\s*currency='(\w*)'\s*rate='([\d\.]*)'/>}is";
         preg_match_all($pattern, $result, $xml_rates);
@@ -577,7 +589,9 @@ class Comm
                 $result[$key]=round($value/$rate, 4);
             }
         }
-        return $result;
+        $res[date]=$date;
+        $res[rates]=$result;
+        return $res;
     }
     public function getResultFromYQL($yql_query, $env = '')
     {

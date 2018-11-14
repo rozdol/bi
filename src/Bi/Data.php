@@ -2191,7 +2191,7 @@ class Data
         if ($what=='partners') {
             $allowed=0;
 
-
+            //$partner=$this->get_row('partners',$id);
             $sql='';
             if ($GLOBALS[allowed_related_pids]!='') {
                 $res=$this->db->GetRow("select * from $what where id=$id and id in ($GLOBALS[allowed_related_pids])");
@@ -2230,6 +2230,7 @@ class Data
                     $allowed=1;
                 }
             }
+            //if(($GLOBALS[workgroup][administrator_id]==1438)&&($partner[type]==201))$allowed=1;
         }
         if ($what=='employees') {
             $allowed=0;
@@ -3116,9 +3117,10 @@ class Data
 
     function ECB_rates()
     {
-        $date=$GLOBALS[today];
+        //$date=$GLOBALS[today];
         $rates = $this->comm->getResultFromECB('USD');
-        foreach ($rates as $curr => $rate) {
+        $date=$rates[date];
+        foreach ($rates[rates] as $curr => $rate) {
             $currid=$this->db->GetVal("select id from listitems where list_id=6 and lower(name)=lower('$curr')")*1;
             $count=$this->db->GetVal("select rate from rates where currency=$currid and date='$date'")*1;
             //echo $this->html->pre_display($rate,"rate $i $date ($currid) $count");
