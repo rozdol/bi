@@ -2224,7 +2224,7 @@ class Data
 
             if ($GLOBALS['history_tail']>0) {
                 $allowed=0;
-                $res=$this->db->GetRow("select * from $what where id=$id and  (c.dateclose>=now() - INTERVAL '$GLOBALS[history_tail] days' or c.dateclose is null)");
+                $res=$this->db->GetRow("select * from $what where id=$id and  (dateclose>=now() - INTERVAL '$GLOBALS[history_tail] days' or dateclose is null)");
                 $res[id]=$res[id]*1;
                 if ($res[id]>0) {
                     $allowed=1;
