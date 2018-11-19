@@ -489,7 +489,7 @@ class Dates
 
         $GLOBALS[settings][holidays]=str_ireplace(';',',',$GLOBALS[settings][holidays]);
         $extra_holidays=array_map('trim', explode(',',$GLOBALS[settings][holidays]));
-        echo $this->pre_display($extra_holidays,"extra_holidays");
+
 
         $date=$this->easter($year);
         $easter_org=$date;
