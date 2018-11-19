@@ -317,8 +317,7 @@ class Dates
     public function F_dates($string = '')
     {
         $string=strtolower($string);
-
-        if ($this->contains('q', $string)) {
+        if (strpos('q', $string) !== false) {
             $tokens=explode('q', $string);
             echo $this->pre_display($tokens, "tokens $string");
             if (!$tokens[0]) {
@@ -488,8 +487,10 @@ class Dates
         );
 
         $GLOBALS[settings][holidays]=str_ireplace(';',',',$GLOBALS[settings][holidays]);
-        $extra_holidays=array_map('trim', explode(',',$GLOBALS[settings][holidays]));
-
+        $extra_holidays_tmp=array_map('trim', explode(',',$GLOBALS[settings][holidays]));
+        foreach ($extra_holidays_tmp as $day) {
+            if (strpos($day, $year) !== false)$extra_holidays[]=$day;
+        }
 
         $date=$this->easter($year);
         $easter_org=$date;
