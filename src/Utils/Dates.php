@@ -487,9 +487,9 @@ class Dates
         "26.12.$year" //New Year Eve
         );
 
-        if ($year==2017) {
-            $strictholidays[]="02.01.$year"; //2nd of Jan in 2017
-        }
+        $GLOBALS[settings][holidays]=str_ireplace(';',',',$GLOBALS[settings][holidays]);
+        $extra_holidays=array_map('trim', explode(',',$GLOBALS[settings][holidays]));
+        echo $this->pre_display($extra_holidays,"extra_holidays");
 
         $date=$this->easter($year);
         $easter_org=$date;
@@ -560,7 +560,7 @@ class Dates
             "09.06.$year" //Pentecost (Kataklysmos)
         );
         */
-        $holidays=array_merge($strictholidays, $movingholidays);
+        $holidays=array_merge($strictholidays, $movingholidays,$extra_holidays);
         //sort($holidays);
         //$str=implode("<br>",$holidays);
         return $holidays;
