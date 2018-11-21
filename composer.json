@@ -11,9 +11,9 @@
     ],
     "require": {
         "vlucas/phpdotenv": "^2.4",
-        "phpoffice/phpword": "v0.13.*",
+        "phpoffice/phpword": "v0.15.*",
         "lukascivil/treewalker": "@dev",
-        "sendgrid/sendgrid": "~6.2"
+        "sendgrid/sendgrid": "~7.0"
     },
     "minimum-stability": "dev",
     "autoload": {
