@@ -2272,7 +2272,7 @@ class Utils
     public function SQLite3_table_exists($tablename)
     {
         $name=$this->SQLite3_querySingle("SELECT name FROM sqlite_master WHERE type='table' AND name='$tablename';");
-        $result=($name!='')?true:FLASE;
+        $result=($name!='')?true:false;
         return $result;
     }
 
