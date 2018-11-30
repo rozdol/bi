@@ -457,8 +457,8 @@ class Router
         if (($this->data->field_exists($what, 'id'))&&(!($what=='ownership'))&&($id>0)&&(in_array($function, array('details','add','edit','delete','form','save')))) {
             if ($access['view_debug']) {
                 $body.= "<span media='print' class='noPrint'>";
-                $body.= "<div class=''>".$this->html->array_display2_textarea($this->data->sql_to_array("SELECT * from $what where id=$id")[0], "DATA:$what($id)")."</div>";
-                $body.= "<div class=''>".$this->html->array_display2D($this->data->sql_to_array("SELECT * from $what where id=$id")[0], "DATA:$what($id)")."</div>";
+                //$body.= "<div class='span12'>".$this->html->array_display2_textarea($this->data->sql_to_array("SELECT * from $what where id=$id")[0], "DATA:$what($id)")."</div>";
+                $body.= "<div class='span12'>".$this->html->array_display2D($this->data->sql_to_array("SELECT * from $what where id=$id")[0], "DATA:$what($id)")."</div>";
                 $body.= "</span>";
             }
 
