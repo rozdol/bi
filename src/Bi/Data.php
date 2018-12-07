@@ -87,7 +87,7 @@ class Data
         //$GLOBALS['no_clients']=1; //Forced
         if ($GLOBALS['no_clients']) {
             $GLOBALS['no_projects']=1;
-            $GLOBALS['stealth']=1;
+            //$GLOBALS['stealth']=1;
             $access['view_clients']=0;
             $access['view_projects']=0;
         }
@@ -3649,9 +3649,14 @@ class Data
         if (!($cur = pg_query($sql))) {
             $this->html->SQL_error($sql);
         }
+        $rows=pg_num_rows($cur);$start_time=$this->utils->get_microtime();
         while ($row = pg_fetch_array($cur)) {
+            $i++;
+
+
             $name=$this->utils->scramble($row[name]);
-            echo "$name<br>";
+            echo "";
+            echo "Processing $i of $rows ($name)<br>";
             $this->db->GetVal("update partners set name='$name' where id=$row[id]");
             $vals=array('name'=>$name);
             $this->db->update_db('partners', $row[id], $vals);
