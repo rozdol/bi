@@ -1921,7 +1921,7 @@ class Data
         return $data;
     }
 
-    function csv($sql, $formated = 0)
+    function csv($sql, $formated = 0, $delimiter="\t", $quoted="")
     {
         $sqltokens=explode("from ", $sql);
         $sqltokens2=explode(" ", $sqltokens[1]);
@@ -1931,40 +1931,52 @@ class Data
             return $this->html->pre_display($sql."\n".pg_last_error(), 'SQL error', 'alert-error');
         }
         $fields_num = pg_num_fields($result);
-        $response="";
+        //$response="";
         $tbl.="<table class='table table-bordered table-striped-tr table-morecondensed tooltip-demo  table-notfull'>";
         $tbl.="<tr class='c'>";
         for ($i=0; $i < $fields_num; $i++) {
             $field = pg_field_name($result, $i);
-            $response.="$field\t";
+            //$response.="$field$delimiter";
+
             $tbl.="<td>$field</td>";
             if ($field=='id') {
                 $idno=$i;
             }
+            $fields[]=$quoted.$field.$quoted;
         }
-        $response.="\n";
+        $csv_row=$fields;
+        $csv_arr[]=implode($delimiter,$csv_row);
+
+        $csv_row=[$i,$row[id],$row[name]];
+
+
+        //$response.="\n";
         $tbl.="</tr>";
         $tbl.="<tr>";
         while ($row = pg_fetch_row($result)) {
             $i=0;
+            $csv_row=[];
             foreach ($row as $cell) {
                 if ($i==$field) {
                     $cell2="<a href='?act=details&what=$table&id=$cell'>$cell</a>";
                 }
                 $tbl.="<td>$cell2   </td>";
 
-                $cell=str_replace(array("\n","\r","\t"), array(" "," "," "), $cell);
-                $response.="$cell\t";
+                $cell=str_replace(array("\n","\r","$delimiter"), array(" "," "," "), $cell);
+                //$response.="$cell$delimiter";
+                $csv_row[]=$quoted.$cell.$quoted;
 
                 $i++;
             }
                 $tbl.="</tr>";
 
-            $response.="\n";
+            //$response.="\n";
+            $csv_arr[]=implode($delimiter,$csv_row);
         }
         $tbl.="</table>";
+        $csv=implode("\n",$csv_arr);
         if ($formated==0) {
-            return $response;
+            return $csv;
         } else {
             return $tbl;
         }

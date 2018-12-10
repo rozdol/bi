@@ -1027,4 +1027,15 @@ class Dates
         $longdate=date("jS \d\a\y \of F, Y", $thedate);
         return $longdate;
     }
+
+    public function F_JSdate($date)
+    {
+        $parts=explode(' ',$date);
+        $days=explode('.',$parts[0]);
+        $time=explode(':',$parts[1]);
+
+        $thedate=mktime($time[0], $time[1], $time[2], $days[1], $days[0], $days[2]);
+        $longdate=date("D M d Y H:i:s ", $thedate);
+        return $longdate."GMT+0200 (EET)";
+    }
 }
