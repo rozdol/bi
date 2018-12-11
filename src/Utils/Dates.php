@@ -561,9 +561,17 @@ class Dates
             "09.06.$year" //Pentecost (Kataklysmos)
         );
         */
+
+        if(!$strictholidays)$strictholidays=[];
+        if(!$movingholidays)$movingholidays=[];
+        if(!$extra_holidays)$extra_holidays=[];
         $holidays=array_merge($strictholidays, $movingholidays,$extra_holidays);
         //sort($holidays);
         //$str=implode("<br>",$holidays);
+        // echo $this->pre_display($strictholidays,"S:$year");
+        // echo $this->pre_display($movingholidays,"M:$year");
+        // echo $this->pre_display($extra_holidays,"E:$year");
+        // echo $this->pre_display($holidays,"H$year");
         return $holidays;
     }
 
@@ -575,8 +583,9 @@ class Dates
 
         $holidays_arr=range(2009, $this_year+2);
 
-        foreach ($holidays_arr as $yaer) {
-            $holidays_this=$this->holidays($yaer);
+        foreach ($holidays_arr as $year) {
+            $holidays_this=$this->holidays($year);
+
             $holidays=array_merge($holidays, $holidays_this);
         }
 
