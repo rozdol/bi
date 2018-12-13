@@ -1581,6 +1581,31 @@ class Html
         ";
         return $res;
     }
+
+    function cols_auto($cols=[], $labels = [])
+    {
+        $count=count($cols);
+        $span=floor(12/$count);
+        $i=0;
+        foreach ($cols as $col) {
+            $inside.="<div class='span$span'>
+
+                <label class='badge-top'>$labels[$i]</label>
+                <fieldset class='lookup'>$col</fieldset>
+            </div>";
+            $i++;
+        }
+
+        $res.= "
+        <fieldset>
+        <div class='row' style='margin-left:0px;'>
+            $inside
+        </div>
+        </fieldset>
+        ";
+        return $res;
+    }
+
     function tr_array($array = [], $class = '')
     {
 //table row

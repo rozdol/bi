@@ -731,11 +731,12 @@ class Dates
         $res=(substr($date, 6, 4).substr($date, 3, 2).substr($date, 0, 2));
         return $res;
     }
-    public function F_MDYDate($date = '')
+    public function F_MDYDate($date = '', $delim='.', $short=0)
     {
         $date=str_replace('/', '.', $date);
         $arr=explode('.', $date);
-        $res=sprintf('%02d', $arr[1]).'.'.sprintf('%02d', $arr[0]).'.'.sprintf('%02d', $arr[2]);
+        if($short>0)$arr[2]=substr($arr[2],2,2);
+        $res=sprintf('%02d', $arr[1]).$delim.sprintf('%02d', $arr[0]).$delim.sprintf('%02d', $arr[2]);
 
         return $res;
     }
