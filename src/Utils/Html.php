@@ -222,16 +222,24 @@ class Html
     function tag($title = '', $type = 'h2', $class = '', $id = '')
     {
         $result='';
-        if ($type=='foldered') {
-            $result="<h3 class='foldered $class'><i class='' style='margin-right:26px;' data-original-title=''></i>$title</h3>";
+        if($GLOBALS[offline_mode]){
+            $GLOBALS[offline_messages][]=strip_tags("$type: $title");
+            return strip_tags("$type: $title");;
+        }else{
+            if ($type=='foldered') {
+                $result="<h3 class='foldered $class'><i class='' style='margin-right:26px;' data-original-title=''></i>$title</h3>";
+            }
+            if ($result=='') {
+                $result="<$type class='$class' id='$id'>$title</$type>";
+            }
+            if ($result=='') {
+                $result="<h2>$title</h2>";
+            }
+            return $result;
         }
-        if ($result=='') {
-            $result="<$type class='$class' id='$id'>$title</$type>";
-        }
-        if ($result=='') {
-            $result="<h2>$title</h2>";
-        }
-        return $result;
+
+
+
     }
 
 
