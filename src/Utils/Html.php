@@ -457,7 +457,11 @@ class Html
         if ($as_list>0) {
             $res=implode(',', $array);
         } else {
-            $res=$array;
+            $res=[];
+            foreach ($array as $value) {
+               if($value!='')$res[]=$value;
+            }
+
         }
         return $res;
     }
