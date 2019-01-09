@@ -2094,6 +2094,7 @@ class Data
     {
         global $uid, $gid,$access;
         $allowed=0;
+        $reason="By default settings";
         if ($what=='documents') {
             if ($GLOBALS['history_tail']>0) {
                 $sql = "$sql and  dateto>=now() - INTERVAL '$GLOBALS[history_tail] days'";
@@ -2142,23 +2143,29 @@ class Data
 
                 if ($GLOBALS[allowed_pids]!='') {
                     $allowed=0;
+                    $reason="By allowed PIDs";
                     if ($GLOBALS[allowed_related_pids]!='') {
                         $sql = "SELECT count(*) FROM documents d where id=$id and docgroup in (1503,1512,1506,1507,1511) and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_related_pids])) or (have_partners='f' and executor=$GLOBALS[uid]) )";
                         $allowed=$this->db->GetVar($sql)*1;
+                        $reason="By document groups (1503,1512,1506,1507,1511)";
                         if($allowed==0){
                             $sql = "SELECT count(*) FROM documents d where id=$id and  (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids])) or (have_partners='f' and executor=$GLOBALS[uid]) )";
                             $allowed=$this->db->GetVar($sql)*1;
+                            $reason="By document owner1";
                         }
                     } else {
                         $sql = "SELECT count(*) FROM documents d where id=$id and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids])) or (have_partners='f' and executor=$GLOBALS[uid]))";
                         $allowed=$this->db->GetVar($sql)*1;
+                        $reason="By document owner2";
                     }
                     if ($res[type]==1658) {
                         $sql = "SELECT count(*) FROM documents d where id=$id and (d.executor=$GLOBALS[uid] or d.creator=$GLOBALS[uid] or d.id in (select a1.docid from documentactions a1 where a1.executor=$GLOBALS[uid]))";
                         $allowed=$this->db->GetVar($sql)*1;
+                        $reason="By document owner3";
                     }
                     if ($res[type]==1652) {
                         $allowed=0;
+                        $reason="By document type 1652";
                     }
                 }
 
@@ -2182,6 +2189,7 @@ class Data
             }
             if (($GLOBALS['regdate'] <> '01.01.1999')&&(($res['type']==1602)||($res['type']==1652))) {
                 $allowed=0;
+                $reason="By regdate";
                 $res=$this->db->GetRow("select * from $what where id=$id and  date>='".$GLOBALS['regdate']."'");
                 $res[id]=$res[id]*1;
                 if ($res[id]>0) {
@@ -2202,7 +2210,6 @@ class Data
 
         if ($what=='partners') {
             $allowed=0;
-
             //$partner=$this->get_row('partners',$id);
             $sql='';
             if ($GLOBALS[allowed_related_pids]!='') {
@@ -2228,6 +2235,7 @@ class Data
             $hiddenpartneridsarray=explode(",", $GLOBALS[hiddenpartnerids]);
             if ((!$access['view_hidden_partners'])&&(in_array($id, $hiddenpartneridsarray))) {
                 $allowed=0;
+                $reason="By disabled";
             }
 
             // if ($GLOBALS[gid]<4) {
@@ -2236,6 +2244,7 @@ class Data
 
             if ($GLOBALS['history_tail']>0) {
                 $allowed=0;
+                $reason="By history_tail";
                 $res=$this->db->GetRow("select * from $what where id=$id and  (dateclose>=now() - INTERVAL '$GLOBALS[history_tail] days' or dateclose is null)");
                 $res[id]=$res[id]*1;
                 if ($res[id]>0) {
@@ -2428,7 +2437,7 @@ class Data
         }
 
         if (($access['main_admin'])&&($allowed==0)) {
-            echo $this->html->message("NOT ALLOWED for not admins", 'warn', 'orange');
+            echo $this->html->message("NOT ALLOWED for not admins<hr>$reason", 'warn', 'orange');
             //$allowed=1;
         }
         //$allowed=0;
