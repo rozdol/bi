@@ -714,6 +714,7 @@ class Html
     }
     function error($msg = '')
     {
+
         if($GLOBALS[offline_mode]){
             $this->message($msg, 'ERROR');
         }else{
@@ -758,6 +759,15 @@ class Html
             flush();
         }
         return true;
+    }
+    function dd($in=[],$exit=0){
+        if($GLOBALS[offline_mode]){
+            $out=json_encode(['debug'=>$in]);
+        }else{
+            $out=$this->pre_display($in,'Debug');
+        }
+        echo $out;
+        if($exit)exit;
     }
     function pre_display($text = '', $title = '', $class = '', $code = 0)
     {
