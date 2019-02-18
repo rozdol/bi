@@ -1457,7 +1457,7 @@ class Html
 
         return $res;
     }
-    function form_chekbox($name = '', $value = '', $label = '', $simple = 0)
+    function form_chekbox($name = '', $value = '', $label = '', $simple = 0, $hangout=0)
     {
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
         $GLOBALS[tabindex]++;
@@ -1472,9 +1472,13 @@ class Html
                 $chkd='checked';
             }
         }
-        $res="<label><input type='checkbox' name='$name' id='$name' value='1' $chkd tabindex='$GLOBALS[tabindex]' $disabled /> $label</label>";
+        if($hangout>0){
+            $showhint="onMouseover=\"showhint('$label', this, event, '150px');\"";
+            $label='';
+        }
+        $res="<label><input type='checkbox' name='$name' id='$name' value='1' $chkd tabindex='$GLOBALS[tabindex]' $disabled $showhint /> $label</label>";
         if ($simple==1) {
-            $res="<input type='checkbox' name='$name' id='$name' value='1' $chkd/> $label";
+            $res="<input type='checkbox' name='$name' id='$name' value='1' $chkd $showhint /> $label";
         }
         return $res;
     }
