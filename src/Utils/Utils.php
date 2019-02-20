@@ -2411,7 +2411,7 @@ class Utils
         $file=$filename.'.xlsx';
         $file=$filename;
         if (!($this->contains('/tmp/', $filename))) {
-            $file=APP_DIR.'data'.DS.$filename.'.xlsx';
+            $file=APP_DIR.DS.'data'.DS.$filename.'.xlsx';
         }
         if (!(file_exists($file))) {
             $this->error("$file not found");
@@ -2546,7 +2546,7 @@ class Utils
         }
         //include 'PHPExcel/IOFactory.php';
         require_once CLASSES_DIR.'/PHPExcel/Classes/PHPExcel/IOFactory.php';
-        $inputFileName = APP_DIR.'data/Входные данные_2.xlsx';
+        $inputFileName = APP_DIR.DS.'data/Входные данные_2.xlsx';
         $inputFileType = \PHPExcel_IOFactory::identify($inputFileName);
         echo 'File ',pathinfo($inputFileName, PATHINFO_BASENAME),' has been identified as an ',$inputFileType,' file<br />';
 
@@ -2612,7 +2612,7 @@ class Utils
         //require_once dirname(__FILE__) . '/../Classes/PHPExcel/IOFactory.php';
         require_once CLASSES_DIR.'/PHPExcel/Classes/PHPExcel/IOFactory.php';
 
-        $file=APP_DIR.'data/test.xlsx';
+        $file=APP_DIR.DS.'data/test.xlsx';
 
         if (!file_exists($file)) {
             exit("$file is missing." . EOL);
@@ -2958,35 +2958,35 @@ class Utils
 
     function get_action_list(){
         $action='form';
-        $list=$this->get_file_list(APP_DIR.'actions/'.$action,'php',1);
+        $list=$this->get_file_list(APP_DIR.DS.'actions/'.$action,'php',1);
         $out.= "<h2>APP:$action</h2>";
         $out.= "<ol>";
         foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
         $out.= "</ol><hr>";
 
         $action='show';
-        $list=$this->get_file_list(APP_DIR.'actions/'.$action,'php',1);
+        $list=$this->get_file_list(APP_DIR.DS.'actions/'.$action,'php',1);
         $out.= "<h2>APP:$action</h2>";
         $out.= "<ol>";
         foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
         $out.= "</ol><hr>";
 
         $action='report';
-        $list=$this->get_file_list(APP_DIR.'actions/'.$action,'php',1);
+        $list=$this->get_file_list(APP_DIR.DS.'actions/'.$action,'php',1);
         $out.= "<h2>APP:$action</h2>";
         $out.= "<ol>";
         foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
         $out.= "</ol><hr>";
 
         $action='search';
-        $list=$this->get_file_list(APP_DIR.'actions/'.$action,'php',1);
+        $list=$this->get_file_list(APP_DIR.DS.'actions/'.$action,'php',1);
         $out.= "<h2>APP:$action</h2>";
         $out.= "<ol>";
         foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";
         $out.= "</ol><hr>";
 
         $action='tools';
-        $list=$this->get_file_list(APP_DIR.'actions/'.$action,'php',1);
+        $list=$this->get_file_list(APP_DIR.DS.'actions/'.$action,'php',1);
         $out.= "<h2>APP:$action</h2>";
         $out.= "<ol>";
         foreach($list as $item)if($item[0]!="_")$out.= "<li><a href='?act=$action&what=$item'>$item</a></li>";

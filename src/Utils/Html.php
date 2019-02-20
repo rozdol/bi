@@ -3174,7 +3174,7 @@ class Html
     {
         return $this->HT_editicons2($table, $id, $print);
     }
-    function HT_editicons2($table, $id, $print)
+    function HT_editicons2($table = '', $id = 0, $print = '')
     {
 
         if (($GLOBALS[edit_icons]=='normal')||($GLOBALS[edit_icons]=='')) {
