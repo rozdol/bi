@@ -525,17 +525,18 @@ class Comm
         return $match[0][0];
     }
 
-    public function get_wiki_page($page = 'start', $dokuwiki_url = "http://dokuwiki.lan", $dokuwiki_ext_url = "http://dokuwiki.rozdol.com")
+    public function get_wiki_page($page = 'start', $dokuwiki_url = "")
     {
-
-        $content = file_get_contents($dokuwiki_url.'/doku.php?id='.$page);
+        if($dokuwiki_url=='')$dokuwiki_url=getenv('DOKUWIKI_URL');
+        $url=$dokuwiki_url.'/doku.php?id='.$page;
+        $content = file_get_contents($url);
         $rates=$content;
         $half=explode("<!-- wikipage start -->", $rates);
         $middle=explode("<!-- wikipage stop -->", $half[1]);
         $data=$middle[0];
-        $data=str_ireplace("/lib/exe/", "$dokuwiki_ext_url/lib/exe/", $data);
+        $data=str_ireplace("/lib/exe/", "$dokuwiki_url/lib/exe/", $data);
         $data=str_ireplace("/doku.php?id=", "?act=report&what=doku&dokupage=", $data);
-        //$data='<link rel="stylesheet" type="text/css" href="'.$dokuwiki_ext_url.'/lib/exe/css.php"/>'.$data;
+        //$data='<link rel="stylesheet" type="text/css" href="'.$dokuwiki_url.'/lib/exe/css.php"/>'.$data;
         return $data;
     }
 
