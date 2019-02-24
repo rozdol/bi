@@ -1791,9 +1791,9 @@ class Html
         if ($collapsed) {
             $in='in';
         }
-        $class_id=preg_replace("/[^a-z0-9.]+/i", "", $title);
+        $class_id=preg_replace("/[^a-z0-9]+/i", "", $title);
 
-        $out= "<label class='badge-collapsable $class'><button type='button' style='margin-left:10px;' class='btn btn-micro' data-toggle='collapse' data-target='#collapsable_$class_id'><span class='$icon'></span></button> $title</label>";
+        $label= "<label class='badge-collapsable $class'><button type='button' style='margin-left:10px;' class='btn btn-micro' data-toggle='collapse' data-target='#collapsable_$class_id'><span class='$icon'></span></button> $title</label>";
 
         if ($header) {
             $header="<div class='collapse-header'>$header</div>";
@@ -1801,13 +1801,14 @@ class Html
         if ($footer) {
             $footer="<div class='collapse-footer'>$footer</div>";
         }
-        $out.="
+        $out.="<div class='collapsable'>$label
         <div class='collapsable $class'>
         $header
         <div class='collapse $class $in' id='collapsable_$class_id' >
             <div class='inside-collapse-disable'>$content</div>
         </div>
         $footer
+        </div>
         </div>";
         return $out;
     }
@@ -2553,7 +2554,7 @@ class Html
         if ($rating=="C") {
             $r_class='badge-important';
         }
-        return $this->tag($rating, 'sapn', "badge $r_class");
+        return $this->tag($rating, 'span', "badge $r_class");
     }
 
     public function link($query = '')
