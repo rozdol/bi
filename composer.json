@@ -12,10 +12,9 @@
     "require": {
         "vlucas/phpdotenv": "^2.4",
         "phpoffice/phpword": "v0.15.*",
-        "lukascivil/treewalker": "@dev",
+        "lukascivil/treewalker": "^0.9",
         "sendgrid/sendgrid": "~7.0"
     },
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Rozdol\\": "src",
