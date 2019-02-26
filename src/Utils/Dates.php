@@ -389,25 +389,25 @@ class Dates
         if ($delim<>'') {
             $str=str_ireplace('.', '/', $str);
         }
-        if (($str=='')&&($check==2)) {
+        if (($str=='')&&($check==2)) { //set null
             $str='null';
         }
-        if (($str=='')&&($check==3)) {
+        if (($str=='')&&($check==3)) { //set latest
             $str='01.01.2030';
         }
         if (($str=='')&&($check==4)) {
-            $str='01.01.'.$this->F_thisyear();
+            $str='01.01.'.$this->F_thisyear(); //set beginning of the current year
         }
-        if (($str=='')&&($check==5)) {
+        if (($str=='')&&($check==5)) { //set earliest
             $str='01.01.1999';
         }
-        if (($str=='')&&($check==6)) {
+        if (($str=='')&&($check==6)) { // set now
             $str='now()';
         }
-        if (($str=='')&&($check==7)) {
+        if (($str=='')&&($check==7)) { //set null
             $str='null';
         }
-        if (($str=='')&&($check==8)) {
+        if (($str=='')&&($check==8)) { //set end of the current year
             $str='31.12.'.$this->F_thisyear();
         }
         if (($str!='now()')&&($check==6)) {

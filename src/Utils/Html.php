@@ -1778,7 +1778,7 @@ class Html
         if ($collapsed) {
             $in='in';
         }
-        $class=preg_replace("/[^a-z0-9.]+/i", "", $title);
+        $class=preg_replace("/[^a-z0-9]+/i", "", $title);
         return "<label class='badge-top'><button type='button' class='btn btn-micro' data-toggle='collapse' data-target='#collapsable_$class'><span class='icon-folder-open'></span></button>
         $title</label>
         <div class='lookup collapse $in' id='collapsable_$class' >
