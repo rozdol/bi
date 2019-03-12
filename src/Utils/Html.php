@@ -2754,7 +2754,7 @@ class Html
                     maxFilesize: 256, // MB // you can add more or less
                     acceptedFiles: ".jpeg, .jpg, .jpe, .bmp, .png, .gif, .ico, .tiff, .tif, .svg, .svgz, \n\
                                      .doc,.docx,.txt, .pdf,.rtf,.xlsx,.xls,.xlsb,.csv, .ppt,\n\
-                                    .zip,.zipx,.tar,.gz,.z,.rar,.eml", // files you accepting
+                                    .zip,.zipx,.tar,.gz,.z,.rar,.eml,.xml", // files you accepting
 
                     success: function (file, response) {
                         var imgName = response;

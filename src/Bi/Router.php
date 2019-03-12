@@ -508,6 +508,21 @@ class Router
         return true;
     }
 
+    function pdf_draw_line($y, $thickness = 0.1)
+    {
+        global $p,$leading,$left,$right,$llx,$urx,$lly,$pageheight,$pagewidth;
+        /* Draw lines*/
+                $p->setlinewidth($thickness);
+                $p->save();
+                $p->moveto($llx, $y);
+                $p->lineto($urx, $y);
+                $p->stroke();
+                $p->restore();
+    }
+    function nf($number){
+        return number_format($number, 2, '.', "'");
+    }
+
     public function progress($start_time=0, $rows=1, $i=1, $text='')
     {
         if(($GLOBALS[offline_mode])||($GLOBALS[pdf_mode])){
