@@ -188,6 +188,33 @@ class Comm
         $multipart .= "--$boundary--\n";
         return array('multipart' => $multipart, 'headers' => $headers);
     }
+
+    public function send_attachment_mail($to = 'email@example.com', $from = 'it@example.com', $subject = 'File', $attachments = [])
+    {
+        require_once FW_DIR.DS.'classes/PHPMailer/PHPMailerAutoload.php';
+
+        $mail = new \PHPMailer;
+        $mail->isSendmail();
+        $mail->setFrom($from, '');
+        $mail->addReplyTo($from, '');
+        $mail->addAddress($to, '');
+        $mail->Subject = $subject;
+        $mail->Body      = " ";
+
+        foreach ($attachments as $attachments) {
+            $file_name=basename($attachments);
+            $mail->addAttachment($attachments, $file_name);
+        }
+
+        if (!$mail->send()) {
+            echo $this->html->pre_display($mail, "result");
+            echo "Mailer Error: " . $mail->ErrorInfo;
+        } else {
+            echo "Message sent to $to!";
+        }
+        unset($mail);
+    }
+
     public function send_announcement_mail($to = 'email@example.com', $from = 'it@example.com', $subject = 'Announcement', $description = '', $body = '', $attachments = [])
     {
         require_once FW_DIR.DS.'classes/PHPMailer/PHPMailerAutoload.php';
