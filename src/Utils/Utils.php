@@ -24,6 +24,25 @@ class Utils
         }
     }
 
+    function delete_all_files($path){
+        $objects=scandir($path);
+        if (is_array($objects)) {
+            foreach ($objects as $file) {
+                if ($file == '.' || $file == '..' ) {
+                    continue;
+                }
+                $new_path = $path . DS . $file;
+                echo "NF:$new_path<br>";
+                if (@is_file($new_path) && !in_array($file, $GLOBALS['exclude_items'])) {
+                    $out.= "Deleted: $new_path<br>";
+                    unlink($new_path);
+                }
+            }
+        }
+        return $out;
+    }
+
+
     public function contains($str, $instr)
     {
         $result=0;
@@ -179,12 +198,27 @@ class Utils
         {
             mkdir($log_folder, 0777, true);
         }
-        $log_filename=$log_folder.'/log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
+        $log_filename=$log_folder.DS.'logs'.DS.'log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
         $log  = date("d.m.y G:i").' - '.$_SERVER['REMOTE_ADDR'].' - '.$GLOBALS[username].' - '.$data.PHP_EOL;
         if(file_put_contents($log_filename, $log, FILE_APPEND)){
             return true;
         }else{
             return "ERROR:Can not write to $log_filename";
+        }
+
+    }
+    public function log_reset()
+    {
+        $log_folder = $GLOBALS[data_dir_tmp];
+        if (!file_exists($log_folder))
+        {
+            mkdir($log_folder, 0777, true);
+        }
+        $log_filename=$log_folder.DS.'logs'.DS.'log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
+        if(unlink($log_filename)){
+            return true;
+        }else{
+            return "ERROR:Can not remove log $log_filename";
         }
 
     }
@@ -693,11 +727,18 @@ class Utils
             case "txt":
                 $ctype="text/plain";
                 break;
+            case "json":
+                $ctype="text/json";
+                break;
+            case "xml":
+                $ctype="text/xml";
+                break;
             case "htm":
                 $ctype="text/html; charset=cp-2151";
                 break;
             //The following are for extensions that shouldn't be downloaded (sensitive stuff, like php files)
             case "php":
+            case "sh":
             case "html":
                 die("<b>Cannot be used for ". $file_extension ." files!</b>");
             break;
@@ -705,6 +746,7 @@ class Utils
             default:
                 $ctype="application/force-download";
         }
+        if(strlen($file_extension)>10)$ctype="text/plain";
         //echo "$file, $name"; exit;
         //Begin writing headers
         header("Pragma: public");

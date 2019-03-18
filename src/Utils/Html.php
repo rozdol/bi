@@ -3296,4 +3296,117 @@ class Html
         $responce= "<td>$view $edit $delete</td>\n";
         return $responce;
     }
+    function filesize($size)
+    {
+        if ($size < 1000) {
+            return sprintf('%s B', $size);
+        } elseif (($size / 1024) < 1000) {
+            return sprintf('%s KB', round(($size / 1024), 2));
+        } elseif (($size / 1024 / 1024) < 1000) {
+            return sprintf('%s MB', round(($size / 1024 / 1024), 2));
+        } elseif (($size / 1024 / 1024 / 1024) < 1000) {
+            return sprintf('%s GB', round(($size / 1024 / 1024 / 1024), 2));
+        } else {
+            return sprintf('%s TB', round(($size / 1024 / 1024 / 1024 / 1024), 2));
+        }
+    }
+    function show_folder($path,$where='tmp'){
+        $objects = is_readable($path) ? scandir($path) : array();
+        $folders = array();
+        $files = array();
+
+        if (is_array($objects)) {
+            foreach ($objects as $file) {
+                if ($file == '.' || $file == '..' && in_array($file, $GLOBALS['exclude_items'])) {
+                    continue;
+                }
+                if (!FM_SHOW_HIDDEN && substr($file, 0, 1) === '.') {
+                    continue;
+                }
+                $new_path = $path . '/' . $file;
+                if (@is_file($new_path) && !in_array($file, $GLOBALS['exclude_items'])) {
+                    $files[] = $file;
+                } elseif (@is_dir($new_path) && $file != '.' && $file != '..' && !in_array($file, $GLOBALS['exclude_items'])) {
+                    $folders[] = $file;
+                }
+            }
+        }
+        if (!empty($files)) {
+            natcasesort($files);
+        }
+        if (!empty($folders)) {
+            natcasesort($folders);
+        }
+        $fields=['#','t','Name','size',' '];
+        $out=$this->tablehead('','', $order, 'no_addbutton', $fields,$sort);
+
+        $num_files = count($files);
+        $num_folders = count($folders);
+        $all_files_size = 0;
+
+        foreach ($folders as $f) {
+            $i++;
+            $is_link = is_link($path . '/' . $f);
+            $img = $is_link ? 'icon-link_folder' : 'fa fa-folder-o';
+            $modif = date(FM_DATETIME_FORMAT, filemtime($path . '/' . $f));
+            $perms = substr(decoct(fileperms($path . '/' . $f)), -4);
+            if (function_exists('posix_getpwuid') && function_exists('posix_getgrgid')) {
+                $owner = posix_getpwuid(fileowner($path . '/' . $f));
+                $group = posix_getgrgid(filegroup($path . '/' . $f));
+            } else {
+                $owner = array('name' => '?');
+                $group = array('name' => '?');
+            }
+            $out.= "<tr class='$class bold'>";
+            $out.= "<td>$i</td>";
+            //$out.= $this->edit_rec($what,$row[id],'ved',$i);
+            //$out.= "<td id='$what:$row[id]' class='cart-selectable' reference='$what'>$row[id]</td>";
+            //$out.= "<td onMouseover=\"showhint('$row[descr]', this, event, '400px');\">$row[name]</td>";
+            $out.= "<td><i class='icon-folder-open'></i></td>";
+            $out.= "<td>$f</td>";
+
+            $out.= "<td>$filesize</td>";
+            $link= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('$row[name]', this, event, '200px');\"><i class='icon-eye-open'></i></a>";
+            $out.= "<td> </td>";
+            //$out.=$this->HT_editicons($what, $row[id]);
+            $out.= "</tr>";
+        }
+        echo "<hr>";
+        foreach ($files as $f) {
+            $i++;
+            $is_link = is_link($path . '/' . $f);
+            //$img = $is_link ? 'fa fa-file-text-o' : fm_get_file_icon_class($path . '/' . $f);
+            $modif = date(FM_DATETIME_FORMAT, filemtime($path . '/' . $f));
+            //$filesize_raw = fm_get_size($path . '/' . $f);
+            $filesize_raw = filesize($path . '/' . $f);
+            $filesize = $this->filesize($filesize_raw);
+            $filelink = '?p=' . urlencode(FM_PATH) . '&amp;view=' . urlencode($f);
+            $all_files_size += $filesize_raw;
+            $perms = substr(decoct(fileperms($path . '/' . $f)), -4);
+            if (function_exists('posix_getpwuid') && function_exists('posix_getgrgid')) {
+                $owner = posix_getpwuid(fileowner($path . '/' . $f));
+                $group = posix_getgrgid(filegroup($path . '/' . $f));
+            } else {
+                $owner = array('name' => '?');
+                $group = array('name' => '?');
+            }
+            $out.= "<tr class='$class'>";
+            $out.= "<td>$i</td>";
+            $out.= "<td><i class='icon-file'></i></td>";
+            //$out.= $this->edit_rec($what,$row[id],'ved',$i);
+            //$out.= "<td id='$what:$row[id]' class='cart-selectable' reference='$what'>$row[id]</td>";
+            //$out.= "<td onMouseover=\"showhint('$row[descr]', this, event, '400px');\">$row[name]</td>";
+            $out.= "<td>$f</td>";
+            $out.= "<td class='n'>$filesize</td>";
+            $view= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('View', this, event, '50');\"><i class='icon-eye-open'></i></a>";
+            $download= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('Download', this, event, '50');\"><i class='icon-download'></i></a>";
+            $send= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('Send', this, event, '50');\"><i class='icon-envelope'></i></a>";
+            $send=$this->confirm_with_comment("<i class='icon-envelope'>", "?act=details&what=file_content&where=$where&plain=1&filename=$f", 'nano', 'Enter email address');
+            $out.= "<td>$view $send</td>";
+            //$out.=$this->HT_editicons($what, $row[id]);
+            $out.= "</tr>";
+        }
+        $out.=$this->tablefoot($i, $totals, $totalrecs);
+        return $out;
+    }
 }
