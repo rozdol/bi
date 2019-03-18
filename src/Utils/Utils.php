@@ -32,7 +32,7 @@ class Utils
                     continue;
                 }
                 $new_path = $path . DS . $file;
-                echo "NF:$new_path<br>";
+                // echo "NF:$new_path<br>";
                 if (@is_file($new_path) && !in_array($file, $GLOBALS['exclude_items'])) {
                     $out.= "Deleted: $new_path<br>";
                     unlink($new_path);
