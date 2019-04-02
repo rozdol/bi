@@ -2750,6 +2750,8 @@ class Html
                   $("#file-up").dropzone({
                     url: "?act=save&what=dropzone&plain=1",
                     addRemoveLinks: true,
+                    parallelUploads: 10,
+                    uploadMultiple: false,
                     dictDefaultMessage:"'.$text.'",
                     maxFilesize: 256, // MB // you can add more or less
                     //acceptedFiles: ".jpeg, .jpg, .jpe, .bmp, .png, .gif, .ico, .tiff, .tif, .svg, .svgz,.doc,.docx,.txt, .pdf,.rtf,.xlsx,.xls,.xlsb,.csv, .ppt,.zip,.zipx,.tar,.gz,.z,.rar,.eml,.xml", // files you accepting
@@ -3311,6 +3313,9 @@ class Html
         }
     }
     function show_folder($path,$where='tmp'){
+        if($path==''||$path=='/'||$path=='\\')
+            return "Wrong path '$path'";
+        //echo "$path<br>";
         $objects = is_readable($path) ? scandir($path) : array();
         $folders = array();
         $files = array();
@@ -3371,7 +3376,6 @@ class Html
             //$out.=$this->HT_editicons($what, $row[id]);
             $out.= "</tr>";
         }
-        echo "<hr>";
         foreach ($files as $f) {
             $i++;
             $is_link = is_link($path . '/' . $f);
