@@ -2863,6 +2863,7 @@ class Data
         } else {
             $name=$this->db->GetVal("select surname||' '||firstname from users where id=$id");
         }
+        if($name==' ')$name=$this->db->GetVal("select username from users where id=$id");
         return $name;
     }
     function surname($id, $short = 0)
