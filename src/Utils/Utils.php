@@ -24,20 +24,21 @@ class Utils
         }
     }
 
-    function dirToArray($dir) {
+    function dirToArray($dir, $skip_dirs=0) {
        $result = array();
        $cdir = scandir($dir);
        foreach ($cdir as $key => $value)
        {
           if (!in_array($value,array(".","..",".DS_Store")))
           {
-             if (is_dir($dir . DIRECTORY_SEPARATOR . $value))
+             if (is_dir($dir . DIRECTORY_SEPARATOR . $value) && ($skip_dirs==0))
              {
                 $result[$value] = $this->dirToArray($dir . DIRECTORY_SEPARATOR . $value);
              }
              else
              {
-                $result[] = $value;
+                if (is_dir($dir . DIRECTORY_SEPARATOR . $value) && ($skip_dirs==0))$result[] = $value;
+                if (!is_dir($dir . DIRECTORY_SEPARATOR . $value))$result[] = $value;
              }
           }
        }
