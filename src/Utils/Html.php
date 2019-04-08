@@ -546,6 +546,14 @@ class Html
         $res = mb_ereg_replace("([\.]{2,})", '', $res);
         return $res;
     }
+
+    public function filepath($val)
+    {
+        $res = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\)\/.])", '', $val);
+        // Remove any runs of periods (thanks falstro!)
+        $res = mb_ereg_replace("([\.]{2,})", '', $res);
+        return $res;
+    }
     public function readRQf($request = '', $default = '')
     {
 //filename
@@ -559,6 +567,18 @@ class Html
         // $res = mb_ereg_replace("([\.]{2,})", '', $res);
         return $res;
     }
+
+        public function readRQp($request = '', $default = '')
+        {
+    //filename
+            $val=$this->readValue($request);
+            if (($val=='')&&($default!='')) {
+                $val=$default;
+            }
+            $res=$this->filepath($val);
+            return $res;
+        }
+
     public function request_normalize()
     {
         $this->message('started normalize');
@@ -3405,7 +3425,7 @@ class Html
             $view= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('View', this, event, '50');\"><i class='icon-eye-open'></i></a>";
             $download= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('Download', this, event, '50');\"><i class='icon-download'></i></a>";
             $send= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('Send', this, event, '50');\"><i class='icon-envelope'></i></a>";
-            $send=$this->confirm_with_comment("<i class='icon-envelope'>", "?act=details&what=file_content&where=$where&plain=1&filename=$f", 'nano', 'Enter email address');
+            $send=$this->confirm_with_comment("<i class='icon-envelope'></i>", "?act=details&what=file_content&where=$where&plain=1&filename=$f", 'nano', 'Enter email address');
             $out.= "<td>$view $send</td>";
             //$out.=$this->HT_editicons($what, $row[id]);
             $out.= "</tr>";
