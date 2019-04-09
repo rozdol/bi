@@ -1895,7 +1895,7 @@ class Html
         if ($data[action]!='') {
             $form_start="<form method='POST' action='$data[action]' class='' id='$modal_id' name='save-$modal_id'>\n";
             $form_end="</form>";
-            $btn="<button type='submit' class='btn btn-success'>Ok</button>";
+            $ok_btn="<button type='submit' class='btn btn-primary'>Submit</button>";
         }
         foreach ($data[fields] as $field) {
             $ins="";
@@ -1939,9 +1939,9 @@ class Html
 
         $modal="
     <!-- Modal -->
-    <div id='{$modal_id}' class='modal hide fade' tabindex='-1' role='dialog' aria-labelledby='{$modal_id}Label' aria-hidden='true'>
+    <div id='{$modal_id}' class='modal hide fade left' style='text-align: left; align:left;' tabindex='-1' role='dialog' aria-labelledby='{$modal_id}Label' aria-hidden='true'>
       $form_start
-      <div class='modal-header'>
+      <div class='modal-header'  class='left'  style='text-align: left; align:left;'>
         <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>×</button>
         <h3 id='{$modal_id}Label'>$data[header]</h3>
       </div>
@@ -1952,7 +1952,7 @@ class Html
       </div>
       <div class='modal-footer'>
         <button class='btn' data-dismiss='modal' aria-hidden='true'>Close</button>
-        <button class='btn btn-primary' type='submit'>Ok</button>
+        $ok_btn
       </div>
       $form_end
     </div>";
