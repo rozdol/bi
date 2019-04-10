@@ -25,7 +25,7 @@ class Utils
     }
     function unzip($path, $pathto){
         $pathinfo = pathinfo($path);
-        echo $this->pre_display($pathinfo,"pathinfo $path");
+        //echo $this->pre_display($pathinfo,"pathinfo $path");
         $zip_basename=$pathinfo[basename];
 
         $deflated=$pathto.DS.$zip_basename;
@@ -42,19 +42,22 @@ class Utils
                 $basename = basename($deflated_filename);
                 $pathinfo = pathinfo($deflated_filename);
                 $new_file=$deflated.DS.$basename;
-                echo $this->pre_display($pathinfo,"pathinfo $new_file");
-                //copy("zip://".$file."#".$deflated_filename, $new_file);
+                //echo $this->pre_display($pathinfo,"pathinfo $new_file");
+                $test="zip://".$path."#".$deflated_filename;
+                if(!copy("zip://".$path."#".$deflated_filename, $new_file))return ['error'=>"Can not copy $test to $new_file"];;
                 //echo "$new_file<br>";
-                //if(!$fp = fopen ($new_file, 'rb')) return ['error'=>"error fopen $new_file"];
-                //if(!$data = fread ($fp, 4)) return ['error'=>"error fread $new_file"];
+                $files[]=$new_file;
             }
             $zip->close();
         }else{
             return ['error'=>"Can not open archive $path"];
         }
-
+        $result[path]=$deflated;
+        $result[folder]=$zip_basename;
+        $result[files]=$files;
         return $result;
     }
+
     function filetype_by_content($path){
         $fh = @fopen($path, "r");
 
