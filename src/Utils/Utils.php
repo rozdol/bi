@@ -23,7 +23,60 @@ class Utils
             $this->sql = new \SQLite3(':memory:') or die('Unable to open SQLite3 database');
         }
     }
+    function unzip($path, $pathto){
+        $pathinfo = pathinfo($path);
+        echo $this->pre_display($pathinfo,"pathinfo $path");
+        $zip_basename=$pathinfo[basename];
 
+        $deflated=$pathto.DS.$zip_basename;
+        if (!file_exists($deflated)) {
+          $oldumask = umask(0);
+            if(!mkdir($deflated, 0777, true)) return ['error'=>"Cannot make destination path $deflated"];
+            umask($oldumask);
+        }
+
+        $zip = new \ZipArchive;
+        if ($zip->open($path) === true) {
+            for($i = 0; $i < $zip->numFiles; $i++) {
+                $deflated_filename = $zip->getNameIndex($i);
+                $basename = basename($deflated_filename);
+                $pathinfo = pathinfo($deflated_filename);
+                $new_file=$deflated.DS.$basename;
+                echo $this->pre_display($pathinfo,"pathinfo $new_file");
+                //copy("zip://".$file."#".$deflated_filename, $new_file);
+                //echo "$new_file<br>";
+                //if(!$fp = fopen ($new_file, 'rb')) return ['error'=>"error fopen $new_file"];
+                //if(!$data = fread ($fp, 4)) return ['error'=>"error fread $new_file"];
+            }
+            $zip->close();
+        }else{
+            return ['error'=>"Can not open archive $path"];
+        }
+
+        return $result;
+    }
+    function filetype_by_content($path){
+        $fh = @fopen($path, "r");
+
+        if (!$fh) {
+          $res="ERROR: couldn't open file.";
+        }
+
+        $blob = fgets($fh, 5);
+
+        fclose($fh);
+
+        if (strpos($blob, 'Rar') !== false) {
+          $res="zip";
+        } else
+        if (strpos($blob, 'PK') !== false) {
+          $res="rar";
+        } else {
+          $res="";
+        }
+
+        return $res;
+    }
     function dirToArray($dir, $skip_dirs=0) {
        $result = array();
        $cdir = scandir($dir);
