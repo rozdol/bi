@@ -111,14 +111,47 @@ class Utils
                 $new_path = $path . DS . $file;
                 // echo "NF:$new_path<br>";
                 if (@is_file($new_path) && !in_array($file, $GLOBALS['exclude_items'])) {
-                    $out.= "Deleted: $new_path<br>";
-                    unlink($new_path);
+
+                    if(unlink($new_path)){
+                        $deleted_files[]=$new_path;
+                    }else{
+                        $ommited_files[]=$new_path;
+                    };
                 }
             }
         }
-        return $out;
+        $res[deleted_files]=$deleted_files;
+        $res[ommited_files]=$ommited_files;
+        return $res;
     }
 
+    function delete_dir($dir,$res=[]) {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (is_dir($dir."/".$object)){
+                        $res[folders][]=$dir."/".$object;
+                        $this->delete_dir($dir."/".$object, $res);
+                    }
+                    else{
+                        $res[files][]=$dir."/".$object;
+                        if(unlink($dir."/".$object)){
+                            $res[deleted_files][]=$dir."/".$object;
+                        }else{
+                            $res[ommited_files][]=$dir."/".$object;
+                        }
+                    }
+                }
+            }
+            if(rmdir($dir)){
+                $res[deleted_folders][]=$dir;
+            }else{
+                $res[ommited_folders][]=$dir;
+            }
+        }
+        return $res;
+    }
 
     public function contains($str, $instr)
     {
