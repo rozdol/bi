@@ -23,6 +23,15 @@ class Utils
             $this->sql = new \SQLite3(':memory:') or die('Unable to open SQLite3 database');
         }
     }
+    function get_keys($ar) {
+        foreach($ar as $k => $v) {
+            $keys[] = $k;
+            if (is_array($ar[$k]))
+                $keys = array_merge($keys, $this->get_keys($ar[$k]));
+        }
+        return array_unique($keys);
+    }
+
     function unzip($path, $pathto){
         $pathinfo = pathinfo($path);
         //echo $this->pre_display($pathinfo,"pathinfo $path");
