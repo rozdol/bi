@@ -304,21 +304,25 @@ class Router
     public function append($what)
     {
         global $access;
+        if($GLOBALS[uid]<=0){unset($content);$this->html->putLogin($content);exit;}
         return $this->dispatch($what, __FUNCTION__);
     }
     public function pdf($what)
     {
         global $access;
+        if($GLOBALS[uid]<=0){unset($content);$this->html->putLogin($content);exit;}
         return $this->dispatch($what, __FUNCTION__);
     }
     public function doc($what)
     {
         global $access;
+        if($GLOBALS[uid]<=0){unset($content);$this->html->putLogin($content);exit;}
         return $this->dispatch($what, __FUNCTION__);
     }
     public function json($what)
     {
         global $access;
+        if($GLOBALS[uid]<=0){unset($content);$this->html->putLogin($content);exit;}
         return $this->dispatch($what, __FUNCTION__);
     }
     public function api($what)
@@ -329,16 +333,19 @@ class Router
     public function graphdata($what)
     {
         global $access;
+        if($GLOBALS[uid]<=0){unset($content);$this->html->putLogin($content);exit;}
         return $this->dispatch($what, __FUNCTION__);
     }
     public function tools($what)
     {
         global $access;
+        if($GLOBALS[uid]<=0){unset($content);$this->html->putLogin($content);exit;}
         return $this->dispatch($what, __FUNCTION__);
     }
     public function test($what)
     {
         global $access;
+        if($GLOBALS[uid]<=0){unset($content);$this->html->putLogin($content);exit;}
         return $this->dispatch($what, __FUNCTION__);
     }
 
@@ -350,6 +357,7 @@ class Router
     private function dispatch($what = '', $function = '', $accessitemchk = '')
     {
         global $limit, $orgqry, $access,$uid,$gid,$reflink,$maxdescr,$today,$ip;
+        //if($GLOBALS[uid]<0)return $this->html->error("No access to $function $what ".$GLOBALS[uid]);
         if ($GLOBALS[action_folder]=='') {
             $GLOBALS[action_folder]=$function;
         }
