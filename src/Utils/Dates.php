@@ -1048,4 +1048,23 @@ class Dates
         $longdate=date("D M d Y H:i:s ", $thedate);
         return $longdate."GMT+0200 (EET)";
     }
+
+    public function MT_date($date_mt)
+    {
+        if (!preg_match('/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})/', $date_mt, $match)) {
+            $this->html->error("Wrong date format $date_mt");
+        }
+        //echo $this->pre_display($match,"match");
+        if($match[2]=='24:00:00')$match[2]='23:59:59';
+        $date = \DateTime::createFromFormat('Y-m-d H:i:s', "$match[1] $match[2]");
+        //echo $this->html->pre_display($date,"date $date_mt");
+        $result["date"]=$date->format('d.m.Y');
+        $result["date2"]=$date->format('Y.m.d');
+        $result["time"]=$date->format('H:i:s');
+        $result["datetime"]=$date->format('d F Y H:i:s'). " CET";
+
+        return $result;
+    }
+
+
 }
