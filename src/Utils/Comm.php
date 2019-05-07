@@ -255,8 +255,13 @@ class Comm
         $mail->Body      = $body;
 
         foreach ($attachments as $attachment) {
-            $file_name=basename($attachment);
-            $mail->addAttachment($attachment, $file_name);
+            if(file_exists($attachment)){
+                $file_name=basename($attachment);
+                $mail->addAttachment($attachment, $file_name);
+            }else{
+                echo "File $file_name not found;<br>";
+            }
+
         }
 
         if (!$mail->send()) {
