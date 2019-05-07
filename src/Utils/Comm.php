@@ -242,10 +242,10 @@ class Comm
         return array('multipart' => $multipart, 'headers' => $headers);
     }
 
-    public function send_attachment_mail($to = 'email@example.com', $from = 'it@example.com', $subject = 'File', $body = ' ', $attachments = [])
+    public function send_attachment_mail($from = 'it@example.com', $to = 'email@example.com', $subject = 'File', $body = ' ', $attachments = [])
     {
         require_once FW_DIR.DS.'classes/PHPMailer/PHPMailerAutoload.php';
-
+        if($body=='')$body=' ';
         $mail = new \PHPMailer;
         $mail->isSendmail();
         $mail->setFrom($from, '');
@@ -268,7 +268,7 @@ class Comm
             echo "body:$body<br>";
             echo $this->html->pre_display($attachments,"attachments");
         } else {
-            echo "Message sent to $to!";
+            echo "Message '$subject' sent from $from to $to!";
         }
         unset($mail);
     }
