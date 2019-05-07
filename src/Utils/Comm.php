@@ -242,7 +242,7 @@ class Comm
         return array('multipart' => $multipart, 'headers' => $headers);
     }
 
-    public function send_attachment_mail($to = 'email@example.com', $from = 'it@example.com', $subject = 'File', $attachments = [])
+    public function send_attachment_mail($to = 'email@example.com', $from = 'it@example.com', $subject = 'File', $body = ' ', $attachments = [])
     {
         require_once FW_DIR.DS.'classes/PHPMailer/PHPMailerAutoload.php';
 
@@ -252,7 +252,7 @@ class Comm
         $mail->addReplyTo($from, '');
         $mail->addAddress($to, '');
         $mail->Subject = $subject;
-        $mail->Body      = " ";
+        $mail->Body      = $body;
 
         foreach ($attachments as $attachment) {
             $file_name=basename($attachment);
@@ -260,8 +260,13 @@ class Comm
         }
 
         if (!$mail->send()) {
-            echo $this->html->pre_display($mail, "result");
-            echo "Mailer Error: " . $mail->ErrorInfo;
+            //echo $this->html->pre_display($mail, "result");
+            echo "Mailer Error: " . $mail->ErrorInfo."<br>";
+            echo "To:$to<br>";
+            echo "From:$from<br>";
+            echo "Subject:$subject<br>";
+            echo "body:$body<br>";
+            echo $this->html->pre_display($attachments,"attachments");
         } else {
             echo "Message sent to $to!";
         }
