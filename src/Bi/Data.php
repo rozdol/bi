@@ -526,6 +526,7 @@ class Data
         //Common
         $today=$this->dates->F_date("", 1);
         $tomorrow=$this->dates->F_dateadd($today, 1);
+        $GLOBALS[yesterday]=$this->dates->F_dateadd($today, -1);
         $Monthes = array( "",
         "Jan",
         "Feb",
