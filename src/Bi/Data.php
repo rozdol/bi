@@ -1096,14 +1096,14 @@ class Data
 
         return $res;
     }
-    function detalize($table, $id, $chars = 0, $noname = '')
+    function detalize($table, $id, $chars = 0, $noname = '', $fileld='name')
     {
 
         //$chars=10;
         settype($id, "integer");
         //if($chars==0)$sql="select name from $table where id=$id";
         //if($chars>0)$sql="select substr(name,1,$chars)||'...' ||substr(name,char_length(name)-5,6) from $table where id=$id";
-        $field=($this->field_exists($table, 'name'))?'name':'id';
+        $field=($this->field_exists($table, $fileld))?$fileld:'id';
         $sql="select $field from $table where id=$id; --detalize";
         if ($noname=='') {
             $name=$this->db->GetVal($sql);
