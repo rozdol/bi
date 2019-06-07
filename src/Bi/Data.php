@@ -1281,6 +1281,18 @@ class Data
         $name=$this->db->GetVal($sql);
         return $name;
     }
+
+    function get_array($table, $field, $id){
+        $data=$this->get_val($table, $field, $id);
+        $result=json_decode($data, true);
+        if (json_last_error() == JSON_ERROR_NONE){
+            return $result;
+        }else{
+            $fallback=[$field=>$data];
+            $result=json_decode($fallback, true);
+            return [$data];
+        }
+    }
     function get_row($table, $id)
     {
         //echo "$table,$id<br>";
