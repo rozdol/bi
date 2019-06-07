@@ -3188,4 +3188,17 @@ class Utils
             $out.= "</ol><hr>";
         return $out;
     }
+
+    function findKey($array, $keySearch)
+    {
+        foreach ($array as $key => $item) {
+            if ($key == $keySearch) {
+                echo "yes, it exists ($key == $keySearch)";
+                return true;
+            } elseif (is_array($item) && $this->findKey($item, $keySearch)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
