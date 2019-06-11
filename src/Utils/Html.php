@@ -148,7 +148,10 @@ class Html
         foreach ($array as $item) {
             if (is_numeric($item)) {
                 $out.="<td class='n'>".$this->money($item)."</td>";
-            } else {
+            } elseif($this->utils->contains('^', $item)) {
+                $item=str_replace('^','',$item);
+                $out.="<td class='n'>$item</td>";
+            }else{
                 $out.="<td>$item</td>";
             }
         }
