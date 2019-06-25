@@ -2488,7 +2488,7 @@ class Data
 
     function listitems2obj($ref_id, $ref_table, $list_id)
     {
-        $res=$this->utils->F_tostring($this->db->GetResults("select ' <a href=\"?act=details&what=listitems&id='||t.id||'\">'||t.name||'</a><span onclick=\"confirmation(''?csrf=$GLOBALS[csrf]&act=delete&table=listitem2obj&id='||d.id||'&listitem_id='||d.listitem_id||''')\" style=\"cursor: pointer; cursor: hand; \">[-]</span>' from listitems t, listitem2obj d where d.listitem_id=t.id and d.ref_id=$ref_id and ref_table='$ref_table'"));
+        $res=$this->utils->F_tostring($this->db->GetResults("select ' <a href=\"?act=details&what=listitems&id='||t.id||'\">'||t.name||'</a><span onclick=\"confirmation(''?csrf=$GLOBALS[csrf]&act=delete&table=listitem2obj&id='||d.id||'&listitem_id='||d.listitem_id||''')\" style=\"cursor: pointer; cursor: hand; \">[-]</span>' from listitems t, listitem2obj d where t.list_id=$list_id and d.listitem_id=t.id and d.ref_id=$ref_id and ref_table='$ref_table'"));
         $res.="<a href='?act=edit&what=listitem2obj&ref_table=$ref_table&ref_id=$ref_id&list_id=$list_id'>[+]</a>";
         return $res;
     }
