@@ -245,6 +245,16 @@ class Html
 
     }
 
+    function detalize($table, $id, $name='details' ,$chars = 0){
+        if ($chars>0) {
+            $chars=$chars*7;
+            $name=$this->utf8->utf8_cutByPixel($name, $chars, false);
+        }
+        $link="<a href='?act=details&what=$table&id=$id'>$name</a>";
+        return $link;
+
+    }
+
 
     function draw_progress_danger($val1 = 0, $val2 = 0, $thresh1 = 0, $thresh2 = 0)
     {

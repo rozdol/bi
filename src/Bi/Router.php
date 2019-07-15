@@ -194,7 +194,8 @@ class Router
     {
         global $access;
         $accessitemchk="view_$what";
-        if (($access[$accessitemchk])) {
+        $accessitemchk2="report_$what";
+        if (($access[$accessitemchk])||($access[$accessitemchk2])) {
             return $this->dispatch($what, __FUNCTION__, $accessitemchk);
         } else {
             return $this->data->noAccess($accessitemchk);
