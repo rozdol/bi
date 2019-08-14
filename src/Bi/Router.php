@@ -516,6 +516,18 @@ class Router
         }
         return true;
     }
+    public function time($text='Time')
+    {
+        if(($GLOBALS[offline_mode])||($GLOBALS[pdf_mode])){
+            $GLOBALS[offline_messages][]=strip_tags($html);
+        }else{
+
+            echo $text.': <b>'.date('d.m.Y H:i:s', time()).'</b><br>'."\n";
+            ob_flush();
+            flush();
+        }
+        return true;
+    }
 
     function pdf_draw_line($y, $thickness = 0.1)
     {
