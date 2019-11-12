@@ -489,7 +489,7 @@ class Dates
         $GLOBALS[settings][holidays]=str_ireplace(';',',',$GLOBALS[settings][holidays]);
         $extra_holidays_tmp=array_map('trim', explode(',',$GLOBALS[settings][holidays]));
         foreach ($extra_holidays_tmp as $day) {
-            if (strpos($day, $year) !== false)$extra_holidays[]=$day;
+            if (strpos($day, strval($year)) !== false)$extra_holidays[]=$day;
         }
 
         $date=$this->easter($year);

@@ -2565,10 +2565,10 @@ class Data
         return $rate;
     }
 
-    function show_cal($year)
+    function show_cal($year='')
     {
-        $year  = isset($_GET['y']) ? $_GET['y'] : $this->dates->F_thisyear();
-        $easter=$this->utils->easter($year);
+        if($year==''){$year  = isset($_GET['y']) ? $_GET['y'] : $this->dates->F_thisyear();}
+        $easter=$this->dates->easter($year);
         $out.="<!DOCTYPE html>
             <html>
             <head>
@@ -2592,9 +2592,9 @@ class Data
     }
     function show_cal_m($year, $month)
     {
-
-        include_once FW_DIR.'/classes/calendar/calendar.php';
-        $calendar = Calendar::factory($month, $year, array('week_start' => 1));
+        $class_file=FW_DIR.'/classes/calendar/calendar.php';
+        if(!file_exists()) include_once $class_file; else echo "ERR: no $class_file in ".FW_DIR;
+        $calendar = \Calendar::factory($month, $year, array('week_start' => 1));
 
 
         $calendar->standard('today')
@@ -2605,38 +2605,51 @@ class Data
         $start="01.".sprintf("%02s", $month).".$year";
         $end=$this->dates->F_dateadd_month($start, 1);
 
-        /*
-        $sql="select * from events where datefrom>='$start' and datefrom<='$end'";
-        if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
-        while ($row = pg_fetch_array($cur)) {
-            $event = $calendar->event()->condition('timestamp', strtotime($row[datefrom]))->title($row[name])->output($row[name]);
-            $calendar->attach($event);
+        if($GLOBALS[calendar][data][events]){
+            $sql="select * from events where datefrom>='$start' and datefrom<='$end'";
+            if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
+            while ($row = pg_fetch_array($cur)) {
+                $event = $calendar->event()->condition('timestamp', strtotime($row[datefrom]))->title($row[name])->output($row[name]);
+                $calendar->attach($event);
+            }
+
+            $sql="select * from events where dateto>='$start' and dateto<='$end'";
+            if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
+            while ($row = pg_fetch_array($cur)) {
+                $event = $calendar->event()->condition('timestamp', strtotime($row[dateto]))->title($row[name])->output($row[name]);
+                $calendar->attach($event);
+            }
         }
 
-        $sql="select * from events where dateto>='$start' and dateto<='$end'";
-        if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
-        while ($row = pg_fetch_array($cur)) {
-            $event = $calendar->event()->condition('timestamp', strtotime($row[dateto]))->title($row[name])->output($row[name]);
-            $calendar->attach($event);
+        if($GLOBALS[calendar][data][transactions]){
+            $sql="select * from transactions where valuedate>='$start' and valuedate<='$end'";
+            if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
+            while ($row = pg_fetch_array($cur)) {
+                $event = $calendar->event()->condition('timestamp', strtotime($row[valuedate]))->title($row[samount])->output("<a href='?act=details&what=transactions&id=$row[id]'>$ $row[amount_usd]</a>");
+                $calendar->attach($event);
+            }
+        }
+
+        if($GLOBALS[calendar][data][invoices]){
+            $sql="select * from invoices where type_id=2601 and date>='$start' and date<='$end'";
+            if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
+            while ($row = pg_fetch_array($cur)) {
+                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($row[amount_usd])->output("<a href='?act=details&what=invoices&id=$row[id]'>$ $row[amount_usd]</a>");
+                $calendar->attach($event);
+            }
         }
 
 
-        $sql="select * from transactions where valuedate>='$start' and valuedate<='$end'";
-        if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
-        while ($row = pg_fetch_array($cur)) {
-            $event = $calendar->event()->condition('timestamp', strtotime($row[valuedate]))->title($row[samount])->output($row[samount]);
-            $calendar->attach($event);
+
+        if($GLOBALS[calendar][data][schedules]){
+            $sql="select * from schedules where nextdate>='$start' and nextdate<='$end'";
+            if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
+            while ($row = pg_fetch_array($cur)) {
+                $event = $calendar->event()->condition('timestamp', strtotime($row[nextdate]))->title($row[id])->output("<a href='?act=edit&what=schedules&id=$row[id]'>$row[descr]</a>");
+                $calendar->attach($event);
+            }
         }
 
-        */
-        $sql="select * from schedules where nextdate>='$start' and nextdate<='$end'";
-        if (!($cur = pg_query($sql))) {
-            $this->html->SQL_error($sql);
-        }
-        while ($row = pg_fetch_array($cur)) {
-            $event = $calendar->event()->condition('timestamp', strtotime($row[nextdate]))->title($row[id])->output("<a href='?act=edit&what=schedules&id=$row[id]'>$row[descr]</a>");
-            $calendar->attach($event);
-        }
 
         $out.="
                 <div style='width:800px; padding:10px; margin:10px auto'>
@@ -2915,10 +2928,10 @@ class Data
         $date=$this->dates->F_date($date, 1);
 
         if (($type==1301)||($type==1302)||($type==1305)||($type==1306)||($type==1307)||($type==1382)) {
-            $sql="select text1 from events where refid='$refid' and reference='$reference' and type='$type' and datefrom<='$date' and complete='1' order by datefrom desc limit 1";
+            $sql="SELECT text1 from events where refid='$refid' and reference='$reference' and type='$type' and datefrom<='$date' and complete='1' order by datefrom desc limit 1; -- from DB_getcurrentevent($type, $date, $reference, $refid)";
         }
         if (($type==1303)||($type==1303)) {
-            $sql="select sum(amount) from events where refid='$refid' and reference='$reference' and type='$type' and datefrom<='$date' and complete='1'";
+            $sql="SELECT sum(amount) from events where refid='$refid' and reference='$reference' and type='$type' and datefrom<='$date' and complete='1'";
         }
 
         $res=$this->db->GetVal($sql);
@@ -2930,7 +2943,7 @@ class Data
         $date=$this->dates->F_date($date, 1);
 
         if (($type==1301)||($type==1302)||($type==1305)||($type==1306)||($type==1307)||($type==1382)) {
-            $sql="select text1,partnerid from events where refid='$refid' and reference='$reference' and type='$type' and datefrom<='$date' and complete='1' order by datefrom desc";
+            $sql="SELECT text1,partnerid from events where refid='$refid' and reference='$reference' and type='$type' and datefrom<='$date' and complete='1' order by datefrom desc";
             //$res=$this->db->GetResults($sql);
             $res = $this->utils->F_toarray_associative($this->db->GetResults($sql));
             //echo $this->html->pre_display($res); exit;
