@@ -429,19 +429,19 @@ class Router
         }
         $procedure_file=APP_DIR.DS.'actions'.DS.$function.DS.strtolower(str_replace("\\", "/", $what)). '.php';
         if (file_exists($procedure_file)) {
-            require $procedure_file;
+            require_once $procedure_file;
         } else {
             $procedure_file=FW_DIR.DS.'actions'.DS.$function.DS.strtolower(str_replace("\\", "/", $what)). '.php';
             if (file_exists($procedure_file)) {
-                require $procedure_file;
+                require_once $procedure_file;
             } else {
                 $procedure_file=APP_DIR.DS.'actions'.DS.$function.DS.'_default.php';
                 if (file_exists($procedure_file)) {
-                    require $procedure_file;
+                    require_once $procedure_file;
                 } else {
                     $procedure_file=FW_DIR.DS.'actions'.DS.$function.DS.'_default.php';
                     if (file_exists($procedure_file)) {
-                        require $procedure_file;
+                        require_once $procedure_file;
                     } else {
                         //$body.=$this->html->pre_display('Missing the '.$function.' default file', 'IS error', 'red');
                         $body.=$this->html->message('Missing the '.$function.' default file', 'BI error', 'alert-error');
@@ -473,8 +473,14 @@ class Router
 
             $this->db->GetVal("insert into tableaccess (tablename,userid,date,time,refid,ip,descr)values('$what',$uid,now(),now(),$id,'$ip','F:$function')");
         }
-
-        return $body;
+        if($act=='api'){
+            if($GLOBALS[offline_messages]){
+                $JSONData['offline_messages']=$GLOBALS[offline_messages];
+            }
+            return json_encode($JSONData);
+        }else{
+            return $body;
+        }
     }
 
 
