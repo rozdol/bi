@@ -3141,7 +3141,28 @@ class Data
             }
         }
     }
+    function chk_updates()
+    {
+        $message='';
+        $update_version=$this->readconfig('update_version')*1+1;
+        $update_version_fm=sprintf('%04d', $update_version);
+        $update_file=APP_DIR.DS.'updates'.DS."update_".$update_version_fm. '.php';
+        if (file_exists($update_file)) {
+            $link="?act=tools&what=update";
+            $btn=$this->html->link_button("Update V.$update_version", $link, 'btn-micro btn-info', $warn = 'Are you sure you want to update the System?');
+        }
 
+
+        $param='daily';
+        $chkdate=$this->readconfig('daily');
+        $days=$this->dates->F_datediff($chkdate, $GLOBALS[today]);
+        $message='';
+        if ($days>=0) {
+            $link="?act=tools&what=daily";
+            $btn2=$this->html->link_button("Daily routine $chkdate", $link, 'btn-micro btn-info', $warn = 'Are you sure you want to run the Daily routine?');
+        }
+        return "$btn$btn2";
+    }
 
     function dailyroutine()
     {
