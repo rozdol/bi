@@ -883,6 +883,13 @@ class Html
             <link href="'.ASSETS_URI.'/assets/css/glyphicons.css" rel="stylesheet">
             <link href="'.ASSETS_URI.'/assets/css/FCcheckbox.css" rel="stylesheet">
             ';
+            $bootstrap_ej='
+           <link href="'.ASSETS_URI.'assets/EJ/Content/ejthemes/ej.widgets.core.min.css" rel="stylesheet" />
+           <link href="'.ASSETS_URI.'assets/EJ/Content/ejthemes/bootstrap-theme/ej.web.all.min.css" rel="stylesheet" />
+           <link href="'.ASSETS_URI.'assets/EJ/Scripts/CodeMirror/codemirror.min.css" rel="stylesheet" />
+           <link href="'.ASSETS_URI.'assets/EJ/Content/default.css" rel="stylesheet"/>
+
+            ';
             $bootstrap_js='
             <script src="'.ASSETS_URI.'/assets/js/bootstrap-transition.js"></script>
             <script src="'.ASSETS_URI.'/assets/js/bootstrap-alert.js"></script>
@@ -897,6 +904,19 @@ class Html
             <script src="'.ASSETS_URI.'/assets/js/bootstrap-carousel.js"></script>
             <script src="'.ASSETS_URI.'/assets/js/bootstrap-typeahead.js"></script>
             <script src="'.ASSETS_URI.'/assets/js/bootstrap-datepicker.js"></script>
+            ';
+
+            $bootstrap_js_ej='
+            <script src="'.ASSETS_URI.'assets/EJ/Scripts/jquery-3.4.1.min.js" type="text/javascript"> </script>
+            <script src="'.ASSETS_URI.'assets/EJ/Scripts/default.js" type="text/javascript"></script>
+            <script src="'.ASSETS_URI.'assets/EJ/Scripts/jsrender.min.js" type="text/javascript"></script>
+            <script src="'.ASSETS_URI.'assets/EJ/Scripts/ej.web.all.min.js" type="text/javascript"></script>
+            <script src="'.ASSETS_URI.'assets/EJ/Scripts/CodeMirror/codemirror.js" type="text/javascript"></script>
+            <script src="'.ASSETS_URI.'assets/EJ/Scripts/CodeMirror/javascript.js" type="text/javascript"></script>
+            <script src="'.ASSETS_URI.'assets/EJ/Scripts/CodeMirror/css.js" type="text/javascript"></script>
+            <script src="'.ASSETS_URI.'assets/EJ/Scripts/CodeMirror/xml.js" type="text/javascript"></script>
+            <script src="'.ASSETS_URI.'assets/EJ/Scripts/CodeMirror/htmlmixed.js" type="text/javascript"></script>
+            <script src="'.ASSETS_URI.'assets/EJ/Scripts/CodeMirror/clike.js" type="text/javascript"></script>
             ';
         } else {
             $bootstrap ='<link href="'.ASSETS_URI.'/assets/bootstrap/'.$bs.'/css/bootstrap.css" rel="stylesheet">';
