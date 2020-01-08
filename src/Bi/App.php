@@ -34,7 +34,8 @@ class App
         $res=$this->db->GetVar("SET DateStyle = 'German';");
 
 
-        date_default_timezone_set('Etc/GMT'); //Europe/Athens Etc/GMT
+        date_default_timezone_set('Etc/GMT'); //Europe/Athens Etc/GMT // UTC +00:00
+        $GLOBALS[timezone]=date_default_timezone_get();
         ini_set('memory_limit', '-1');
         //$this->db->DebugOn();
 
