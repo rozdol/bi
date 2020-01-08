@@ -408,6 +408,7 @@ class Db
         }
 
         $this->SetErrCode();
+        //$this->log("DB_ERROR_Query:".$this->GetErr());
         if (!$this->show_errors) {
             $this->WriteError($this->GetErr());
         }
@@ -555,6 +556,7 @@ class Db
             $res = $this->result[0][0];
             return $res;
         }
+        $this->log("DB_ERROR_GetVal:$qry");
         return "No query given";
     }
 
@@ -806,6 +808,7 @@ class Db
         $sql="INSERT INTO $table $vars;";
         $err=$this->GetVal($sql);
         if ($err!='') {
+            $this->log("DB_ERROR_INS:$err");
             echo $err;
             exit;
         }
@@ -820,6 +823,7 @@ class Db
         $sql="update $table set $vars where id=$id;";
         $err=$this->GetVal($sql);
         if ($err!='') {
+            $this->log("DB_ERROR_UPD:$err");
             echo $err;
             exit;
         }
@@ -830,10 +834,28 @@ class Db
         $sql="delete from $table where id=$id;";
         $err=$this->GetVal($sql);
         if ($err!='') {
+            $this->log("DB_ERROR_DEL:$err");
             echo $err;
             exit;
         }
         return $id;
+    }
+
+    public function log($data = '')
+    {
+        $log_folder = $GLOBALS[data_dir_tmp];
+        if (!file_exists($log_folder))
+        {
+            mkdir($log_folder, 0777, true);
+        }
+        $log_filename=$log_folder.DS.'logs'.DS.'log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
+        $log  = date("d.m.y G:i").' - '.$_SERVER['REMOTE_ADDR'].' - '.$GLOBALS[username].' - '.$data.PHP_EOL;
+        if(file_put_contents($log_filename, $log, FILE_APPEND)){
+            return true;
+        }else{
+            return "ERROR:Can not write to $log_filename";
+        }
+
     }
 
 
