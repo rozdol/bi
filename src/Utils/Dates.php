@@ -1070,5 +1070,46 @@ class Dates
         return $result;
     }
 
+    public function timezone_PHP($tz){
+        $array=[
+            'UTC -11:00' => 'Pacific/Midway',
+            'UTC -10:00' => 'US/Hawaii',
+            'UTC -09:00' => 'US/Alaska',
+            'UTC -08:00' => 'US/Pacific',
+            'UTC -07:00' => 'US/Arizona',
+            'UTC -06:00' => 'US/Central',
+            'UTC -05:00' => 'US/Eastern',
+            'UTC -04:30' => 'America/Caracas',
+            'UTC -04:00' => 'Canada/Atlantic',
+            'UTC -03:30' => 'Canada/Newfoundland',
+            'UTC -03:00' => 'Greenland',
+            'UTC -02:00' => 'Atlantic/Stanley',
+            'UTC -01:00' => 'Atlantic/Azores',
+            'UTC' => 'Europe/London',
+            'UTC 00:00' =>  'Europe/London',
+            'UTC -00:00' =>  'Europe/London',
+            'UTC +00:00' =>  'Europe/London',
+            'UTC +01:00' => 'Europe/Berlin',
+            'UTC +02:00' => 'Europe/Athens',
+            'UTC +03:00' => 'Europe/Moscow',
+            'UTC +03:30' => 'Asia/Tehran',
+            'UTC +04:00' => 'Europe/Volgograd',
+            'UTC +04:30' => 'Asia/Kabul',
+            'UTC +05:00' => 'Asia/Tashkent',
+            'UTC +05:30' => 'Asia/Kolkata',
+            'UTC +05:45' => 'Asia/Kathmandu',
+            'UTC +06:00' => 'Asia/Yekaterinburg',
+            'UTC +07:00' => 'Asia/Novosibirsk',
+            'UTC +08:00' => 'Asia/Krasnoyarsk',
+            'UTC +09:00' => 'Asia/Tokyo',
+            'UTC +09:30' => 'Australia/Darwin',
+            'UTC +10:00' => 'Asia/Yakutsk',
+            'UTC +11:00' => 'Asia/Vladivostok',
+            'UTC +12:00' => 'Asia/Magadan'
+        ];
+        $res=$array[$tz];
+        return $res;
+    }
+
 
 }
