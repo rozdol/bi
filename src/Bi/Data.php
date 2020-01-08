@@ -3143,6 +3143,7 @@ class Data
     }
     function chk_updates()
     {
+        if(!$GLOBALS[main_admin])return;
         $message='';
         $update_version=$this->readconfig('update_version')*1+1;
         $update_version_fm=sprintf('%04d', $update_version);
@@ -3354,6 +3355,7 @@ class Data
     function chk_birthday()
     {
         global $uid, $today;
+        if(!$this->table_exists('employees')) return;
         $ubday=$this->db->GetVal("select birhtdate from employees where userid=$uid order by id desc limit 1");
         $ub=substr($ubday, 0, 5);
         $td=substr($today, 0, 5);
