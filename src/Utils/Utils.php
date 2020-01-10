@@ -328,12 +328,12 @@ class Utils
 
     public function log($data = '')
     {
-        $log_folder = $GLOBALS[data_dir_tmp];
+        $log_folder = LOGS_DIR;
         if (!file_exists($log_folder))
         {
             mkdir($log_folder, 0777, true);
         }
-        $log_filename=$log_folder.DS.'logs'.DS.'log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
+        $log_filename=$log_folder.'log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
         $log  = date("d.m.y G:i").' - '.$_SERVER['REMOTE_ADDR'].' - '.$GLOBALS[username].' - '.$data.PHP_EOL;
         if(file_put_contents($log_filename, $log, FILE_APPEND)){
             return true;
@@ -344,12 +344,12 @@ class Utils
     }
     public function log_reset()
     {
-        $log_folder = $GLOBALS[data_dir_tmp];
+        $log_folder = LOGS_DIR;
         if (!file_exists($log_folder))
         {
             mkdir($log_folder, 0777, true);
         }
-        $log_filename=$log_folder.DS.'logs'.DS.'log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
+        $log_filename=$log_folder.'log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
         if(unlink($log_filename)){
             return true;
         }else{
