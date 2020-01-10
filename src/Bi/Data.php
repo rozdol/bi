@@ -146,6 +146,7 @@ class Data
                 $GLOBALS[my_owner_id]=$result[owner_id];
                 $GLOBALS[user]=$result[surname].' '.$result[firstname];
                 $GLOBALS[user_email]=$result[email];
+                $GLOBALS[username]=$username;
                 $cart = $_SESSION['cart'];
 
                 //if ($token!=$result[avatar]) {$logged = false;}

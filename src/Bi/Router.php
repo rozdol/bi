@@ -429,19 +429,19 @@ class Router
         }
         $procedure_file=APP_DIR.DS.'actions'.DS.$function.DS.strtolower(str_replace("\\", "/", $what)). '.php';
         if (file_exists($procedure_file)) {
-            require_once $procedure_file;
+            require $procedure_file;
         } else {
             $procedure_file=FW_DIR.DS.'actions'.DS.$function.DS.strtolower(str_replace("\\", "/", $what)). '.php';
             if (file_exists($procedure_file)) {
-                require_once $procedure_file;
+                require $procedure_file;
             } else {
                 $procedure_file=APP_DIR.DS.'actions'.DS.$function.DS.'_default.php';
                 if (file_exists($procedure_file)) {
-                    require_once $procedure_file;
+                    require $procedure_file;
                 } else {
                     $procedure_file=FW_DIR.DS.'actions'.DS.$function.DS.'_default.php';
                     if (file_exists($procedure_file)) {
-                        require_once $procedure_file;
+                        require $procedure_file;
                     } else {
                         //$body.=$this->html->pre_display('Missing the '.$function.' default file', 'IS error', 'red');
                         $body.=$this->html->message('Missing the '.$function.' default file', 'BI error', 'alert-error');
