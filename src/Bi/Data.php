@@ -3144,7 +3144,7 @@ class Data
     }
     function chk_updates()
     {
-        if(!$GLOBALS[main_admin])return;
+        if(!$GLOBALS[access][main_admin])return;
         $message='';
         $update_version=$this->readconfig('update_version')*1+1;
         $update_version_fm=sprintf('%04d', $update_version);
