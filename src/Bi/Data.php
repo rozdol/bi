@@ -1656,7 +1656,7 @@ class Data
         return $name;
         //$out.= "N:$name<br>"; exit;
     }
-    function listitems($field_name='', $value='', $alias='', $class='', $all = 'none')
+    function listitems($field_name='', $value='', $alias='', $class='', $all = 'none', $order='name')
     {
 
         $listid=$this->db->GetVal("select id from lists where lower(alias)=lower('$alias') order by id asc limit 1")*1;
@@ -1668,7 +1668,7 @@ class Data
         } else {
             $def=$this->db->GetVal("select id from listitems where list_id=$listid and default_value='1' order by name limit 1");
         }
-        $sql="SELECT id, name FROM listitems where list_id=$listid ORDER by name";
+        $sql="SELECT id, name FROM listitems where list_id=$listid ORDER by $order";
         $txt=$this->html->htlist($field_name, $sql, $value, $all, '', $def, $class);
         return $txt;
     }
