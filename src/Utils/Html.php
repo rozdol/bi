@@ -747,7 +747,7 @@ class Html
     }
     function error($msg = '')
     {
-
+        $this->utils->log("ERROR: $msg");
         if($GLOBALS[offline_mode]){
             $this->message($msg, 'ERROR');
         }else{
