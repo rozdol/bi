@@ -787,24 +787,9 @@ class Utils
         }
     }
 
-    public function dl_file($file, $name, $exit = true)
-    {
-        //echo "<html>Test: $file, $name</html>"; exit;
-        //First, see if the file exists
-
-        if (!is_file($file)) {
-            die("404 File <b>$file</b> not found! <a href='?act=tools&what=fix_file&name=file.pdf&id=0'>Rename to file?</a> ?act=tools&what=fix_file&name=file.pdf&id=");
-        }
-
-        //Gather relevent info about file
-        $len = filesize($file);
+    public function content_type($file){
         $filename = basename($file);
-        if ($name=='') {
-            $name=$filename;
-        }
         $file_extension = strtolower(substr(strrchr($filename, "."), 1));
-
-        //This will set the Content-Type to the appropriate setting for the file
         switch ($file_extension) {
             case "pdf":
                 $ctype="application/pdf";
@@ -881,6 +866,29 @@ class Utils
             default:
                 $ctype="application/force-download";
         }
+
+        return $ctype;
+    }
+
+    public function dl_file($file, $name, $exit = true)
+    {
+        //echo "<html>Test: $file, $name</html>"; exit;
+        //First, see if the file exists
+
+        if (!is_file($file)) {
+            die("404 File <b>$file</b> not found! <a href='?act=tools&what=fix_file&name=file.pdf&id=0'>Rename to file?</a> ?act=tools&what=fix_file&name=file.pdf&id=");
+        }
+
+        //Gather relevent info about file
+        $len = filesize($file);
+        $filename = basename($file);
+        if ($name=='') {
+            $name=$filename;
+        }
+        $file_extension = strtolower(substr(strrchr($filename, "."), 1));
+
+        //This will set the Content-Type to the appropriate setting for the file
+        $ctype=$this->content_type($file);
         if(strlen($file_extension)>10)$ctype="text/plain";
         //echo "$file, $name"; exit;
         //Begin writing headers
