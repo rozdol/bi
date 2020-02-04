@@ -30,6 +30,26 @@ class Db
                     die("No $dbname or any default database at host://$host:$port"."<br>host=$host port=$port dbname=$dbname user=$login password=$pass");
                 }
             }
+
+
+            $dbsfile=$GLOBALS['settings']['dbsfile'];
+            $use_dbs=$GLOBALS['settings']['use_dbs'];
+            if($use_dbs){
+                $allow=0;
+                if (!file_exists($dbsfile) || !is_readable($dbsfile)) {
+                    die("dbsfile missing or unreadable");
+                }
+                if (($handle = fopen($dbsfile, 'r')) !== false) {
+                    while (($row = fgetcsv($handle, 1000, ';')) !== false) {
+                        //echo "R:$row[0]<br>";
+                        if($dbname==trim($row[0])) $allow++;
+                    }
+                }
+                if($allow==0){
+                    die("DB $dbname not allowed");
+                }
+
+            }
             echo "Setting up database $dbname ...<br>";
             $sql="CREATE DATABASE $dbname
   WITH OWNER = $login

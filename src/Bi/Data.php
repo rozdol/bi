@@ -429,46 +429,82 @@ class Data
     }
     function chk_ip($redirect)
     {
-
+        $ip=$_SERVER['REMOTE_ADDR'];
+        $allow=0; //Should be 0!
+        $block=0; //Should be 0!
+        $realip=$ip;
         $wipfile=$GLOBALS['settings']['wipfile'];//DATA_DIR.'/wiplist.txt';
         $use_wip=$GLOBALS['settings']['use_wip'];
-        $file_c = file_get_contents($wipfile);
-        //$listip.=$file_c;
-        $allowedip = explode("\n", trim($file_c));
-        $ip=$_SERVER['REMOTE_ADDR'];
-        $realip=$ip;
-        //$ip="81.4.14.155";
-        $allow=0; //Should be 0!
-        //if($use_wip!=1)$allow++;
-        //$listip.="F:$wipfile, USE:$use_wip/$allow<br>";
-        $listip.= $ip.'<br>';
 
+        $bipfile=$GLOBALS['settings']['bipfile'];
+        $use_bip=$GLOBALS['settings']['use_bip'];
 
-        if (($allowedip)&&($allow==0)) {
-            if ($use_wip) {
-                foreach ($allowedip as $good_ip_pair) {
-                    $good_ip_pairarr = explode(";", trim($good_ip_pair));
-                    $good_ip = $good_ip_pairarr[0];
-                    $listip.="IP:$good_ip,<br>";
-                    //if(eregi("^$good_ip",$ip)){
-                    if (preg_match("/^$good_ip/i", $ip)) {
-                        $allow++;
-                        $listip.="ALLOWED IP:$good_ip,<br>";
-                    }
+        if($bipfile){
+            if((!file_exists($bipfile))) {
+                $this->html->notFound("bipfile"); exit;
+            }
+            $ips=$this->utils->csvfile_to_array($bipfile,';');
+            foreach ($ips as $row) {
+                //echo "$row[ip] => $value<br>";
+
+                if ((!$this->utils->contains('#', $row[ip]))&&($row[ip]!='')) {
+                    $blocked_ips[]=$row[ip];
                 }
-            } else {
-                $allow++;
-                $listip.="BINGO<br>";
+            }
+
+            // if(count($blocked_ips)==0){
+            //     $this->html->notFound("bipfile empty"); exit;
+            // }
+            foreach ($blocked_ips as $bad_ip) {
+                //echo "$good_ip<br>";
+                if (preg_match("/^$bad_ip/i", $ip)) {
+                    $block++;
+                    //echo "ALLOWED IP:$good_ip,<br>";
+                }
+            }
+            if($block>0){
+                //$this->html->notFound("B:$realip"); exit;
+                header("Location: $redirect");
+                exit();
             }
         }
-        $listip.="ALLOW:$allow<br>";
-        //echo $listip;
-            //$this->utils->post_message($listip);
-        $listip='';
-        if ($allow==0) {
-            echo "$ip";
-            //header("Location: $redirect");
-            exit();
+
+        if($use_wip){
+            if((!file_exists($wipfile))) {
+                return true;
+                //$this->html->notFound("wipfile");
+                //exit;
+            }
+
+            $ips=$this->utils->csvfile_to_array($wipfile,';');
+            //echo $this->html->pre_display($ips,"ips");
+            foreach ($ips as $row) {
+                //echo "$row[ip] => $value<br>";
+                if ((!$this->utils->contains('#', $row[ip]))&&($row[ip]!='')) {
+                    $allowed_ips[]=$row[ip];
+                }
+            }
+            //echo $this->html->pre_display($allowed_ips,"allowed_ips");
+            if(count($allowed_ips)==0){
+                $this->html->notFound("wipfile empty"); exit;
+            }
+            foreach ($allowed_ips as $good_ip) {
+                //echo "$good_ip<br>";
+                if (preg_match("/^$good_ip/i", $ip)) {
+                    $allow++;
+                    //echo "ALLOWED IP:$good_ip,<br>";
+                }
+            }
+            if ($allow==0) {
+                $this->html->notFound("$realip"); exit;
+                //header("Location: $redirect");
+                exit();
+            }else{
+                return true;
+            }
+
+        }else{
+            return true;
         }
     }
     function getUserVals($uid)
@@ -488,7 +524,7 @@ class Data
         $ip=$this->utils->getRealIpAddr();
         //Default
         $GLOBALS[max_rows]=2000;
-        $GLOBALS[no_io_redirect]='https://www.google.com/';
+        if($GLOBALS[no_io_redirect]=='')$GLOBALS[no_io_redirect]='https://www.google.com/';
         $GLOBALS[message_time]=3;
 
         //$GLOBALS[reflink]=$_COOKIE["reflink"];
@@ -518,7 +554,7 @@ class Data
         }
 
         $this->chk_ip($GLOBALS[no_io_redirect]);
-        if ((!$GLOBALS['active'])&&(!($ip=="192.168.0.104"))) {
+        if ((!$GLOBALS['active'])&&(!($ip==$GLOBALS['settings']['admin_ip']))) {
             echo $this->html->refreshpage('', 60, "<div class='alert alert-error'>$GLOBALS[shutdowntext]</div>");
             exit;
         }

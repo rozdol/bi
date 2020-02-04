@@ -1873,6 +1873,7 @@ class Html
     }
     function notFound($message = '')
     {
+        header("HTTP/1.0 404 Not Found");
         echo '<h2>404 Not found</h2><p>'.$message.'</p>';
     }
 
