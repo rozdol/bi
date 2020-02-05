@@ -2216,10 +2216,10 @@ class Html
   <title>Multiple Sheets</title>
 
   <!-- Normalize or reset CSS with your favorite library -->
-  <link rel="stylesheet" href="/assets/css/normalize.css">
+  <link rel="stylesheet" href="'.ASSETS_URI.'/assets/css/normalize.css">
 
   <!-- Load paper.css for happy printing -->
-  <link rel="stylesheet" href="/assets/css/paper.css">
+  <link rel="stylesheet" href="'.ASSETS_URI.'/assets/css/paper.css">
 
   <!-- Set page size here: A5, A4 or A3 -->
   <!-- Set also "landscape" if you need -->
@@ -2795,7 +2795,7 @@ class Html
             </div>
             </div><!-- jQuery -->
 
-            <script src="assets/js/dropzone.js"></script>
+            <script src="'.ASSETS_URI.'/assets/js/dropzone.js"></script>
 
             <script language="JavaScript">
             $(document).ready(function () {
@@ -2926,8 +2926,8 @@ class Html
 
             </style>
 
-            <script type="text/javascript" src="assets/js/llqrcode.js"></script>
-            <script type="text/javascript" src="assets/js/webqr.js"></script>
+            <script type="text/javascript" src="'.ASSETS_URI.'/assets/js/llqrcode.js"></script>
+            <script type="text/javascript" src="'.ASSETS_URI.'/assets/js/webqr.js"></script>
 
 
         <div id="main">
@@ -2984,7 +2984,7 @@ class Html
                 <div id="my_camera"></div>
 
                 <!-- First, include the Webcam.js JavaScript Library -->
-                <script type="text/javascript" src="assets/js/webcam.js"></script>
+                <script type="text/javascript" src="'.ASSETS_URI.'/assets/js/webcam.js"></script>
 
                 <!-- Configure a few settings and attach camera -->
                 <script language="JavaScript">
@@ -3001,7 +3001,7 @@ class Html
                         image_format: \'jpeg\',
                         '.$quality_js.'
 
-                        swfURL:\'assets/swf/webcam.swf\',
+                        swfURL:\''.ASSETS_URI.'/assets/swf/webcam.swf\',
 
                         // flip horizontal (mirror mode)
                         '.$flip_js.'
