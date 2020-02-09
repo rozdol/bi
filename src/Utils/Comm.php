@@ -315,10 +315,15 @@ class Comm
         if (!$mail->send()) {
             echo $this->html->pre_display($mail, "result");
             echo "Mailer Error: " . $mail->ErrorInfo;
+            unset($mail);
+            return "Mailer Error: " . $mail->ErrorInfo;
         } else {
             echo "Message sent  $to!";
+            unset($mail);
+            return "Message sent  $to";
+
         }
-        unset($mail);
+
     }
 
     public function send_announcement($to = 'email@example.com', $from = 'it@example.com', $subject = 'Announcement', $description = '', $body = '')
