@@ -4,6 +4,8 @@ namespace Rozdol\Utils;
 use Rozdol\Html\Html;
 use Rozdol\Utils\Utils;
 use Rozdol\Dates\Dates;
+use Aws\Ses\SesClient;
+use Aws\Exception\AwsException;
 
 //use \Sendgrid\Sendgrid;
 
@@ -26,6 +28,52 @@ class Comm
         $this->utils = Utils::getInstance();
     }
 
+    public function send_mail_aws($sender_email = '', $recipient_emails, $subject = 'email', $html_body = '', $plaintext_body='',$attachments = []){
+
+
+        $SesClient = new SesClient([
+            'profile' => 'default',
+            'version' => '2010-12-01',
+            'region'  => getenv('AWS_REGION')
+        ]);
+        $char_set = 'UTF-8';
+
+        try {
+            $result = $SesClient->sendEmail([
+                'Destination' => [
+                    'ToAddresses' => $recipient_emails,
+                ],
+                'ReplyToAddresses' => [$sender_email],
+                'Source' => $sender_email,
+                'Message' => [
+                  'Body' => [
+                      'Html' => [
+                          'Charset' => $char_set,
+                          'Data' => $html_body,
+                      ],
+                      'Text' => [
+                          'Charset' => $char_set,
+                          'Data' => $plaintext_body,
+                      ],
+                  ],
+                  'Subject' => [
+                      'Charset' => $char_set,
+                      'Data' => $subject,
+                  ],
+                ],
+                // If you aren't using a configuration set, comment or delete the
+                // following line
+                //'ConfigurationSetName' => $configuration_set,
+            ]);
+            $messageId = $result['MessageId'];
+            return $messageId;
+        } catch (AwsException $e) {
+            return $e->getAwsErrorMessage();
+            // output error message if fails
+            //echo $this->html->message($e->getMessage());
+            //$this->html->error("The email was not sent. Error message: ".$e->getAwsErrorMessage());
+        }
+    }
     public function sendgrid_file($from = 'name:name@example.com', $to = 'name:name@example.com', $subject = 'email', $body = '', $attachments = [])
     {
         $bits_from=explode(":", $from);
