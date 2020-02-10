@@ -1159,7 +1159,7 @@ class Html
     {
         $info="ip:".$GLOBALS[ip]." | db:".$GLOBALS['DB']['DB_NAME']." | dm:".$GLOBALS['DB']['DB_DOMAIN']." | app:".APP_NAME;
 
-        if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&($GLOBALS['settings']['use_mfa'])) {
+        if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&(getenv('MFA_AUTH'))) {
             $content['html'].='<label> </label>
             <div class="input-prepend">
                 <span class="add-on"><i class="icon-time"></i></span>
