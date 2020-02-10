@@ -352,13 +352,13 @@ class Data
                 $oneCode=$this->html->readRQ('otp');
                 $checkResult = $ga->verifyCode($secret, $oneCode, 0);    // 2 = 2*30sec clock tolerance
                 if ($checkResult) {
-                    //$this->comm->sms2admin("IS:Loged in $username with OTP");
-                    //$this->comm->mail2admin("IS OTP Login", "IS:Loged in $username with OTP. IP: ".$_SERVER['REMOTE_ADDR']);
+                    $this->comm->sms2admin("IS:Loged in $username with OTP");
+                    $this->comm->mail2admin("IS OTP Login", "IS:Loged in $username with OTP. IP: ".$_SERVER['REMOTE_ADDR']);
                     return $this->grand_access($user[id], $reflink);
                 } else {
-                    //$this->comm->sms2admin("IS:Failded $username on OTP");
-                    //$this->comm->mail2admin("IS OTP Login Faildes", "IS:Loged Failed in $username with OTP. IP: ".$_SERVER['REMOTE_ADDR']);
-                    //$this->chk_fails("$username on OTP");
+                    $this->comm->sms2admin("IS:Failded $username on OTP");
+                    $this->comm->mail2admin("IS OTP Login Faildes", "IS:Loged Failed in $username with OTP. IP: ".$_SERVER['REMOTE_ADDR']);
+                    $this->chk_fails("$username on OTP");
                     $uid=0;
                     return $this->html->refreshpage('', 3, "<div class='alert alert-error'>No access<br>OTP failed.</div>");
                 }
