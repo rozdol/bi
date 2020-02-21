@@ -56,7 +56,7 @@ class Data
         */
         if ($this->table_exists('workgroup_pids')) {
             $user_workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
-            if(($_ENV['AUTO_DOMAIN'])&&($user_workgroup_id==3)){
+            if((getenv('AUTO_DOMAIN'))&&($user_workgroup_id==3)){
                 $sql="SELECT id from workgroups where lower(name)=lower('".$GLOBALS[DB][DB_DOMAIN]."');";
                 //$this->html->error($sql);
                 $workgroup_id=$this->db->getval($sql)*1;
@@ -1802,7 +1802,7 @@ class Data
 
             if($GLOBALS[workgroup][id]>0)$workgroup_name="@".strtolower($GLOBALS[workgroup][name]).":".$GLOBALS[is_owner_id];
             $logininfo='<i class="icon-user icon-white"></i> <a href="?act=report&what=myprofile" ><span style="color:#fff;">'.$username.$workgroup_name.'</span></a>'.$docs.$reqs.$alrts.$rate;
-            if($_ENV[BRAND_NAME]!='')$logininfo=$_ENV[BRAND_NAME].' | '.$logininfo;
+            if(getenv('BRAND_NAME')!='')$logininfo=getenv('BRAND_NAME').' | '.$logininfo;
         } else {
             $logoutbtn="";
             $logininfo='';
