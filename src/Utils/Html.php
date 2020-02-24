@@ -932,7 +932,7 @@ class Html
         if ($title) {
             $content['header']['title']=$title;
         } else {
-            $content['header']['title']="$owner - $what $act";
+            $content['header']['title']=DB_NAME." - $what $act";
         }
         if ($css) {
             foreach ($css as $name => $val) {
