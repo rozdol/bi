@@ -840,7 +840,7 @@ class Db
     public function update_db($table = '', $id = 0, $vals = [])
     {
         $vars=$this->array_sql_upd($vals);
-        $sql="update $table set $vars where id=$id;";
+        $sql="update $table set $vars where id='$id';";
         $err=$this->GetVal($sql);
         if ($err!='') {
             $this->log("DB_ERROR_UPD:$err");
@@ -851,7 +851,7 @@ class Db
     }
     public function delete_db($table, $id)
     {
-        $sql="delete from $table where id=$id;";
+        $sql="delete from $table where id='$id';";
         $err=$this->GetVal($sql);
         if ($err!='') {
             $this->log("DB_ERROR_DEL:$err");
