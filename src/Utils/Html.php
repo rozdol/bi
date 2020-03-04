@@ -2276,6 +2276,17 @@ class Html
         return $out;
     }
 
+    function link_label($title = '', $link = '', $class = '', $warn = '')
+    {
+        //$out="<a href='$link'><i class='btn btn-mini $class'>$title</i></a>";
+        if ($warn=='') {
+            $out="<span onclick=\"location.href = '$link';\" style=\"cursor: pointer; cursor: hand; \" class='label label-$class'>$title</span>";
+        } else {
+            $out="<span onclick=\"confirmation('$link','$warn');\" style=\"cursor: pointer; cursor: hand; \" class='label label-$class'>$title</span>";
+        }
+        return $out;
+    }
+
     function confirm_with_comment($title = '', $link = '', $class = '', $warn = '')
     {
             $out="<span class='btn btn-mini btn-$class' onclick=\"leavecomment('$link','$warn');\" style=\"cursor: pointer; cursor: hand; \">$title</span>";
