@@ -2271,7 +2271,8 @@ class Html
         //$out="<a href='$link'><i class='btn btn-mini $class'>$title</i></a>";
         $link=htmlspecialchars($link);
         if ($warn=='') {
-            $out="<span onclick=\"location.href = '$link';\" style=\"cursor: pointer; cursor: hand; \" class='badge badge-$class'>$title</span>";
+            //$out="<span onclick=\"location.href = '$link';\" style=\"cursor: pointer; cursor: hand; \" class='badge badge-$class'>$title</span>";
+            $out="<a href=\"$link\"><span class='label label-$class'>$title</span></a>";
         } else {
             $out="<span onclick=\"confirmation('$link','$warn');\" style=\"cursor: pointer; cursor: hand; \" class='badge badge-$class'>$title</span>";
         }
