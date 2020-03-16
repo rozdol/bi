@@ -2257,6 +2257,7 @@ class Html
     function link_button($title = '', $link = '', $class = '', $warn = '')
     {
         //$out="<a href='$link'><i class='btn btn-mini $class'>$title</i></a>";
+        $link=htmlspecialchars($link);
         if ($warn=='') {
             $out="<a href='$link'><span class='btn $class' type='button'>$title</span></a>";
         } else {
@@ -2268,6 +2269,7 @@ class Html
     function link_badge($title = '', $link = '', $class = '', $warn = '')
     {
         //$out="<a href='$link'><i class='btn btn-mini $class'>$title</i></a>";
+        $link=htmlspecialchars($link);
         if ($warn=='') {
             $out="<span onclick=\"location.href = '$link';\" style=\"cursor: pointer; cursor: hand; \" class='badge badge-$class'>$title</span>";
         } else {
@@ -2279,8 +2281,10 @@ class Html
     function link_label($title = '', $link = '', $class = '', $warn = '')
     {
         //$out="<a href='$link'><i class='btn btn-mini $class'>$title</i></a>";
+        $link=htmlspecialchars($link);
         if ($warn=='') {
-            $out="<span onclick=\"location.href = '$link';\" style=\"cursor: pointer; cursor: hand; \" class='label label-$class'>$title</span>";
+            //$out3="<span onclick=\"location.href = '$link';\" style=\"cursor: pointer; cursor: hand; \" class='label label-$class'>$title</span>";
+            $out="<a href=\"$link\"><span class='label label-$class'>$title</span></a>";
         } else {
             $out="<span onclick=\"confirmation('$link','$warn');\" style=\"cursor: pointer; cursor: hand; \" class='label label-$class'>$title</span>";
         }
