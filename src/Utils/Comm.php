@@ -30,7 +30,8 @@ class Comm
 
     public function send_mail_aws($sender_email = '', $recipient_emails, $subject = 'email', $html_body = '', $plaintext_body='',$attachments = []){
 
-
+        $data_dir=getenv('DATA_DIR');
+        putenv("HOME=$data_dir");
         $SesClient = new SesClient([
             'profile' => 'default',
             'version' => '2010-12-01',
@@ -428,7 +429,7 @@ class Comm
     }
     public function mail2admin($subject, $msg)
     {
-        $subject=$GLOBALS['app_name'].": $subject";
+        $subject=$GLOBALS['db_name'].": $subject";
         $email=$GLOBALS['settings']['admin_mail'];
         if ($email=='') {
             $email=$GLOBALS['settings']['system_email'];
@@ -438,7 +439,7 @@ class Comm
         }
         $mail_text=$msg;
         $mail_text.="<hr>";
-        $mail_text.="<b>APP:</b>".$GLOBALS['app_name'].'<hr>';
+        $mail_text.="<b>APP:</b>".$GLOBALS['db_name'].'<hr>';
         $mail_text.="<b>IP:</b>".$GLOBALS['ip'].'<hr>';
         $mail_text.="<b>User:</b>".$GLOBALS['username'].'<hr>';
 
