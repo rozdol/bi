@@ -459,33 +459,41 @@ class Comm
             // $from_username="IS";
             // $from="info@example.com";
         }
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-        $headers  .= "From: $from\r\n";
-            //options to send to cc+bcc
-            //$headers .= "Cc: [email]maa@p-i-s.cXom[/email]\r\n";
-            //$headers .= "Bcc: [email]email@maaking.cXom[/email]\r\n";
-        $color="#DCEEFC";
-        if ($this->utils->contains('sql', strtolower($subject))) {
-            $color="#FF8585";
+
+        if(getenv('AWS_USE_S3')==1){
+
+            $result = $this->send_mail_aws($from, $to, $subject, $message, $message);
+            $status=(!$this->utils->contains('ERR',$result))?true:false;
+            return $status;
+        }else{
+            $headers = "MIME-Version: 1.0\r\n";
+            $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+            $headers  .= "From: $from\r\n";
+                //options to send to cc+bcc
+                //$headers .= "Cc: [email]maa@p-i-s.cXom[/email]\r\n";
+                //$headers .= "Bcc: [email]email@maaking.cXom[/email]\r\n";
+            $color="#DCEEFC";
+            if ($this->utils->contains('sql', strtolower($subject))) {
+                $color="#FF8585";
+            }
+            if ($this->utils->contains('error', strtolower($subject))) {
+                $color="#FF8585";
+            }
+            $message = "<html>
+                <body bgcolor=\"$color\">
+                <h3>$subject</h3>
+                <p>
+                $message
+                </p>
+                </body>
+                </html>";
+            //echo $message;
+            if ($GLOBALS['settings']['no_mail']!=1) {
+                mail($to, $subject, $message, $headers);
+            }
+            //DB_log("SENT MAIL: $to, SUBJ:$subject, MESG:$message");
+            return true;
         }
-        if ($this->utils->contains('error', strtolower($subject))) {
-            $color="#FF8585";
-        }
-        $message = "<html>
-            <body bgcolor=\"$color\">
-            <h3>$subject</h3>
-            <p>
-            $message
-            </p>
-            </body>
-            </html>";
-        //echo $message;
-        if ($GLOBALS['settings']['no_mail']!=1) {
-            mail($to, $subject, $message, $headers);
-        }
-        //DB_log("SENT MAIL: $to, SUBJ:$subject, MESG:$message");
-        return true;
     }
 
 
