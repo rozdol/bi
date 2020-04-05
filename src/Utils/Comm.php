@@ -462,7 +462,7 @@ class Comm
 
         if(getenv('AWS_USE_S3')==1){
 
-            $result = $this->send_mail_aws($from, $to, $subject, $message, $message);
+            $result = $this->send_mail_aws($from, [$to], $subject, $message, $message);
             $status=(!$this->utils->contains('ERR',$result))?true:false;
             return $status;
         }else{
