@@ -767,6 +767,88 @@ class Comm
         //return json_decode($json);
         return $json;
     }
+
+    function get_api_file($api_URL = '', $auth = '', $data = [],$saveTo='')
+    {
+        $fp = fopen($saveTo, 'w+');
+        if($fp === false){
+            die ('Could not open: ' . $saveTo);
+        }
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $api_URL);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Connection: Close',
+            'User-Agent: BI8',
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: Bearer '.$auth]);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt(
+            $ch,
+            CURLOPT_POSTFIELDS,
+            http_build_query($data)
+        );
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+
+        $server_output = curl_exec($ch);
+
+        if(curl_errno($ch)){
+            die(curl_error($ch));
+        }
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $response=json_decode($server_output);
+        curl_close($ch);
+        fclose($fp);
+
+        if ($response->error=='No Auth') {
+            die($response->error);
+        }
+        if($statusCode == 200){
+            return true;
+        } else{
+            return "Status Code: " . $statusCode;
+        }
+        return $server_output;
+    }
+
+    function get_api($api_URL = '', $auth = '', $data = [])
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $api_URL);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Connection: Close',
+            'User-Agent: BI8',
+            'Content-Type: application/x-www-form-urlencoded',
+            'Authorization: Bearer '.$auth]);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt(
+            $ch,
+            CURLOPT_POSTFIELDS,
+            http_build_query($data)
+        );
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $server_output = curl_exec($ch);
+        $response=json_decode($server_output);
+        curl_close($ch);
+
+        if ($response->error=='No Auth') {
+            die($response->error);
+        }
+        return $response;
+    }
+
+    function api_auth($api_URL = "", $user = '', $pass = '')
+    {
+        $data=[
+            'user' => $user,
+            'pass' => $pass,
+        ];
+        $response=$this->get_api($api_URL, '', $data);
+        return $response;
+    }
     public function test()
     {
         return 'ok';
