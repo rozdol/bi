@@ -1820,7 +1820,8 @@ class Data
         if ($id<1) {
             $id=0;
         }
-        if ($id>(2*10^64)) {
+        $max=2*pow(10,64);
+        if ($id>$max) {
             $id=0;
         }
         $act=$this->html->readRQ('act');
@@ -2486,13 +2487,13 @@ class Data
             //     }
             // }
         }
-
-        if (($access['main_admin'])&&($allowed==0)) {
-            echo $this->html->message("NOT ALLOWED for not admins<hr>$reason", 'warn', 'orange');
+        //if($GLOBALS[access]['main_admin'])$allowed=1;
+        if (($GLOBALS[access]['main_admin'])&&($allowed==0)) {
+            echo $this->html->message("NOT ALLOWED $what for not admins<hr>$reason", 'warn', 'orange');
             //$allowed=1;
         }
         //$allowed=0;
-         //if($access[main_admin])$allowed=1;
+        //if($access[main_admin])$allowed=1;
         //echo "allowed $what:$allowed<br>";
         //$allowed=1;
         return $allowed;
