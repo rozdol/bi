@@ -1645,7 +1645,7 @@ class Data
             $month2="12";
             $lastday="31";
         }
-        $date_filter="and date>='01.$month.$yearfull' and date<='$lastday.$month2.$yearfull  23:59:59'";
+        $date_filter="and date>='01.$month.$yearfull' and date<='$lastday.$month2.$yearfull 23:59:59'";
         if ($opt=='no_date') {
             $date_filter='';
         }
