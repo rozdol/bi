@@ -1800,8 +1800,8 @@ class Data
             }
 
 
-            if($GLOBALS[workgroup][id]>0)$workgroup_name="@".strtolower($GLOBALS[workgroup][name]).":".$GLOBALS[is_owner_id];
-            $logininfo='<i class="icon-user icon-white"></i> <a href="?act=report&what=myprofile" ><span style="color:#fff;">'.$username.$workgroup_name.'</span></a>'.$docs.$reqs.$alrts.$rate;
+            if($GLOBALS[workgroup][id]>0)$workgroup_name="@".strtolower($GLOBALS[workgroup][name]).":".$this->detalize('partners',$GLOBALS[is_owner_id]);
+            $logininfo='<i class="icon-user icon-white"></i> <a href="?act=report&what=myprofile" ><span style="color:#fff;">'.$username.'</span></a>'.$workgroup_name.$docs.$reqs.$alrts.$rate;
             if(getenv('BRAND_NAME')!='')$logininfo=getenv('BRAND_NAME').' | '.$logininfo;
         } else {
             $logoutbtn="";
