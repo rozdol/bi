@@ -2492,11 +2492,14 @@ class Html
         foreach ($array as $row_key => $row) {
             $j=$i+1;
             $row_vals='';
+            $row_class='';
 
             //echo $this->pre_display($row, $row_key);
+            $c=0;
             foreach ($row as $col_key => $col) {
+                $c++;
                 $field_name=$col_key;
-                //echo "field_name:$field_name<br>";
+
                 $field_value=$col;
 
                 if (!is_string($field_name)) {
@@ -2516,6 +2519,7 @@ class Html
                         $field_value=$this->money($field_value, '', '', $rounding);
                     }
                     $row_vals.="<td class='$class'>$field_value</td>";
+                    if (($this->utils->contains('total', strtolower($field_value)))&&($c==1)) $row_class='c';
                 }
             }
 
@@ -2523,11 +2527,19 @@ class Html
                 //echo $this->pre_display($fields, 'fields');
                 $head=$this->tablehead('', '', '', '', $fields);
             }
-
-            $rows.= "<tr class=''>";
-            $rows.="<td class='n'>$j</td>";
-            $rows.= $row_vals;
-            $rows.= "</tr>";
+            if($row_class!='c'){
+                $rows.= "<tr class='$row_class'>";
+                $rows.="<td class='n'>$j</td>";
+                $rows.= $row_vals;
+                $rows.= "</tr>";
+            }else{
+                $rows.="</tbody><tfoot>";
+                $rows.= "<tr class='$row_class'>";
+                $rows.="<td class='n'> </td>";
+                $rows.= $row_vals;
+                $rows.= "</tr>";
+                $rows.="</tfoot>";
+            }
 
 
             //$sql_insert="INSERT INTO $tablename VALUES (NULL,";
