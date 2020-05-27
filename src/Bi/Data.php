@@ -311,7 +311,7 @@ class Data
             if($count==0){
                 $sql="insert into accessitems (name) values ('$access_item');";
                 $res=$this->db->GetVar($sql);
-                $sql="update accesslevel set access='1' where groupid=$gid;";
+                $sql="update accesslevel set access='1' where groupid=3;";
                 $res=$this->db->GetVar($sql);
                 echo "<span class='alert alert-info'>Access item <b>$access_item</b> is added!</span><br>";
             }
