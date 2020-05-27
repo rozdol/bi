@@ -303,6 +303,38 @@ class Data
 
         return $this->html->refreshpage($reflink, 1, "Welcome back, $GLOBALS[user]!");
     }
+
+    function add_access($access_arr=[]){
+        foreach ($access_arr as $access_item) {
+            $access_item;
+            $count=$this->db->getVal("select count(*) from accessitems where name='$access_item'")*1;
+            if($count==0){
+                $sql="insert into accessitems (name) values ('$access_item');";
+                $res=$this->db->GetVar($sql);
+                $sql="update accesslevel set access='1' where groupid=$gid;";
+                $res=$this->db->GetVar($sql);
+                echo "<span class='alert alert-info'>Access item <b>$access_item</b> is added!</span><br>";
+            }
+
+            if ($access_item!='main_delete') {
+                $accid=$this->db->getval("SELECT id from accessitems where name='$access_item' order by id asc limit 1");
+                $sql="UPDATE accesslevel set access='1' where groupid=3 and accessid=$accid";
+                //echo "$sql<br>";
+                if ($accid>0) {
+                    $cur= $this->db->GetVal($sql);
+                }
+            }
+            echo "<br>";
+        }
+        return true;
+    }
+
+    function delete_access($access_item=''){
+        $sql="delete from accessitems where lower(name)=lower('$access_item');";
+        $res=$this->db->GetVar($sql);
+        echo "<span class='alert alert-error'>Access item <b>$access_item</b> is deleted!</span>";
+        return true;
+    }
     function login()
     {
         //echo "login Time:".microtime(true)."<br>";
