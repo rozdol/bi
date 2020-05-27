@@ -2706,6 +2706,7 @@ class Utils
                 if (!$header) {
                     $row_array = array_map('strtolower', $row_array);
                     $row_array=str_ireplace(' ', '_', $row_array);
+                    $row_array=str_ireplace(':', '', $row_array);
                     $header = $row_array;
                 } elseif ($index_filed==0) {
                     $data[] = array_combine($header, $row_array);
