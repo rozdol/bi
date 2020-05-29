@@ -2138,12 +2138,16 @@ class Html
         $name=str_replace(" ", "_", $name);
         $showname=str_replace("_", " ", $name);
         $link="$link&dynamic=1&title=$name";
+        $html_link=str_replace("&dynamic=1", "", $link);
+        $html_link=str_replace("&plain=1", "", $html_link);
         $reload='<div id="icon-refresh-'.$name.'"
         hidden
         onclick="
         reload_controls();
         $(this).hide();
         " class="reload-controlls"><i class="icon-refresh"></i></div>';
+        $with_link='';
+        if ($this->utils->contains('with_link', strtolower($opt))) $with_link='<a href="'.$html_link.'">-></a>';
         if ($opt!='inline') {
             $buttonhide='<button class=\"btn '.$opt.'\">Hide '.$showname.'<span class=\"caret\"></span></button>';
             $buttonshow='<button class=\"btn '.$opt.'\">Show '.$showname.'<span class=\"caret\"></span></button>';
@@ -2156,6 +2160,7 @@ class Html
                 $buttonshow='<button class=\"btn btn-micro '.$opt.'\"><span class=\"icon-folder-close\"></span></button>';
                 $buttonshow1='<button class="btn btn-micro '.$opt.'"><span class="icon-folder-close"></span></button>';
         }
+
         //$buttonhide="Hide $name";
         //$buttonshow="Show $name";
         $text="<div id='$name.act_'
@@ -2173,7 +2178,7 @@ class Html
                      document.getElementById(\"$name.\").innerHTML=\"\";'
                 onmouseover=\"this.style.cursor='pointer';\"></div>$reload
                 <div id='$name.'></div>";
-        return "<div class='well-fw'>$text</div><br>";
+        return "<div class='well-fw'>$text</div><br>$with_link";
     }
     function refreshpage($where = '', $time = 0, $message = '')
     {
