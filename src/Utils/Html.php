@@ -1420,7 +1420,7 @@ class Html
         return $res;
     }
 
-    function form_text($name = '', $value = '', $label = '', $placeholder = '', $minlength = 0, $class = '')
+    function form_text($name = '', $value = '', $label = '', $placeholder = '', $minlength = 0, $class = '' , $style = '')
     {
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
         $GLOBALS[tabindex]++;
@@ -1433,7 +1433,7 @@ class Html
 
         $res="
           <label class='control-label' for='$name'>$label</label>
-            <input type='text' name='$name' id='text-$name' value='$value' placeholder='$placeholder' class='$class' tabindex='$GLOBALS[tabindex]' $disabled>";
+            <input type='text' name='$name' id='text-$name' value='$value' placeholder='$placeholder' class='$class' tabindex='$GLOBALS[tabindex]' style='$style' $disabled>";
         if (($name=='email')&&($minlength>0)) {
             $GLOBALS['js']['form'].="   $name: {
               minlength: $minlength,
