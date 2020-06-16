@@ -3226,4 +3226,14 @@ class Utils
         }
         return false;
     }
+
+    function load_helper($filename=''){
+        if($filename=='')return "Empty filename.";
+        $file=APP_DIR . DS .'helpers'. DS .$filename;
+        if(file_exists($file)) {
+            return file_get_contents($file);
+        } else {
+            return "No $filename found.";
+        }
+    }
 }
