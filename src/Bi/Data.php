@@ -2115,16 +2115,22 @@ class Data
             $response[]="Table $table does not exist";
             return $response;
         }
-        $sql="select * from $table where id=$id; -- data record_array";
-        if (($result = pg_query($sql))) {
-            $fields_num = pg_num_fields($result);
-            $response="";
-            $row = pg_fetch_row($result);
-            for ($i=0; $i < $fields_num; $i++) {
-                $field = pg_field_name($result, $i);
-                $response[$field]=$row[$i];
-            }
-        }
+        $response=$this->get_row($table,$id);
+        // echo $this->html->pre_display($row,"row");
+        // $sql="select * from $table where id=$id; -- data record_array";
+        // echo "$sql<br>";
+        // if (($result = pg_query($sql))) {
+        //     $fields_num = pg_num_fields($result);
+        //     $response="";
+        //     $row = pg_fetch_row($result);
+        //     echo $this->html->pre_display($row,"row $fields_num");
+        //     for ($i=0; $i < $fields_num; $i++) {
+        //         $field = pg_field_name($result, $i);
+        //         echo "$field = $row[$i]<br>";
+        //         $response["$field"]=$row[$i];
+        //     }
+        // }
+        // echo $this->html->pre_display($response,"response");
         return $response;
     }
 
