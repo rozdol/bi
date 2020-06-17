@@ -2006,7 +2006,7 @@ class Html
             $access[report_searchresults]=1;
         if (($access[report_searchresults])&&($menu!='')&&($GLOBALS['settings']['no_search']=='')) {
             $search="<form class='navbar-search' action='?act=report&what=searchresults' method='post'>
-                <input type='text' class='search-query' placeholder='Search' name='text'>
+                <input type='text' autocomplete='off' class='search-query' placeholder='Search' name='text'>
                 </form>";
         }
         if ($access[main_print]) {

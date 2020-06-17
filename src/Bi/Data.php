@@ -1425,7 +1425,7 @@ class Data
 
         $out="<fieldset class='lookup'>
             <div id='title_$field'>$title</div>
-            <input type='text' placeholder='Narrow search' name='partnersearch' id='search_$field' value='' onchange='itemid=this.value;ajaxFunction(\"partner_$field\",\"?csrf=$GLOBALS[csrf]&act=append&what=partnerid&fieldname=$field&value=\"+itemid);' $disabled>
+            <input type='text' autocomplete='off' placeholder='Narrow search' name='partnersearch' id='search_$field' value='' onchange='itemid=this.value;ajaxFunction(\"partner_$field\",\"?csrf=$GLOBALS[csrf]&act=append&what=partnerid&fieldname=$field&value=\"+itemid);' $disabled>
             <span onclick='itemid=document.getElementById(\"search_$field\").value;ajaxFunction(\"partner_$field\",\"?csrf=$GLOBALS[csrf]&act=append&what=partnerid&fieldname=$field&value=\"+itemid);' class='icon-search'></span>
             <div id='partner_$field'></div>
             </fieldset>";
@@ -1487,7 +1487,7 @@ class Data
 
         $out.="<fieldset class='lookup'>
             <div id='title_$field'><b>$title</b></div>
-            <input type='text' placeholder='Narrow search' name='partnersearch' id='search_$field' value='' onchange='itemid=this.value;CallFunc_$field(itemid);' $disabled>
+            <input type='text' autocomplete='off' placeholder='Narrow search' name='partnersearch' id='search_$field' value='' onchange='itemid=this.value;CallFunc_$field(itemid);' $disabled>
             <span onclick='itemid=document.getElementById(\"search_$field\").value;CallFunc_$field(itemid);' class='icon-search'></span>
             <div id='partner_$field'></div>
             $html
@@ -1551,7 +1551,7 @@ class Data
 
         $out.="<fieldset class='lookup'>
             <div id='title_$field'><b>$title</b></div>
-            <input type='text' placeholder='Narrow search' name='objectsearch' id='search_$field' value='' onchange='itemid=this.value;CallFunc_$field(itemid);' $disabled>
+            <input type='text' autocomplete='off' placeholder='Narrow search' name='objectsearch' id='search_$field' value='' onchange='itemid=this.value;CallFunc_$field(itemid);' $disabled>
             <span onclick='itemid=document.getElementById(\"search_$field\").value;CallFunc_$field(itemid);' class='icon-search'></span>
             <div id='object_$field'></div>
             $html
@@ -1574,7 +1574,7 @@ class Data
         $tablefield=$table.'_'.$field;
         $out="<fieldset class='lookup'>
             <div id='title_$field'>$title</div>
-            <input type='text' placeholder='Narrow search' name='search$tablefield' id='search_$tablefield' value='' onchange='itemid=this.value;ajaxFunction(\"$tablefield\",\"?csrf=$GLOBALS[csrf]&act=append&what=object_id&fromtable=$table&fieldname=$field&value=\"+itemid);' $disabled>
+            <input type='text' autocomplete='off' placeholder='Narrow search' name='search$tablefield' id='search_$tablefield' value='' onchange='itemid=this.value;ajaxFunction(\"$tablefield\",\"?csrf=$GLOBALS[csrf]&act=append&what=object_id&fromtable=$table&fieldname=$field&value=\"+itemid);' $disabled>
             <span onclick='itemid=document.getElementById(\"search_$tablefield\").value;ajaxFunction(\"$tablefield\",\"?csrf=$GLOBALS[csrf]&act=append&what=object_id&fromtable=$table&fieldname=$field&value=\"+itemid);' class='icon-search'></span>
             <div id='$tablefield'></div>
             </fieldset>";
@@ -1612,7 +1612,7 @@ class Data
         $ftitle=ucfirst($arr[0]);//.",$role,$refid,$acc_id,$queue,$field";
         $href="\"?csrf=$GLOBALS[csrf]&act=append&what=lookup&fromtable=partners&field=$field&child=account&role=$role&value=\"+itemid";
          $out="<fieldset class='lookup'><label>$ftitle</label>
-            <input type='text' placeholder='Narrow search' name='partnersearch' id='search_$field' value=''
+            <input type='text' autocomplete='off' placeholder='Narrow search' name='partnersearch' id='search_$field' value=''
             onchange='itemid=this.value;ajaxFunction(\"partner_$field\",$href);'>
                 <span onclick='itemid=document.getElementById(\"search_$field\").value;ajaxFunction(\"partner_$field\",$href);' class='icon-search'></span>
             <div id='partner_$field'>partner_$field</div>
