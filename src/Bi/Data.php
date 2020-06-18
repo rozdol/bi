@@ -1367,7 +1367,7 @@ class Data
         //echo "$table,$id<br>";
         $id=$id*1;
         $sql="select * from $table where id=$id; --data get_row";
-        $row=$this->db->GetRow($sql);
+        if($this->field_exists($table, 'id'))$row=$this->db->GetRow($sql);
         return $row;
     }
     function obj_namelist($table = 'partners', $ids = array(), $detalize = 1, $delim = ',', $show_ids = 0, $max = 10)
