@@ -1885,6 +1885,10 @@ class Html
         echo '<h2>404 Not found</h2><p>'.$message.'</p>';
     }
 
+    public function wrap_string($string, $chars='80'){
+        $string=wordwrap($string, $chars, "<br />\n");
+        return $string;
+    }
     public function wrappedMessage($message = '', $title = '', $class = 'alert-info')
     {
         $this->putHeader();
