@@ -617,8 +617,8 @@ class Html
             $_GET[act]='add';
         }
         if ($this->readRQ('what')=='a_translines') {
-            $_GET[what]='a_transactions';
-            $_POST[what]='a_transactions';
+           // $_GET[what]='a_transactions';
+           // $_POST[what]='a_transactions';
         }
         if ($this->readRQ('what')=='journal') {
             $_GET[what]='a_transactions';
@@ -1547,7 +1547,7 @@ class Html
             $showhint="onMouseover=\"showhint('$label', this, event, '150px');\"";
             $label='';
         }
-        $res="<label><input type='checkbox' name='$name' id='$name' value='1' $chkd tabindex='$GLOBALS[tabindex]' $disabled $showhint /> $label</label>";
+        $res="<div style='clear:both;'></div><div class='checkbox inline'><input type='checkbox' name='$name' id='$name' value='1' $chkd tabindex='$GLOBALS[tabindex]' $disabled $showhint /><label> $label</label></div>";
         if ($simple==1) {
             $res="<input type='checkbox' name='$name' id='$name' value='1' $chkd $showhint /> $label";
         }
