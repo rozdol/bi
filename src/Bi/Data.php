@@ -311,12 +311,13 @@ class Data
             if($count==0){
                 $sql="insert into accessitems (name) values ('$access_item');";
                 $res=$this->db->GetVar($sql);
-                $sql="update accesslevel set access='1' where groupid=2;";
-                $res=$this->db->GetVar($sql);
+                // $sql="update accesslevel set access='1' where groupid=2;";
+                // $res=$this->db->GetVar($sql);
                 echo "<span class='alert alert-info'>Access item <b>$access_item</b> is added!</span><br>";
             }
 
             if ($access_item!='main_delete') {
+                $this->db->GetRow("select * from process_addaccsstbl();");
                 $accid=$this->db->getval("SELECT id from accessitems where name='$access_item' order by id asc limit 1");
                 $sql="UPDATE accesslevel set access='1' where groupid=2 and accessid=$accid";
                 //echo "$sql<br>";
