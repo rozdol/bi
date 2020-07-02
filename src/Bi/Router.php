@@ -314,6 +314,12 @@ class Router
         if($GLOBALS[uid]<=0){unset($content);$this->html->putLogin($content);exit;}
         return $this->dispatch($what, __FUNCTION__);
     }
+    public function xls($what)
+    {
+        global $access;
+        if($GLOBALS[uid]<=0){unset($content);$this->html->putLogin($content);exit;}
+        return $this->dispatch($what, __FUNCTION__);
+    }
     public function doc($what)
     {
         global $access;
