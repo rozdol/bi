@@ -3266,10 +3266,48 @@ class Html
         }
         $responce= "<td></td>\n";
 
-        $out="<span hidden class='row-editable-icons' id='icons:${what}_${id}'>$view $edit $delete</span>";
+        $out="<span hidden class='row-editable-icons' id='icons:${what}_${id}'>&nbsp;$view $edit $delete&nbsp;</span>";
         $out="<td class='row-editable' id='place:${what}_${id}'>$out $text</td>";
         return $out;
     }
+
+    function manage_rec($what = '', $id=0, $act = 'svedai', $text = '', $warn = '', $query1=[], $query2=[])
+    {
+        global $access;
+        $s=($this->utils->contains('s', $act));
+        $v=($this->utils->contains('v', $act));
+        $e=($this->utils->contains('e', $act));
+        $d=($this->utils->contains('d', $act));
+        $a=($this->utils->contains('a', $act));
+        $i=($this->utils->contains('i', $act));
+
+        //echo "$e";
+        //<td id='$what:$row[id]' class='cart-selectable' reference='$what'>$row[id]</td>
+        if (($access['view_'.$what])&&($s)) {
+            $select= "<span id='$what:$id' class='cart-selectable' reference='$what'><i class='icon-ok-circle icon-white withpointer edit-icon'></i></span>";
+        }
+        if (($access['view_'.$what])&&($v)) {
+            $view= "<a href='".$this->link(['act'=>'details','what'=>$what,'id'=>$id])."'><i class='icon-eye-open icon-white withpointer edit-icon'></i></a>";
+        }
+        if (($access['edit_'.$what])&&($e)) {
+            $edit= "<a href='".$this->link(['act'=>'edit','what'=>$what,'id'=>$id])."'><i class='icon-pencil icon-white withpointer edit-icon'></i></a>";
+        }
+        if (($access['edit_'.$what])&&($a)) {
+            $add= "<a href='".$this->link(['act'=>'add','what'=>$what]+$query1)."'><i class='icon-plus-sign icon-white withpointer edit-icon'></i></a>";
+        }
+        if (($access['edit_'.$what])&&($i)) {
+            $insert= "<a href='".$this->link(['act'=>'add','what'=>$what]+$query2)."'><i class='icon-plus icon-white withpointer edit-icon'></i></a>";
+        }
+        if (($access['edit_'.$what])&&($d)) {
+            $delete= "<i class='icon-trash icon-white withpointer edit-icon' onclick=\"confirmation('".$this->link(['csrf'=>$GLOBALS[csrf],'act'=>'delete','what'=>$what,'id'=>$id])."','$warn')\"></i>";
+        }
+        $responce= "<td></td>\n";
+
+        $out="<span hidden class='row-editable-icons' id='icons:${what}_${id}'>&nbsp;$select $view $edit $add $insert $delete&nbsp;</span>";
+        $out="<span class='row-editable' id='place:${what}_${id}'>$out $text </span>";
+        return $out;
+    }
+
     function HT_editicons($table = '', $id = 0, $print = '')
     {
         return $this->HT_editicons2($table, $id, $print);
