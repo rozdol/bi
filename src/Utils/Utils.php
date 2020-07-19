@@ -2725,6 +2725,67 @@ class Utils
         //echo $out;
         return $data;
     }
+    public function xlsx_to_csv($inputFileName = 'test.xlsx',$delimeter="\t")
+    {
+        $csv;
+        if (!file_exists($inputFileName)) {
+            exit(pathinfo($inputFileName, PATHINFO_BASENAME)." not found.");
+        }
+        //include 'PHPExcel/IOFactory.php';
+        require_once CLASSES_DIR.'/PHPExcel/Classes/PHPExcel/IOFactory.php';
+        //$inputFileName = APP_DIR.DS.'data/Входные данные_2.xlsx';
+        $inputFileType = \PHPExcel_IOFactory::identify($inputFileName);
+        //echo 'File ',pathinfo($inputFileName, PATHINFO_BASENAME),' has been identified as an ',$inputFileType,' file<br />';
+
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        //$objReader->setPreCalculateFormulas(FALSE);
+        $input = $objReader->load($inputFileName);
+
+
+        //echo '<hr />';
+
+        //echo "<h1>$filename</h1>";
+        //echo '<hr />';
+        foreach ($input->getWorksheetIterator() as $worksheet) {
+            $worksheetTitle     = $worksheet->getTitle();
+            $highestRow         = $worksheet->getHighestRow(); // e.g. 10
+            $highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+            $highestColumnIndex = \PHPExcel_Cell::columnIndexFromString($highestColumn);
+            $nrColumns = ord($highestColumn) - 64;
+
+            //echo "<h3 class='foldered'><i class='icon-th-large tooltip-test addbtn' data-original-title=''></i>$worksheetTitle</h3>";
+            //echo "<table class='table table-bordered table-striped-tr table-morecondensed tooltip-demo  table-notfull' id='sortTableExample'>";
+            for ($row=0; $row<=$highestRow; $row++) {
+                //echo "<tr>";
+                for ($col=0; $col<$highestColumnIndex; $col++) {
+                    $tmp = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
+                    //if($this->contains('VLOOKUP',$tmp))$val=$tmp; else
+                    try {
+                        $val = $worksheet->getCellByColumnAndRow($col, $row)->getCalculatedValue();
+                    } catch (PHPExcel_Calculation_Exception $e) {
+                        try {
+                            $val = $worksheet->getCellByColumnAndRow($col, $row)->getOldCalculatedValue();
+                        } catch (PHPExcel_Calculation_Exception $e) {
+                            $val='';
+                            //echo("<span class='badge red'>Error in cell '$tmp'".$e->getMessage()."</span><br>");
+                            $csv.="Error in cell '$tmp'".$e->getMessage();
+                        }
+                    }
+
+                    $class=(is_numeric($val))?'n':'';
+                    //echo "<td class='$class'>$val</td>";
+                    $csv.="$val$delimeter";
+                }
+                //echo "</tr>";
+                $csv.="\n";
+            }
+            //echo "</table>";
+        }
+        return $csv;
+        //echo $this->pre_display($csv,"csv");
+        //$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+        //var_dump($sheetData);
+    }
     public function read_xlsx($inputFileName = 'test.xlsx')
     {
         if (!file_exists($inputFileName)) {
@@ -2732,7 +2793,7 @@ class Utils
         }
         //include 'PHPExcel/IOFactory.php';
         require_once CLASSES_DIR.'/PHPExcel/Classes/PHPExcel/IOFactory.php';
-        $inputFileName = APP_DIR.DS.'data/Входные данные_2.xlsx';
+        //$inputFileName = APP_DIR.DS.'data/Входные данные_2.xlsx';
         $inputFileType = \PHPExcel_IOFactory::identify($inputFileName);
         echo 'File ',pathinfo($inputFileName, PATHINFO_BASENAME),' has been identified as an ',$inputFileType,' file<br />';
 

@@ -1237,7 +1237,7 @@ class Html
     function form_start($what = '', $id = 0, $title = '', $opt = [])
     {
         if ($title=='') {
-            $title=$what;
+            $title=ucwords(str_ireplace('_',' ', $what));
         }
         if ($title=='no') {
             $title='';

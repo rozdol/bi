@@ -2086,6 +2086,8 @@ class Data
         if (($GLOBALS['stealth']>0)||($GLOBALS['settings']['supress_warnings'])) {
             return '';
         } else {
+            if($access['main_admin'])$body.=  "<span media='print' class='noPrint'><a href='?act=details&what=groupaccess&type=$accessitemchk'><span class='btn btn-nano btn-danger'>ACL $accessitemchk</span></a></span>";
+
             return "<div class='alert alert-warn'>No permission for $accessitemchk $body</div>";
         }
     }

@@ -410,6 +410,12 @@ class Dates
         if (($str=='')&&($check==8)) { //set end of the current year
             $str='31.12.'.$this->F_thisyear();
         }
+        if (($str=='')&&($check==9)) { //set beginning of the current month
+            $str='01.'.$this->F_thismonth().'.'.$this->F_thisyear();
+        }
+        if (($str=='')&&($check==10)) { //set end of the current month
+            $str=$this->F_daysinmonth('').'.'.$this->F_thismonth().'.'.$this->F_thisyear();
+        }
         if (($str!='now()')&&($check==6)) {
             $str="'$str'";
         }
