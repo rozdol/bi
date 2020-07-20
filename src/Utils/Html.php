@@ -3271,7 +3271,7 @@ class Html
         return $out;
     }
 
-    function manage_rec($what = '', $id=0, $act = 'svedai', $text = '', $warn = '', $query1=[], $query2=[])
+    function manage_rec($what = '', $id=0, $act = 'svedai', $text = '', $warn = '', $query_v=[], $query_a=[], $query_i=[])
     {
         global $access;
         $s=($this->utils->contains('s', $act));
@@ -3287,16 +3287,16 @@ class Html
             $select= "<span id='$what:$id' class='cart-selectable' reference='$what'><i class='icon-ok-circle icon-white withpointer edit-icon'></i></span>";
         }
         if (($access['view_'.$what])&&($v)) {
-            $view= "<a href='".$this->link(['act'=>'details','what'=>$what,'id'=>$id])."'><i class='icon-eye-open icon-white withpointer edit-icon'></i></a>";
+            $view= "<a href='".$this->link(['act'=>'details','what'=>$what,'id'=>$id]+$query_v)."'><i class='icon-eye-open icon-white withpointer edit-icon'></i></a>";
         }
         if (($access['edit_'.$what])&&($e)) {
             $edit= "<a href='".$this->link(['act'=>'edit','what'=>$what,'id'=>$id])."'><i class='icon-pencil icon-white withpointer edit-icon'></i></a>";
         }
         if (($access['edit_'.$what])&&($a)) {
-            $add= "<a href='".$this->link(['act'=>'add','what'=>$what]+$query1)."'><i class='icon-plus-sign icon-white withpointer edit-icon'></i></a>";
+            $add= "<a href='".$this->link(['act'=>'add','what'=>$what]+$query_a)."'><i class='icon-plus-sign icon-white withpointer edit-icon'></i></a>";
         }
         if (($access['edit_'.$what])&&($i)) {
-            $insert= "<a href='".$this->link(['act'=>'add','what'=>$what]+$query2)."'><i class='icon-plus icon-white withpointer edit-icon'></i></a>";
+            $insert= "<a href='".$this->link(['act'=>'add','what'=>$what]+$query_i)."'><i class='icon-plus icon-white withpointer edit-icon'></i></a>";
         }
         if (($access['edit_'.$what])&&($d)) {
             $delete= "<i class='icon-trash icon-white withpointer edit-icon' onclick=\"confirmation('".$this->link(['csrf'=>$GLOBALS[csrf],'act'=>'delete','what'=>$what,'id'=>$id])."','$warn')\"></i>";
