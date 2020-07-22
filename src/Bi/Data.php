@@ -474,7 +474,7 @@ class Data
 
         if($bipfile){
             if((!file_exists($bipfile))) {
-                $this->html->notFound("bipfile"); exit;
+                $this->html->notFound("bipfile is missing"); exit;
             }
             $ips=$this->utils->csvfile_to_array($bipfile,';');
             foreach ($ips as $row) {
