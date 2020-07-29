@@ -481,11 +481,11 @@ class Utils
             $csv=strip_tags($csv);
             $csv="\n$csv\n";
             $rnd=str_replace(".", "", microtime(true));
-            $out.="<div class='dropdown2' data-toggle='collapse' data-target='#csv_data_$rnd'>
+            $out.="<div media='print'  class='noPrint'><div class='dropdown2' data-toggle='collapse' data-target='#csv_data_$rnd'>
                 <textarea cols='1' rows='6' onclick='this.focus();this.select()' class='lookup collapse' id='csv_data_$rnd' data-original-title='CSV Data'>$csv</textarea>
-                </div>";
+                </div></div>";
             if ($short!='') {
-                $out.="<label>Export data</label><textarea cols='20' rows='10' class='well span12'>$csv</textarea>";
+                $out.="<div media='print'  class='noPrint'><label>Export data</label><textarea cols='20' rows='10' class='well span12'>$csv</textarea></div>";
             }
         }
         return $out;
