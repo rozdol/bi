@@ -1681,6 +1681,7 @@ class Data
         $date_filter="and date>='01.$month.$yearfull' and date<='$lastday.$month2.$yearfull 23:59:59'";
         if ($opt=='no_date') {
             $date_filter='';
+            $orderby="name desc, id desc";
         }
         $sql="select count(*) from $table where id>0 $date_filter $addsql";
 
