@@ -2092,14 +2092,15 @@ class Html
         $addlink = $this->readRQ('addlink');
         $refid = $this->readRQn('refid');
         $type = $this->readRQn('type');
+        $category = $this->readRQ('category');
 
         $suffix=substr($what, 0, 3);
 
         if (!($suffix=='vw_')) {
-            $addbutton="<a href='?act=add&what=$what$addlink&type=$type&refid=$refid&reference=$reference$reffinfo$morelink'><i class='icon-plus-sign tooltip-test addbtn' data-original-title='Create new'></i></a>";
+            $addbutton="<a href='?act=add&what=$what$addlink&type=$type&refid=$refid&reference=$reference&category=$category$reffinfo$morelink'><i class='icon-plus-sign tooltip-test addbtn' data-original-title='Create new'></i></a>";
         }
         if ($addform!="") {
-            $addbutton="<a href='?act=add&table=$addform$addlink&type=$type&refid=$refid&reference=$reference$reffinfo$morelink'><i class='icon-plus-sign tooltip-test addbtn' data-original-title='Create new'></i></a>";
+            $addbutton="<a href='?act=add&table=$addform$addlink&type=$type&refid=$refid&reference=$reference&category=$category$reffinfo$morelink'><i class='icon-plus-sign tooltip-test addbtn' data-original-title='Create new'></i></a>";
         }
         if ($addform=="-") {
             $addbutton="";
