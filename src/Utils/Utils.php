@@ -762,9 +762,10 @@ class Utils
         }
         return $string;
     }
-    public function l($phrase)
+
+    public static function l($phrase)
     {
-        return ucfirst_utf8(ln($phrase));
+        return $this->ucfirst_utf8($this->ln($phrase));
     }
     public function ln($phrase)
     {
@@ -772,9 +773,9 @@ class Utils
         static $translations = null;
         /* If no instance of $translations has occured load the language file */
         if (is_null($translations)) {
-            $lang_file = './lang/' . LANGUAGE . '.txt';
+            $lang_file = FW_DIR.'/lang/' . LANGUAGE . '.json';
             if (!file_exists($lang_file)) {
-                $lang_file ='./lang/' . 'en-us.txt';
+                $lang_file =FW_DIR.'/lang/' . 'en-us.json';
             }
             $lang_file_content = file_get_contents($lang_file);
             /* Load the language file as a JSON object and transform it into an associative array */
