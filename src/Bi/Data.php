@@ -548,6 +548,9 @@ class Data
         $GLOBALS[$token]=$user[$token];
         $token='regdate';
         $GLOBALS[$token]=substr($user[$token], 0, 10);
+        if (!defined('LANGUAGE')) {
+            define('LANGUAGE', $user[lang]);
+        }
         //$token='history_days';$GLOBALS[$token]=substr($user[$token],0,10);
         //if($GLOBALS['history_days']>0)$GLOBALS['regdate']=$this->dates->F_dateadd($GLOBALS['today'],-$GLOBALS['history_days']);
     }
