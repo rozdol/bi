@@ -72,10 +72,11 @@ class Html
             } else {
                 $tip="";
             }
+            $field=\util::l($field);
             if (($sort[$i]!="")&&($sort!='no_sort')&&(is_array($sort))) {
-                $out.=" <th class='tooltip-test' $tip><a href='?$qry&sortby=$sort[$i]$order' TITLE='Sort'>".ucfirst($field)."</a></th>";
+                $out.=" <th class='tooltip-test' $tip><a href='?$qry&sortby=$sort[$i]$order' TITLE='Sort'>".$field."</a></th>";
             } else {
-                $out.=" <th class='tooltip-test' $tip>".ucfirst($field)."</th>";
+                $out.=" <th class='tooltip-test' $tip>".$field."</th>";
             }
             $i++;
         }
@@ -135,7 +136,11 @@ class Html
         }
         return $out;
     }
-
+    public function tr_det($label, $value='', $class = '')
+    {
+        if (is_numeric($value))$class="$class n";
+        return "<tr><td class='mt'><b>".\util::l($label).": </b></td><td class='m $class'>$value</td></tr>";
+    }
     public function tr($text, $class = '')
     {
     //table row
@@ -224,6 +229,7 @@ class Html
 
     function tag($title = '', $type = 'h2', $class = '', $id = '')
     {
+        $title=\util::l($title);
         $result='';
         if($GLOBALS[offline_mode]){
             $GLOBALS[offline_messages][]=strip_tags("$type: $title");
@@ -1237,15 +1243,16 @@ class Html
     function form_start($what = '', $id = 0, $title = '', $opt = [])
     {
         if ($title=='') {
-            $title=ucwords(str_ireplace('_',' ', $what));
+            //$title=ucwords(str_ireplace('_',' ', $what));
+            $title=\util::l(strtolower(str_ireplace('_',' ', $what)));
         }
         if ($title=='no') {
             $title='';
         }
         if ($id==0) {
-            $action='Add';
+            $action=\util::l('add');
         } else {
-            $action='Edit';
+            $action=\util::l('edit');
             $id_var="id:$id";
         }
         //$class='form-horizontal';
@@ -1265,7 +1272,7 @@ class Html
 
         if ($opt['title']!='') {
             $action="";
-            $title=$opt['title'];
+            $title=\util::l($opt['title']);
         }
         if ($opt['validation']) {
             $validation=$this->validation($what, $opt['validation']);
@@ -1292,7 +1299,7 @@ class Html
     {
         $GLOBALS[tabindex]++;
         $btn_id="btn_save_$what";
-
+        $text=\util::l($text);
         $res="<button type='submit' class='btn btn-primary' name='act' value='$value'  tabindex='$GLOBALS[tabindex]'>$text</button>";
         //<input type='hidden' name='save' value='$value'>
 
@@ -1300,10 +1307,10 @@ class Html
         <button type='submit' class='btn btn-primary' id='$btn_id' tabindex='$GLOBALS[tabindex]'>$text</button>";
         $GLOBALS[tabindex]++;
         if ($GLOBALS[cancel_button]) {
-            $res.=" <button type='reset' class='btn' onClick='$GLOBALS[cancel_button]'  tabindex='$GLOBALS[tabindex]'>Cancel</button>
+            $res.=" <button type='reset' class='btn' onClick='$GLOBALS[cancel_button]'  tabindex='$GLOBALS[tabindex]'>".\util::l('Cancel')."</button>
     </div>";
         } else {
-            $res.=" <button type='reset' class='btn' onClick='history.go(-1);'  tabindex='$GLOBALS[tabindex]'>Cancel</button>
+            $res.=" <button type='reset' class='btn' onClick='history.go(-1);'  tabindex='$GLOBALS[tabindex]'>".\util::l('Cancel')."</button>
     </div>";
         }
         $GLOBALS['js']['form'].="errorPlacement: function(error, element) {
@@ -1406,15 +1413,15 @@ class Html
         if ($GLOBALS[backtodetails]>0) {
             $backtodetails_sel='checked';
         }
-        $backtoedit_btn="<label><input type='checkbox' name='backtoedit' value='1' $backtoedit_sel tabindex='$GLOBALS[tabindex]'/> Edit this record after save</label>";
+        $backtoedit_btn="<label><input type='checkbox' name='backtoedit' value='1' $backtoedit_sel tabindex='$GLOBALS[tabindex]'/> ".\util::l('Edit this record after save')."</label>";
         $GLOBALS[tabindex]++;
-        $backtodetails_btn="<label><input type='checkbox' name='backtodetails' value='1' $backtodetails_sel tabindex='$GLOBALS[tabindex]'/> Show details of the record after save</label>";
+        $backtodetails_btn="<label><input type='checkbox' name='backtodetails' value='1' $backtodetails_sel tabindex='$GLOBALS[tabindex]'/> ".\util::l('Show details of the record after save')."</label>";
         $GLOBALS[tabindex]++;
         if (($id>0)&&($noduplicate==0)) {
             if ($this->readRQ('duplicate')>0) {
                 $duplicate_sel='checked';
             }
-            $duplicate_btn="<label><input type='checkbox' name='duplicate' value='1' $duplicate_sel tabindex='$GLOBALS[tabindex]'/> Duplicate the record</label>";
+            $duplicate_btn="<label><input type='checkbox' name='duplicate' value='1' $duplicate_sel tabindex='$GLOBALS[tabindex]'/> ".\util::l('Duplicate the record')."</label>";
         }
         $res="<hr>$backtodetails_btn $backtoedit_btn $duplicate_btn";
         return $res;
@@ -1425,8 +1432,10 @@ class Html
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
         $GLOBALS[tabindex]++;
         if ($label=='') {
-            $label=ucfirst($name);
+            //$label=$name;
+            $label=$name;
         }
+        $label=\util::l(strtolower($label));
         $res="<label>$label</label>
             <input type='text' name='$name' value='$value' class='span12' placeholder='$placeholder'/ $disabled>";
 
@@ -1456,8 +1465,9 @@ class Html
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
         $GLOBALS[tabindex]++;
         if ($label=='') {
-            $label=ucfirst($name);
+            $label=$name;
         }
+        $label=\util::l(strtolower($label));
         $res="<label>$label</label>
             <input type='password' name='$name' value='$value' class='span12' placeholder='$placeholder' tabindex='$GLOBALS[tabindex]'/ $disabled>";
 
@@ -1487,8 +1497,9 @@ class Html
             $placeholder='DD.MM.YYYY';
         }
         if ($label=='') {
-            $label=ucfirst($name);
+            $label=$name;
         }
+        $label=\util::l(strtolower($label));
         $res="<label>$label</label>
                 <input type='text' data-datepicker='datepicker' name='$name' value='$value'  class='$class'' placeholder='$placeholder'/ $disabled>";
 
@@ -1508,8 +1519,9 @@ class Html
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
         $GLOBALS[tabindex]++;
         if ($label=='') {
-            $label=ucfirst($name);
+            $label=$name;
         }
+        $label=\util::l(strtolower($label));
         if ($properties=='') {
             $rows='4';
         }
@@ -1533,8 +1545,9 @@ class Html
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
         $GLOBALS[tabindex]++;
         if ($label=='') {
-            $label=ucfirst($name);
+            $label=$name;
         }
+        $label=\util::l(strtolower($label));
         if ($value>0) {
             $chkd='checked';
         } else {
@@ -1559,8 +1572,9 @@ class Html
         $GLOBALS[tabindex]++;
         $id=$GLOBALS[tabindex];
         if ($label=='') {
-            $label=ucfirst($name);
+            $label=$name;
         }
+        $label=\util::l(strtolower($label));
         if ($value>0) {
             $chkd='checked';
         } else {
@@ -1808,6 +1822,7 @@ class Html
         }
         $htlist = "$htlist</SELECT>\n";
         $out.="";
+        $caption=\util::l($caption);
         $out.="<dl><dt class='$class'><label>$caption</label>$htlist</dt></dl>";
         return $out;
     }
@@ -1829,6 +1844,7 @@ class Html
         }
         $htlist = "$htlist</SELECT>\n";
         $out.="";
+        $caption=\util::l($caption);
         $out.="<dl><dt class='$class'><label>$caption</label>$htlist</dt></dl>";
         return $out;
     }
@@ -2272,6 +2288,7 @@ class Html
 
     function link_button($title = '', $link = '', $class = '', $warn = '')
     {
+        $title=\util::l($title);
         //$out="<a href='$link'><i class='btn btn-mini $class'>$title</i></a>";
         $link=htmlspecialchars($link);
         if ($warn=='') {
@@ -2447,7 +2464,26 @@ class Html
         //$out="<table class='table table-bordered table-morecondensed table-notfull' ><tr><td class='n'>Test</td></tr></table>";
         return $out;
     }
-
+    function array_values_form($array = [], $file_name = '', $where = '')
+    {
+        $form_opt['well_class']="span11 columns form-wrap";
+        $form_opt['title']="Edit $file_name";
+        $out.=$this->form_start('file_json','','',$form_opt);
+        $out.=$this->form_hidden('file_name',$file_name);
+        $out.=$this->form_hidden('where',$where);
+        $out.="<hr>";
+        $out.= "<table class='table table-bordered table-morecondensed table-notfull' >";
+        foreach ($array as $key => $value) {
+            $out.= "<tr><td class='n bold'>{$key}:</td><td class='span12'>";
+            $out.=$this->form_text($key,$value,' ','',0,'span12');
+            $out.= "</td></tr>";
+        }
+        $out.= "</table>";
+        $out.=$this->form_submit('Save');
+        $out.=$this->form_end();
+        $result[out]=$out;
+        return $result;
+    }
     function array_nested_form($array = [], $table = '', $field = '', $id = 0, $parent = '', $js = '')
     {
         $inline_edit=1;
@@ -3516,6 +3552,7 @@ class Html
         }
         foreach ($files as $f) {
             $i++;
+            $file_extension=$this->utils->file_extension($f);
             $is_link = is_link($path . '/' . $f);
             //$img = $is_link ? 'fa fa-file-text-o' : fm_get_file_icon_class($path . '/' . $f);
             $modif = date(FM_DATETIME_FORMAT, filemtime($path . '/' . $f));
@@ -3540,11 +3577,19 @@ class Html
             //$out.= "<td onMouseover=\"showhint('$row[descr]', this, event, '400px');\">$row[name]</td>";
             $out.= "<td>$f</td>";
             $out.= "<td class='n'>$filesize</td>";
+            $edit= "";
             $view= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('View', this, event, '50');\"><i class='icon-eye-open'></i></a>";
             $download= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('Download', this, event, '50');\"><i class='icon-download'></i></a>";
+            if($file_extension=='json'){
+                $edit= "<a href='?act=form&what=file_json&where=$where&plain=&filename=$f' onMouseover=\"showhint('Edit', this, event, '50');\"><i class='icon-edit'></i></a>";
+            }
+            if($file_extension=='txt'){
+                $edit= "<a href='?act=form&what=edit_file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('Edit', this, event, '50');\"><i class='icon-edit'></i></a>";
+            }
+
             $send= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('Send', this, event, '50');\"><i class='icon-envelope'></i></a>";
             $send=$this->confirm_with_comment("<i class='icon-envelope'></i>", "?act=details&what=file_content&where=$where&plain=1&filename=$f", 'nano', 'Enter email address');
-            $out.= "<td>$view $send</td>";
+            $out.= "<td>$view $send $download $edit</td>";
             //$out.=$this->HT_editicons($what, $row[id]);
             $out.= "</tr>";
         }

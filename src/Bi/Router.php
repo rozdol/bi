@@ -416,7 +416,8 @@ class Router
                 }
                 $titleorig=ucfirst($title);
 
-                $title="$addbutton". ucfirst(str_replace('_', ' ', $title)); //remove on new design
+                //$title="$addbutton". ucfirst(str_replace('_', ' ', $title)); //remove on new design
+                $title="$addbutton". \util::l(str_replace('_', ' ', $title));
                 //echo "$what,$function,$accessitemchk,$title,$titleorig";exit;
                 //if($what=='documents')$srchbtn="<a href='?act=search&what=$what' class='c'><i class='icon-search'></i></a>";
                 if (($notitle=="")&&($hide_title=='')) {

@@ -773,9 +773,9 @@ class Utils
         static $translations = null;
         /* If no instance of $translations has occured load the language file */
         if (is_null($translations)) {
-            $lang_file = FW_DIR.'/lang/' . LANGUAGE . '.json';
+            $lang_file = DATA_DIR.'/lang/' . LANGUAGE . '.json';
             if (!file_exists($lang_file)) {
-                $lang_file =FW_DIR.'/lang/' . 'en-us.json';
+                $lang_file =DATA_DIR.'/lang/' . 'en-us.json';
             }
             $lang_file_content = file_get_contents($lang_file);
             /* Load the language file as a JSON object and transform it into an associative array */

@@ -819,6 +819,8 @@ class Data
                 $link=$menuitems[link];
                 if ($title=="Main") {
                     $title="<i class='icon-home icon-white'></i>";
+                }else{
+                    $title=\util::l($title);
                 }
                 $submenu=$this->submenu($row[id], $group_id, 1);
                 $out.="<li id='n-main_$i'><a href='$link'>$title</a>";
@@ -937,6 +939,8 @@ class Data
                 if ($i==1) {
                     $class="first";
                 }
+                $title=\util::l($title);
+                //echo $this->html->pre_display($title,"title");
                 //$submenu=submenu($row[id],$gid,$level);
                 $submenu=$this->submenu($row[id], $group_id, $level);
                 if ($children>0) {
@@ -1490,7 +1494,7 @@ class Data
                 ';
 
         $out.="<fieldset class='lookup'>
-            <div id='title_$field'><b>$title</b></div>
+            <div id='title_$field'>".\util::l($title)."</div>
             <input type='text' autocomplete='off' placeholder='Narrow search' name='partnersearch' id='search_$field' value='' onchange='itemid=this.value;CallFunc_$field(itemid);' $disabled>
             <span onclick='itemid=document.getElementById(\"search_$field\").value;CallFunc_$field(itemid);' class='icon-search'></span>
             <div id='partner_$field'></div>
@@ -1554,7 +1558,7 @@ class Data
                 ';
 
         $out.="<fieldset class='lookup'>
-            <div id='title_$field'><b>$title</b></div>
+            <div id='title_$field'>".\util::l($title)."</div>
             <input type='text' autocomplete='off' placeholder='Narrow search' name='objectsearch' id='search_$field' value='' onchange='itemid=this.value;CallFunc_$field(itemid);' $disabled>
             <span onclick='itemid=document.getElementById(\"search_$field\").value;CallFunc_$field(itemid);' class='icon-search'></span>
             <div id='object_$field'></div>
@@ -1577,7 +1581,7 @@ class Data
     {
         $tablefield=$table.'_'.$field;
         $out="<fieldset class='lookup'>
-            <div id='title_$field'>$title</div>
+            <div id='title_$field'>".\util::l($title)."</div>
             <input type='text' autocomplete='off' placeholder='Narrow search' name='search$tablefield' id='search_$tablefield' value='' onchange='itemid=this.value;ajaxFunction(\"$tablefield\",\"?csrf=$GLOBALS[csrf]&act=append&what=object_id&fromtable=$table&fieldname=$field&value=\"+itemid);' $disabled>
             <span onclick='itemid=document.getElementById(\"search_$tablefield\").value;ajaxFunction(\"$tablefield\",\"?csrf=$GLOBALS[csrf]&act=append&what=object_id&fromtable=$table&fieldname=$field&value=\"+itemid);' class='icon-search'></span>
             <div id='$tablefield'></div>
@@ -2154,9 +2158,9 @@ class Data
         $sql="select * from favorites where refid=$id and reference='$table' and userid=$uid";
         $count=$this->db->GetVal($sql)*1;
         if ($count>0) {
-            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-in.png' title='Remove from favorites'> Favorite</a>";
+            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-in.png' title='Remove from favorites'> ".\util::l('Favorite')."</a>";
         } else {
-            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-out.png' title='Add to favorites'> Favorite</a>";
+            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-out.png' title='Add to favorites'> ".\util::l('Favorite')."</a>";
         }
         return $result;
     }
@@ -2166,9 +2170,9 @@ class Data
         $sql="select * from favorites where refid=$id and reference='$table' and userid=$uid";
         $count=$this->db->GetVal($sql)*1;
         if ($count>0) {
-            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-in.png' title='Remove from favorites'> Favorite</a>";
+            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-in.png' title='Remove from favorites'> ".\util::l('Favorite')."</a>";
         } else {
-            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-out.png' title='Add to favorites'> Favorite</a>";
+            $result="<a href='?csrf=$GLOBALS[csrf]&act=save&what=favorites&refid=$id&reference=$table'><img src='".ASSETS_URI."/assets/img/custom/fav-out.png' title='Add to favorites'> ".\util::l('Favorite')."</a>";
         }
         return $result;
     }
@@ -2886,13 +2890,13 @@ class Data
             $whattag='p';
         }
         if (($GLOBALS['access']['edit_'.$what])&&($_POST[noedit]!=1)) {
-            $edit=":: <a href='?act=edit&table=$what&id=$id'><img src='".ASSETS_URI."/assets/img/custom/edit.png'> Edit </a>";
+            $edit=":: <a href='?act=edit&table=$what&id=$id'><img src='".ASSETS_URI."/assets/img/custom/edit.png'> ".\util::l('Edit')." </a>";
         }
         if (($GLOBALS['access']['edit_'.$what])&&($_POST[nodelete]!=1)) {
-            $del_btn.= ":: <i class='icon-trash withpointer' onclick=\"confirmation('?csrf=$GLOBALS[csrf]&act=delete&what=$what&id=$id','$text')\" onMouseOver=\"this.className='icon-trash icon-white withpointer black'\" onMouseOut=\"this.className='icon-trash withpointer'\"></i> Delete ";
+            $del_btn.= ":: <i class='icon-trash withpointer' onclick=\"confirmation('?csrf=$GLOBALS[csrf]&act=delete&what=$what&id=$id','$text')\" onMouseOver=\"this.className='icon-trash icon-white withpointer black'\" onMouseOut=\"this.className='icon-trash withpointer'\"></i> ".\util::l('Delete');
         }
         $qr="<a href='?act=pdf&what=pdf_qr&acttag=d&whattag=$whattag&id=$id'><i class='icon-qrcode withpointer'></i> QR</a>";
-        $out.="<div class='alert alert-info'>$fav $edit :: <a href='?act=edit&table=notify&refid=$id&tablename=$what'><img src='".ASSETS_URI."/assets/img/custom/MailSend.png'> Notify </a> :: $qr $del_btn | $more $isnotified</div>";
+        $out.="<div class='alert alert-info'>$fav $edit :: <a href='?act=edit&table=notify&refid=$id&tablename=$what'><img src='".ASSETS_URI."/assets/img/custom/MailSend.png'> ".\util::l('Notify')." </a> :: $qr $del_btn | $more $isnotified</div>";
         return "<span media='print' class='noPrint'>$out</span>";
     }
     function readconfig($what)
