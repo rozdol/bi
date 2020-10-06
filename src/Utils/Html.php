@@ -1976,6 +1976,9 @@ class Html
             if ($field=='text') {
                 $ins=$this->form_textarea('text', '', 'Text', '', 0, '', 'span12');
             }
+            if ($field=='password') {
+                $ins=$this->form_password($field, "", ucfirst($field), '', 0, 'span12');
+            }
             if ($field=='active') {
                 $ins=$this->form_chekbox($field, '', ucfirst($field), '', 0, 'span12');
             }
