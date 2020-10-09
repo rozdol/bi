@@ -1351,12 +1351,15 @@ class Utils
         for ($j = 0; $j < $i; $j++) {
             //echo "column $j\n";
             $fieldname = pg_field_name($cur, $j);
+            $fieldname=str_ireplace('_id','',$fieldname);
             $fieldtype = pg_field_type($cur, $j);
             //$out.= "F:$fieldname:$fieldtype\n";
             $ok="";
-            $fieldlist.="'$fieldname',";
+            //$fieldlist.="'$fieldname',";
+            $field_array[]="'$fieldname'";
         }
-        $out.="\$fields=array($fieldlist);
+        $fieldlist=implode(',',$field_array);
+        $out.="\$fields=[$fieldlist];
     //\$sort= \$fields;
     \$out=\$this->html->tablehead(\$what,\$qry, \$order, 'no_addbutton', \$fields,\$sort);
 
@@ -1365,7 +1368,8 @@ class Utils
     while (\$row = pg_fetch_array(\$cur)) {
         \$i++;
         \$class='';
-        //\$type=\$this->data->get_name('listitems',\$row[type]);
+        //\$type=\$this->data->get_name('listitems',\$row[type_id]);
+        //\$partner=\$this->data->detalize('partners',\$row[partner_id]);
         if(\$row[id]==0)\$class='d';
         \$out.= \"<tr class='\$class'>\";
         \$out.= \$this->html->edit_rec(\$what,\$row[id],'ved',\$i);
@@ -1374,6 +1378,7 @@ class Utils
         \$out.= \"<td>\$row[date]</td>\";
         \$out.= \"<td>\$type</td>\";
         \$out.= \"<td class='n'>\".\$this->html->money(\$row[amount]).\"</td>\";
+        //\$out.= \$this->html->HT_editicons(\$what, \$row[id]);
         \$out.= \"</tr>\";
         \$totals[2]+=\$row[qty];
         if (\$allids) \$allids.=','.\$what.':'.\$row[id]; else \$allids.=\$what.':'.\$row[id];
@@ -1532,8 +1537,8 @@ class Utils
                     $ok=1;
 
                     $outfields.= "  \";
-                        \$$fieldname=\$this->data->listitems('$fieldname',\$res[$fieldname],'$fieldname');
-                        \$out.= \"<label>$label</label>\$$fieldname\n";
+                    \$$fieldname=\$this->data->listitems('$fieldname',\$res[$fieldname],'$fieldname');
+                    \$out.= \"<label>$label</label>\$$fieldname\n";
                 }
                 if ((($fieldname=='partnerid')||($fieldname=='partner_id')||($fieldname=='bank_id')||($fieldname=='bankid')||($fieldname=='sender_id')||($fieldname=='receiver_id')||($fieldname=='sender_id')||($fieldname=='receiver'))&&($ok=="")) {
                     $ok=1;
@@ -1549,8 +1554,9 @@ class Utils
                     $list_alias=implode('_', $tokens);
                     //$$fieldname=\$this->html->htlist('$fieldname',\"SELECT id, name FROM $tokens[0]s WHERE id>0 ORDER by id\",\$res[$fieldname],'Select $tokens[0]');
                     $outfields.= "
-    $$fieldname=\$this->data->listitems('$fieldname',\$res[$fieldname],'$list_alias','span12');
-        \$out.= \"<label>".ucfirst($label)."</label>$$fieldname\";\n";
+$$fieldname=\$this->data->listitems('$fieldname',\$res[$fieldname],'$list_alias','span12');
+\$out.= \"<label>\".\util::l('$label').\"</label>$$fieldname\";\n";
+//\$out.= \"<label>".ucfirst($label)."</label>$$fieldname\";\n";
                 }
                 if ((($fieldname=='descr')||($fieldname=='addinfo')||($fieldname=='values')||($fieldname=='data')||($fieldname=='key'))&&($ok=="")) {
                     $ok=1;
@@ -1571,34 +1577,34 @@ class Utils
             }
         }
         $outhead.= "<?php
-    //Edit $tablename
-    if (\$act=='edit'){
-        \$sql=\"select * from \$what WHERE id=\$id\";
-        \$res=\$this->db->GetRow(\$sql);
-    }else{
-        \$sql=\"select * from \$what WHERE id=\$refid\";
-        \$res2=\$this->db->GetRow(\$sql);
-        \$res[active]='t';
-    }
+//Edit $tablename
+if (\$act=='edit'){
+    \$sql=\"select * from \$what WHERE id=\$id\";
+    \$res=\$this->db->GetRow(\$sql);
+}else{
+    \$sql=\"select * from \$what WHERE id=\$refid\";
+    \$res2=\$this->db->GetRow(\$sql);
+    \$res[active]='t';
+}
 
-    \$form_opt['well_class']=\"span11 columns form-wrap\";
+\$form_opt['well_class']=\"span11 columns form-wrap\";
 
-    \$out.=\$this->html->form_start(\$what,\$id,'',\$form_opt);
-    \$out.=\"<hr>\";
+\$out.=\$this->html->form_start(\$what,\$id,'',\$form_opt);
+\$out.=\"<hr>\";
 
-    \$out.=\$this->html->form_hidden('reflink',\$reflink);
-    \$out.=\$this->html->form_hidden('id',\$id);
-    \$out.=\$this->html->form_hidden('reference',\$reference);
-    \$out.=\$this->html->form_hidden('refid',\$refid);
+\$out.=\$this->html->form_hidden('reflink',\$reflink);
+\$out.=\$this->html->form_hidden('id',\$id);
+\$out.=\$this->html->form_hidden('reference',\$reference);
+\$out.=\$this->html->form_hidden('refid',\$refid);
 
-    $outfields
+$outfields
 
-    \$out.=\$this->html->form_confirmations();
-    \$out.=\$this->html->form_submit('Save');
-    \$out.=\$this->html->form_end();
-    ";
-        $out.="$outhead
-    \$body.=\$out;
+\$out.=\$this->html->form_confirmations();
+\$out.=\$this->html->form_submit('Save');
+\$out.=\$this->html->form_end();
+";
+    $out.="$outhead
+\$body.=\$out;
     </textarea>";
 
         //echo $out;
