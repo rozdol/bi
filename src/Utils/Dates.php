@@ -244,7 +244,7 @@ class Dates
         list($day2,$month2,$year2) = explode('.', $date2);
         $date2 = "{$month2}/{$day2}/{$year2}";
         $date2 = strtotime($date2);
-        if (($base=='')||($base=='365')) {
+        if (($base=='')||($base=='365')||($base=='A/360'||($base=='Actual/360'))) {
             $res = round(($date2 - $date1)/(3600*24), 0);
         }
         if ($base=='30/360') {
@@ -907,7 +907,7 @@ class Dates
 
         return $new_date;
     }
-    public function F_dateadd($date = '', $days = '', $workingonly = '')
+    public function F_dateadd($date = '', $days = 0, $workingonly = 0, $ignore_weekends = 0)
     {
         if ($workingonly>0) {
             $holidays=array('01.01.2013','02.01.2013');
@@ -920,9 +920,14 @@ class Dates
         }
           $date=(mktime(0, 0, 0, substr($date, 3, 2), (substr($date, 0, 2)+$days), substr($date, 6, 4)));
         $date  = date('d.m.Y', $date);
+        if($ignore_weekends>0){
+            $day_of_week=$this->F_weekday($date);
+            if($day_of_week==6)$date=$this->F_dateadd($date,-1);
+            if($day_of_week==7)$date=$this->F_dateadd($date,+1);
+        }
         return $date;
     }
-    public function F_dateadd_year($date = '', $val = 1)
+    public function F_dateadd_year($date = '', $val = 1, $ignore_weekends = 0)
     {
         $date=(mktime(0, 0, 0, substr($date, 3, 2), (substr($date, 0, 2)), substr($date, 6, 4)));
         if ($val<0) {
@@ -932,9 +937,14 @@ class Dates
         }
         $newdate = strtotime("$sign $val year", $date) ;
         $newdate = date('d.m.Y', $newdate);
+        if($ignore_weekends>0){
+            $day_of_week=$this->F_weekday($newdate);
+            if($day_of_week==6)$newdate=$this->F_dateadd_day($newdate,-1);
+            if($day_of_week==7)$newdate=$this->F_dateadd_day($newdate,+1);
+        }
         return $newdate;
     }
-    public function F_dateadd_month($date = '', $val = 1)
+    public function F_dateadd_month($date = '', $val = 1, $ignore_weekends = 0)
     {
         $date=(mktime(0, 0, 0, substr($date, 3, 2), (substr($date, 0, 2)), substr($date, 6, 4)));
         if ($val<0) {
@@ -944,9 +954,14 @@ class Dates
         }
         $newdate = strtotime("$sign $val month", $date) ;
         $newdate = date('d.m.Y', $newdate);
+        if($ignore_weekends>0){
+            $day_of_week=$this->F_weekday($newdate);
+            if($day_of_week==6)$newdate=$this->F_dateadd_day($newdate,-1);
+            if($day_of_week==7)$newdate=$this->F_dateadd_day($newdate,+1);
+        }
         return $newdate;
     }
-    public function F_dateadd_week($date = '', $val = 1)
+    public function F_dateadd_week($date = '', $val = 1, $ignore_weekends = 0)
     {
         $date=(mktime(0, 0, 0, substr($date, 3, 2), (substr($date, 0, 2)), substr($date, 6, 4)));
         if ($val<0) {
@@ -956,9 +971,14 @@ class Dates
         }
         $newdate = strtotime("$sign $val week", $date) ;
         $newdate = date('d.m.Y', $newdate);
+        if($ignore_weekends>0){
+            $day_of_week=$this->F_weekday($newdate);
+            if($day_of_week==6)$newdate=$this->F_dateadd_day($newdate,-1);
+            if($day_of_week==7)$newdate=$this->F_dateadd_day($newdate,+1);
+        }
         return $newdate;
     }
-    public function F_dateadd_day($date = '', $val = 1)
+    public function F_dateadd_day($date = '', $val = 1, $ignore_weekends = 0)
     {
         $date=(mktime(0, 0, 0, substr($date, 3, 2), (substr($date, 0, 2)), substr($date, 6, 4)));
         if ($val<0) {
@@ -968,9 +988,14 @@ class Dates
         }
         $newdate = strtotime("$sign $val day", $date) ;
         $newdate = date('d.m.Y', $newdate);
+        if($ignore_weekends>0){
+            $day_of_week=$this->F_weekday($newdate);
+            if($day_of_week==6)$newdate=$this->F_dateadd_day($newdate,-1);
+            if($day_of_week==7)$newdate=$this->F_dateadd_day($newdate,+1);
+        }
         return $newdate;
     }
-    public function F_date_add($date = '', $val = 1, $what = 'day')
+    public function F_date_add($date = '', $val = 1, $what = 'day', $ignore_weekends = 0)
     {
         $date=(mktime(0, 0, 0, substr($date, 3, 2), (substr($date, 0, 2)), substr($date, 6, 4)));
         if ($val<0) {
