@@ -2651,6 +2651,33 @@ class Data
         //echo "$currid,$date:$rate<br>";
         return $rate;
     }
+    function get_libor_rate($date = '',$currency_id='', $maturity_id='', $source_id='')
+    {
+        $date=$this->dates->F_date($date, 1);
+
+        if(!is_numeric($currency_id))$currency_id=$this->db->GetVal("SELECT id from listitems where lower(name)=lower('$currency_id') and list_id=6");
+        if ($currency_id*1==0)$currency_id=600;
+
+        if(!is_numeric($maturity_id))$maturity_id=$this->db->GetVal("SELECT id from listitems where lower(name)=lower('$maturity_id') and list_id=119");
+        if ($maturity_id*1==0)$maturity_id=11904;
+
+        if(!is_numeric($source_id))$source_id=$this->db->GetVal("SELECT id from listitems where lower(name)=lower('$source_id') and list_id=118");
+        if ($source_id*1==0)$source_id=11800;
+
+        $sql="SELECT id from libor_rates where date<='$date' and currency_id=$currency_id and maturity_id=$maturity_id and source_id=$source_id order by date desc limit 1";
+        $id=$this->db->GetVal($sql)*1;
+        //echo "$sql ($id)<br>";
+        if ($id==0) {
+            $sql="SELECT id from libor_rates where currency_id=$currency_id and maturity_id=$maturity_id and source_id=$source_id order by date desc limit 1";
+            $id=$this->db->GetVal($sql)*1;
+            //echo "$sql ($rate)<br>";
+        }
+        if ($id==0) return 'N/A';
+        $sql="SELECT rate from libor_rates where id=$id";
+        $rate=$this->db->GetVal($sql)*1;
+        //echo "$currency_id,$date:$rate<br>";
+        return $rate;
+    }
 
     function show_cal($year='')
     {
