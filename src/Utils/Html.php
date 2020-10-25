@@ -1429,7 +1429,10 @@ class Html
 
     function form_text($name = '', $value = '', $label = '', $placeholder = '', $minlength = 0, $class = '' , $style = '')
     {
-        $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
+        $disabled="";
+        if($this->utils->contains('disabled', $class))$disabled='disabled';
+        if($this->utils->contains('readonly', $class))$disabled='readonly';
+
         $GLOBALS[tabindex]++;
         if ($label=='') {
             //$label=$name;
