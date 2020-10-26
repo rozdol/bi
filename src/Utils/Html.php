@@ -229,7 +229,7 @@ class Html
 
     function tag($title = '', $type = 'h2', $class = '', $id = '')
     {
-        $title=\util::l($title);
+        //$title=\util::l($title);
         $result='';
         if($GLOBALS[offline_mode]){
             $GLOBALS[offline_messages][]=strip_tags("$type: $title");
