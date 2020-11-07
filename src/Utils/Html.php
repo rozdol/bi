@@ -2203,7 +2203,7 @@ class Html
             onclick='document.getElementById(\"$name.act_\").innerHTML=\"$buttonshow\";
                      document.getElementById(\"$name.hide_\").innerHTML=\"\";
                      document.getElementById(\"$name.\").innerHTML=\"\";'
-                onmouseover=\"this.style.cursor='pointer';\"></div>$reload
+                onmouseover=\"this.style.cursor='pointer';\"></div>$reload2
                 <div id='$name.'></div>";
         return "<div class='well-fw'>$text</div><br>$with_link";
     }
