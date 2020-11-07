@@ -2238,9 +2238,18 @@ class Data
             $res=$this->db->GetRow("select * from $what where id=$id $sql");
             $res[id]=$res[id]*1;
             if ($res[id]>0) {
-                $sql="SELECT count(*) FROM docs2groups WHERE docid=$id and (groupid=$gid or groupid=0);";
 
-                $allowed=$this->db->GetVar($sql)*1;
+                $sql="SELECT count(*) FROM docs2groups WHERE docid=$id;";
+                $count=$this->db->GetVar($sql)*1;
+                if($count>0){
+                    $sql="SELECT count(*) FROM docs2groups WHERE docid=$id and (groupid=$gid or groupid=0);";
+                    $allowed=$this->db->GetVar($sql)*1;
+                    $gids=$this->get_list_csv("SELECT groupid FROM docs2groups WHERE docid=$id");
+                    $reason="By group access your is $gid, GIDS:$gids";
+                    if($GLOBALS[access]['main_admin'])$allowed=1;
+                }else{
+                    $allowed=1;
+                }
 
                 if ($GLOBALS[allowed_pids]!='') {
                     $allowed=0;
