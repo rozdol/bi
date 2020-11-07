@@ -681,6 +681,9 @@ class Html
         }
 
         if ((in_array($GLOBALS[act], array('show','details','report','r','v','d')))&&($GLOBALS[plain]=='')&&(!in_array($GLOBALS[what], array('groupaccess')))) {
+            // $GLOBALS[return_to_act]=$GLOBALS[act];
+            // $GLOBALS[return_to]=$GLOBALS[what];
+            // $GLOBALS[return_to_id]=$this->readRQ('id');
             $this->set_reflink();
         }
         if ((in_array($GLOBALS[act], array('save')))&&($GLOBALS[plain]=='')&&(!in_array($GLOBALS[what], array('groupaccess'))&&($this->readRQ('back_to_url')!=''))) {
@@ -2860,17 +2863,22 @@ class Html
     //     return $out.$tbl;
     // }
 
-    function dropzoneJS($formdata = '', $text = 'Drop files here')
+    function dropzoneJS($formdata = '', $text = 'Drop files here',$inline=0)
     {
+        $UUID = md5(uniqid(rand(), true));
         $related_data=json_decode($formdata, true);
-        //echo $this->pre_display($related_data,$formdata); exit;
+        //echo $this->pre_display($related_data,'related_data'.$UUID); //exit;
         foreach ($related_data as $key => $value) {
             $hidden.=$this->form_hidden($key, $value);
+        }
+        if($inline>0){
+            $style='style="width:100%; margin:0"';
+            $text="";
         }
 
         $out='
             <span id="up-ack"></span>
-            <form id="file-up" class="dropzone">
+            <form id="file-up_'.$UUID.'" class="dropzone" '.$style.'>
             '.$hidden.'
             </form>
 
@@ -2889,7 +2897,7 @@ class Html
             $(document).ready(function () {
                  //prevent error: "Error: Dropzone already attached."
                   Dropzone.autoDiscover = false;
-                  $("#file-up").dropzone({
+                  $("#file-up_'.$UUID.'").dropzone({
                     url: "?act=save&what=dropzone&plain=1",
                     addRemoveLinks: true,
                     parallelUploads: 10,
