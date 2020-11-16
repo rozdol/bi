@@ -1396,7 +1396,7 @@ class Html
 
     function form_hidden($name = 'reflink', $value = '/')
     {
-        $res="<input type='hidden' name='$name' value='$value'>\n";
+        $res="<input type='hidden' name='$name' id='$name' value='$value'>\n";
         return $res;
     }
     public function form_confirmations()
