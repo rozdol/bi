@@ -1176,7 +1176,8 @@ class Html
         $hostname = gethostname();
         $info="ip:".$GLOBALS[ip]." | db:".$GLOBALS['DB']['DB_NAME']." | dm:".$GLOBALS['DB']['DB_DOMAIN']." | app:".APP_NAME. " | H:$hostname";
 
-        if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&(getenv('MFA_AUTH'))) {
+        if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&((getenv('MFA_AUTH')||($GLOBALS[settings][use_mfa])))) {
+        //if(1==1){
             $content['html'].='<label> </label>
             <div class="input-prepend">
                 <span class="add-on"><i class="icon-time"></i></span>

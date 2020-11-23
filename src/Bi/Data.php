@@ -377,8 +377,9 @@ class Data
         //echo "$password, $good_hash<br> OK:$ok, username=$user[username] UID:$user[id]<br>$sql"; exit;
         //$ok=1;
         if ($ok > 0) {
-            if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&(getenv('MFA_AUTH'))&&$user['ga']!='') {
-                //if(1!=1){
+            if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&((getenv('MFA_AUTH')||($GLOBALS[settings][use_mfa])))&&$user['ga']!='') {
+                //if(1==1){
+                include_once(CLASSES_DIR.'/PHPGangsta/GoogleAuthenticator.php');
                 $ga = new \PHPGangsta_GoogleAuthenticator();
                 //echo $this->html->pre_display($user['ga'],"ga"); exit;
                 $secret = $user['ga'];
