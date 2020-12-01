@@ -2549,7 +2549,7 @@ class Data
         //if($GLOBALS[access]['main_admin'])$allowed=1;
         if (($GLOBALS[access]['main_admin'])&&($allowed==0)&&($id>0)) {
             echo $this->html->message("NOT ALLOWED $what for not admins<hr>$reason", 'warn', 'orange');
-            //$allowed=1;
+            $allowed=1;
         }
         //$allowed=0;
         //if($access[main_admin])$allowed=1;
