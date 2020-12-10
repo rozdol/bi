@@ -3,6 +3,7 @@ namespace Rozdol\Html;
 
 use Rozdol\Utils\Utils;
 use Rozdol\Dates\Dates;
+use Rozdol\Utils\Utf8;
 
 class Html
 {
@@ -20,6 +21,7 @@ class Html
     {
             $this->dates = Dates::getInstance();
             $this->utils = Utils::getInstance();
+            $this->utf8 = Utf8::getInstance();
     }
 
     function tablehead($what = '', $qry = '', $order = '', $addbutton = '', $fields = [], $sort = '', $tips = [], $class = 'table-notfull')
@@ -259,6 +261,10 @@ class Html
         $link="<a href='?act=details&what=$table&id=$id'>$name</a>";
         return $link;
 
+    }
+
+    function shorter($text='' ,$chars = 400){
+        return $this->utf8->utf8_cutByPixel($text, $chars, false);
     }
 
 
