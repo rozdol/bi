@@ -672,6 +672,9 @@ class Html
         if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='docs:DOWNLOADZIP')) {
             $GLOBALS[plain]=1;
         }
+        if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='docs:DOWNLOADZIPSINGLE')) {
+            $GLOBALS[plain]=1;
+        }
         if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='all:EXPORTZIP')) {
             $GLOBALS[plain]=1;
         }
