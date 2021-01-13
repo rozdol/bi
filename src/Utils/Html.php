@@ -2451,8 +2451,8 @@ class Html
 
             $rows.= "<tr class=''>";
             $rows.="<td class='n'>$i</td>";
-            $rows.="<td class='n'><b>$key</b></td>";
-            $rows.= "<td class=''>".htmlspecialchars($val)."</td>";
+            $rows.="<td class=''><b>$key</b></td>";
+            $rows.= "<td class='$class'>".htmlspecialchars($val)."</td>";
             $rows.= "</tr>";
             $i++;
             //echo $this->pre_display($row,$row_key);
