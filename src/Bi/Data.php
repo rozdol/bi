@@ -2929,6 +2929,9 @@ class Data
         if (($GLOBALS['access']['edit_'.$what])&&($_POST[noedit]!=1)) {
             $edit=":: <a href='?act=edit&table=$what&id=$id'><img src='".ASSETS_URI."/assets/img/custom/edit.png'> ".\util::l('Edit')." </a>";
         }
+        if (($GLOBALS['access']['edit_'.$what])&&($_POST[noedit]!=1)&&($GLOBALS[access][main_admin])) {
+            $edit.=":: <a href='?act=edit&table=$what&raw_data=1&id=$id'><img src='".ASSETS_URI."/assets/img/custom/edit.png'> ".\util::l('Raw Edit')." </a>";
+        }
         if (($GLOBALS['access']['edit_'.$what])&&($_POST[nodelete]!=1)) {
             $del_btn.= ":: <i class='icon-trash withpointer' onclick=\"confirmation('?csrf=$GLOBALS[csrf]&act=delete&what=$what&id=$id','$text')\" onMouseOver=\"this.className='icon-trash icon-white withpointer black'\" onMouseOut=\"this.className='icon-trash withpointer'\"></i> ".\util::l('Delete');
         }
