@@ -850,6 +850,8 @@ class Comm
         curl_close($curl);
         // No HTTP error authorized
         if ($http_code != 200) {
+            echo curl_error($curl);
+            echo $this->html->pre_display($result,"result");
             echo $this->html->message('HTTP status code ' . $http_code." <br>$curl ",__FUNCTION__,'alert-error');
             return null;
         }
