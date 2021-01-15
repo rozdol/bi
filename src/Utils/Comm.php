@@ -842,7 +842,7 @@ class Comm
         curl_setopt_array($curl, array(
             CURLOPT_URL             => $source,
             CURLOPT_RETURNTRANSFER  => 1,
-            CURLOPT_TIMEOUT         => 2
+            CURLOPT_TIMEOUT         => 20
         ));
         $result = curl_exec($curl);
         //echo $this->html->pre_display($result,"result");
