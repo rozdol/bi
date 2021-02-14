@@ -39,7 +39,7 @@ class Data
             $this->html->SQL_error($sql);
         }
         $access=array();
-        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+        while ($row = pg_fetch_array($cur)) {
             $value=$row[access];
             $name=$row[name];
             //if ($value=='f') {$value=0;} else {$value=1;}
@@ -573,7 +573,7 @@ class Data
         if (!($cur = pg_query($sql))) {
             $this->html->SQL_error($sql);
         }
-        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+        while ($row = pg_fetch_array($cur)) {
             $value=$row[value];
             $name=$row[name];
             $GLOBALS[$name]=$value;
@@ -800,7 +800,7 @@ class Data
         if (!($cur = pg_query($sql))) {
             $this->html->SQL_error($sql);
         }
-        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+        while ($row = pg_fetch_array($cur)) {
             $print=0;
             $i++;
             if ($gid2==2) {
@@ -4038,7 +4038,7 @@ class Data
         if ($rows>0) {
             $res.="<div class='post'>";
         }
-        $result = pg_fetch_array($cur,NULL,PGSQL_ASSOC);
+        $result = pg_fetch_array($cur);
         $columnts= pg_num_fields($cur);
         $fieldnames = [];
         $fieldtypes = [];
@@ -4055,7 +4055,7 @@ class Data
         }
         $rows=pg_num_rows($cur);
 
-        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+        while ($row = pg_fetch_array($cur)) {
             $i++;
             $tbl.= "<tr class='$class'>";
             $tbl.= "<td>$i</td>";
@@ -4081,7 +4081,7 @@ class Data
             $this->html->SQL_error($sql);
         }
         $rows=pg_num_rows($cur);
-        while ($row = pg_fetch_array($cur, null, PGSQL_ASSOC)) {
+        while ($row = pg_fetch_array($cur)) {
             $res[] = $row;
         }
         /*
