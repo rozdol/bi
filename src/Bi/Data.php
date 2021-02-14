@@ -39,7 +39,7 @@ class Data
             $this->html->SQL_error($sql);
         }
         $access=array();
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $value=$row[access];
             $name=$row[name];
             //if ($value=='f') {$value=0;} else {$value=1;}
@@ -573,7 +573,7 @@ class Data
         if (!($cur = pg_query($sql))) {
             $this->html->SQL_error($sql);
         }
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $value=$row[value];
             $name=$row[name];
             $GLOBALS[$name]=$value;
@@ -800,7 +800,7 @@ class Data
         if (!($cur = pg_query($sql))) {
             $this->html->SQL_error($sql);
         }
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $print=0;
             $i++;
             if ($gid2==2) {
@@ -853,7 +853,7 @@ class Data
         if (!($cur = pg_query($sql))) {
             $this->html->SQL_error($sql);
         }
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $print=0;
             $menuitem=$this->db->GetRow("select * from menuitems where id=$row[menuid]");
 
@@ -979,7 +979,7 @@ class Data
             $this->html->SQL_error($sql);
         }
         $rows = pg_num_rows($cur);
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $this->save_approval_items_template($template_id, $approval_id, $row[id], 0);
         }
     }
@@ -1009,7 +1009,7 @@ class Data
             $this->html->SQL_error($sql);
         }
         $rows = pg_num_rows($cur);
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $this->save_approval_items_template($template_id, $approval_id, $row[id], $new_id);
         }
     }
@@ -1049,7 +1049,7 @@ class Data
             $this->html->SQL_error($sql);
         }
         $rows = pg_num_rows($cur);
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $this->get_approval_item_status($row[id]);
         }
 
@@ -1127,7 +1127,7 @@ class Data
             $this->html->SQL_error($sql);
         }
         $rows = pg_num_rows($cur);
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $this->get_approval_item_status($row[id]);
         }
         return true;
@@ -1280,7 +1280,7 @@ class Data
                 if (!($cur = pg_query($sql))) {
                     $this->html->SQL_error($sql);
                 }
-                while ($row = pg_fetch_array($cur)) {
+                while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
                     if (in_array($row[clientid], $data[only])) {
                         $group=$group."_".$row[clientid];
                     } else {
@@ -2701,18 +2701,30 @@ class Data
         <link type='text/css' rel='stylesheet' media='all' href='".ASSETS_URI."/assets/css/cal_style.css' />
         </head>
         <body>
-        $year
+        <h2>$year</h2>
         <table><tr>";
+        if($GLOBALS[calendar][data][monthes]){
+            $monthes=explode(',',$GLOBALS[calendar][data][monthes]);
+        }
         for ($month=1; $month<=12; $month++) {
-            $cal=$this->show_cal_m($year, $month);
-            $out.="<td valign='top'>$cal<td>";
-            //if($month % 3 ==0){$out.="</tr><tr>";}
-            $out.="</tr><tr>";
+            if(!$monthes){
+                $cal=$this->show_cal_m($year, $month);
+                $out.="<td valign='top'>$cal<td>";
+                //if($month % 3 ==0){$out.="</tr><tr>";}
+                $out.="</tr><tr>";
+            }else{
+                if(in_array($month,$monthes)){
+                    $cal=$this->show_cal_m($year, $month);
+                    $out.="<td valign='top'>$cal<td>";
+                    //if($month % 3 ==0){$out.="</tr><tr>";}
+                    $out.="</tr><tr>";
+                }
+            }
         }
 
         $out.="</tr></table></body>
         </html>";
-        echo $out;
+        return $out;
     }
     function show_cal_m($year, $month)
     {
@@ -2730,26 +2742,115 @@ class Data
         $end=$this->dates->F_dateadd_month($start, 1);
 
         if($GLOBALS[calendar][data][events]){
-            $sql="select * from events where datefrom>='$start' and datefrom<='$end'";
+            $partner_id=$GLOBALS[calendar][data][events];
+            if($partner_id>0)$sql_event="and ((refid=$partner_id and reference='partners') or (partnerid=$partner_id))";
+            $sql="select * from events where datefrom>='$start' and datefrom<='$end' and type!=1335 $sql_event";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
-            while ($row = pg_fetch_array($cur)) {
-                $event = $calendar->event()->condition('timestamp', strtotime($row[datefrom]))->title($row[name])->output($row[name]);
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+                $descr="";
+                $partner_name=$this->get_name($row[reference],$row[refid]);
+                $descr.="<b>$partner_name</b><br>";
+                $type_name=$this->get_name('listitems',$row[type]);
+                $descr.="$type_name<hr>";
+
+                if($row[partnerid]>0){
+                    $partner_name=$this->get_name('partners',$row[partnerid]);
+                    $descr.="ref:$partner_name<br>";
+                }
+                if($row[qty]>0)$descr.=$row[qty]."<br>";
+                if($row[amount]>0)$descr.=$row[amount]."<br>";
+                if($row[text1]!='')$descr.=$row[text1]."<br>";
+                if($row[text2]!='')$descr.=$row[text2]."<br>";
+                if($row[text3]!='')$descr.=$row[text3]."<br>";
+
+                $event = $calendar->event()->condition('timestamp', strtotime($row[datefrom]))->title($row[name])->output("<a href='?act=details&what=events&id=$row[id]' class='label label-info' onMouseover=\"showhint('$descr', this, event, '200px');\">Event: $row[name]</a>");
                 $calendar->attach($event);
             }
 
-            $sql="select * from events where dateto>='$start' and dateto<='$end'";
+            $sql="select * from events where dateto>='$start' and dateto<='$end' and type not in (1335, 1385,1309) $sql_event";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
-            while ($row = pg_fetch_array($cur)) {
-                $event = $calendar->event()->condition('timestamp', strtotime($row[dateto]))->title($row[name])->output($row[name]);
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+                $descr="";
+                $partner_name=$this->get_name($row[reference],$row[refid]);
+                $descr.="<b>$partner_name</b><br>";
+                $type_name=$this->get_name('listitems',$row[type]);
+                $descr.="$type_name<hr>";
+
+                if($row[partnerid]>0){
+                    $partner_name=$this->get_name('partners',$row[partnerid]);
+                    $descr.="ref:$partner_name<br>";
+                }
+                if($row[qty]>0)$descr.=$row[qty]."<br>";
+                if($row[amount]>0)$descr.=$row[amount]."<br>";
+                if($row[text1]!='')$descr.=$row[text1]."<br>";
+                if($row[text2]!='')$descr.=$row[text2]."<br>";
+                if($row[text3]!='')$descr.=$row[text3]."<br>";
+                $event = $calendar->event()->condition('timestamp', strtotime($row[dateto]))->title($row[name])->output("<a href='?act=details&what=events&id=$row[id]' class='label label-info' onMouseover=\"showhint('$descr', this, event, '200px');\">EventEnd: $row[name]</a>");
                 $calendar->attach($event);
             }
         }
 
         if($GLOBALS[calendar][data][transactions]){
-            $sql="select * from transactions where valuedate>='$start' and valuedate<='$end'";
+            $partner_id=$GLOBALS[calendar][data][accounting_transactions];
+            if($partner_id>0)$sql_po="and (sender=$partner_id or receiver=$partner_id)";
+            $sql="select * from transactions where valuedate>='$start' and valuedate<='$end' and active='t' $sql_po";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
-            while ($row = pg_fetch_array($cur)) {
-                $event = $calendar->event()->condition('timestamp', strtotime($row[valuedate]))->title($row[samount])->output("<a href='?act=details&what=transactions&id=$row[id]'>$ $row[amount_usd]</a>");
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+                $row[amount_eur]=round($this->convert_currency($row[amount_usd], 'USD', 'EUR',$row[valuedate]),2);
+                $from=$this->get_name('partners',$row[sender]);
+                $to=$this->get_name('partners',$row[receiver]);
+                $class='';
+                if($row[receiver]==$partner_id)$class='success';
+                if($row[sender]==$partner_id)$class='important';
+                $descr="From:<b>$from</b><br>To:<b>$to</b><hr>$row[bankdescr]";
+                $event = $calendar->event()->condition('timestamp', strtotime($row[valuedate]))->title($row[samount])->output("<a href='?act=details&what=transactions&id=$row[id]' class='label label-$class' onMouseover=\"showhint('$descr', this, event, '200px');\">PO: € $row[amount_eur]</a>");
+                $calendar->attach($event);
+            }
+        }
+
+        if($GLOBALS[calendar][data][account_transactions]){
+            $sql="select * from account_transactions where value_date>='$start' and value_date<='$end'";
+            if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+                $descr="$row[descr]";
+                $class=($row[amount]>0)?"success":"important";
+                $event = $calendar->event()->condition('timestamp', strtotime($row[value_date]))->title($row[amount_eur])->output("<a href='?act=details&what=account_transactions&id=$row[id]' class='label label-$class' onMouseover=\"showhint('$descr', this, event, '200px');\">Bank: € $row[amount_eur]</a>");
+                $calendar->attach($event);
+            }
+        }
+
+        if($GLOBALS[calendar][data][cash_transactions]){
+            $sql="select * from cashtransactions where date>='$start' and date<='$end'";
+            if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+                $descr="$row[descr]";
+                $class=($row[amount]>0)?"success":"important";
+                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($row[amount])->output("<a href='?act=details&what=cash_transactions&id=$row[id]' class='label label-$class' onMouseover=\"showhint('$descr', this, event, '200px');\">Cash: € $row[amount]</a>");
+                $calendar->attach($event);
+            }
+        }
+
+        if($GLOBALS[calendar][data][accounting_transactions]){
+            $partner_id=$GLOBALS[calendar][data][accounting_transactions];
+            if($partner_id>0)$sql_acc="and partnerid=$partner_id";
+            $sql="select * from a_transactions where date>='$start' and date<='$end' $sql_acc";
+            if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+                $descr="";
+                $amount=0;
+                $sql="SELECT * from a_translines where a_transactionid=$row[id] order by line";
+                if (!($cur2 = pg_query($sql))) {$this->html->SQL_error($sql);}
+                while ($row2 = pg_fetch_array($cur2,NULL,PGSQL_ASSOC)){
+                    $a_name=$this->get_name('a_accounts',$row2[a_accountid]);
+                    if($row2[dr]>0){
+                        $descr.="$a_name DR: $row2[dr]<br>";
+                        $amount+=$row2[dr];
+                    }else{
+                        $descr.="$a_name CR: $row2[cr]<br>";
+                    }
+                }
+                $descr.="<hr>$row[descr]";
+                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($amount)->output("<a href='?act=details&what=a_transactions&id=$row[id]' class='label' onMouseover=\"showhint('$descr', this, event, '200px');\">Acc: € $amount</a>");
                 $calendar->attach($event);
             }
         }
@@ -2757,8 +2858,36 @@ class Data
         if($GLOBALS[calendar][data][invoices]){
             $sql="select * from invoices where type_id=2601 and date>='$start' and date<='$end'";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
-            while ($row = pg_fetch_array($cur)) {
-                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($row[amount_usd])->output("<a href='?act=details&what=invoices&id=$row[id]'>$ $row[amount_usd]</a>");
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+                $from=$this->get_name('partners',$row[frompartner_id]);
+                $to=$this->get_name('partners',$row[topartner_id]);
+                $descr="<b>$row[name]</b><br>Date due:$row[due_date]<br>From:$from<br>To:$to";
+                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($row[amount_eur])->output("<a href='?act=details&what=invoices&id=$row[id]' class='label label-success' onMouseover=\"showhint('$descr', this, event, '200px');\">Sale: € $row[amount_eur]</a>");
+                $calendar->attach($event);
+            }
+        }
+
+        if($GLOBALS[calendar][data][inwardinvoices]){
+            $sql="select * from documents where type=1602 and datefrom>='$start' and datefrom<='$end'";
+            if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+                $from=$this->get_name('partners',$this->db->getval("SELECT ref_id FROM docs2obj WHERE ref_table='partners' and doc_id=$row[id] and type_id=5744"));
+                $to=$this->get_name('partners',$this->db->getval("SELECT ref_id FROM docs2obj WHERE ref_table='partners' and doc_id=$row[id] and type_id in (5735, 5740)"));
+                $descr="<b>$row[name]</b><br>Date due:$row[due_date]<br>From:$from<br>To:$to<hr>$row[descr]";
+                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($row[amount_eur])->output("<a href='?act=details&what=documents&id=$row[id]' class='label label-important' onMouseover=\"showhint('$descr', this, event, '200px');\">Purchase: € $row[amount_eur]</a>");
+                $calendar->attach($event);
+            }
+        }
+
+        if($GLOBALS[calendar][data][receipts]){
+            $sql="select * from documents where type=1623 and datefrom>='$start' and datefrom<='$end'";
+            if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+                $amount=($row[amount_eur]>0)?$row[amount_eur]:$row[amount];
+                $from=$this->get_name('partners',$this->db->getval("SELECT ref_id FROM docs2obj WHERE ref_table='partners' and doc_id=$row[id] and type_id=5744"));
+                $to=$this->get_name('partners',$this->db->getval("SELECT ref_id FROM docs2obj WHERE ref_table='partners' and doc_id=$row[id] and type_id in (5735, 5740)"));
+                $descr="<b>$row[name]</b><br>Date due:$row[due_date]<br>From:$from<br>To:$to<hr>$row[descr]";
+                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($row[amount_eur])->output("<a href='?act=details&what=documents&id=$row[id]' class='label label-important' onMouseover=\"showhint('$descr', this, event, '200px');\">Receipt: € $amount</a>");
                 $calendar->attach($event);
             }
         }
@@ -2766,10 +2895,14 @@ class Data
 
 
         if($GLOBALS[calendar][data][schedules]){
-            $sql="select * from schedules where nextdate>='$start' and nextdate<='$end'";
+            $partner_id=$GLOBALS[calendar][data][schedules];
+            if($partner_id>0)$sql_sched="and refid=$partner_id";
+            $sql="select * from schedules where nextdate>='$start' and nextdate<='$end' $sql_sched";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
-            while ($row = pg_fetch_array($cur)) {
-                $event = $calendar->event()->condition('timestamp', strtotime($row[nextdate]))->title($row[id])->output("<a href='?act=edit&what=schedules&id=$row[id]'>$row[descr]</a>");
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
+                $obj_name=$this->get_name($row[tablename],$row[refid]);
+                $descr="<b>$obj_name</b><hr>$row[descr]";
+                $event = $calendar->event()->condition('timestamp', strtotime($row[nextdate]))->title($row[id])->output("<a href='?act=edit&what=schedules&id=$row[id]' class='label label-warning' onMouseover=\"showhint('$descr', this, event, '200px');\">Schedule: $row[name]</a>");
                 $calendar->attach($event);
             }
         }
@@ -2824,7 +2957,7 @@ class Data
         $month = isset($_GET['m']) ? $_GET['m'] : null;
         $year  = isset($_GET['y']) ? $_GET['y'] : null;
 
-        $calendar = Calendar::factory($month, $year, array('week_start' => 1));
+        $calendar = \Calendar::factory($month, $year, array('week_start' => 1));
 
         $event1 = $calendar->event()->condition('timestamp', strtotime(date('F').' 21, '.date('Y')))->title('Hello All')->output('<a href="http://google.com">Going to Google</a>');
         $event2 = $calendar->event()->condition('timestamp', strtotime(date('F').' 21, '.date('Y')))->title('Something Awesome')->output('<a href="http://coreyworrell.com">My Portfolio</a><br />It\'s pretty cool in there.');
@@ -3134,7 +3267,7 @@ class Data
             if (!($cur = pg_query($sql))) {
                 $this->html->SQL_error($sql);
             }
-            while ($row = pg_fetch_array($cur)) {
+            while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
                 $nextdate=$row[nextdate];
                 $qty=$row[qty]-1;
                 if ($qty==0) {
@@ -3465,7 +3598,7 @@ class Data
             $this->html->SQL_error($sql);
         }
         $rows=pg_num_rows($cur);
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $i++;
             $this->gen_fast_menu($row[id]);
             //$this->livestatus(str_replace("\"","'",$this->html->draw_progress($i/$rows*100)));
@@ -3534,7 +3667,7 @@ class Data
         if (!($cur = pg_query($sql))) {
             $this->html->SQL_error($sql);
         }
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             if ($this->dates->F_datediff($row[fromdate], "01.01.$year")>0) {
                 $row[fromdate]="01.01.$year";
             }
@@ -3754,7 +3887,7 @@ class Data
                 if (!($cur = pg_query($sql))) {
                     $this->html->SQL_error($sql);
                 }
-                while ($row = pg_fetch_array($cur)) {
+                while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
                     array_push($userids, $row[userid]);
                     //$out.= "GUID:$row[userid]<br>";
                 }
@@ -3826,7 +3959,7 @@ class Data
         if ($rows>0) {
             $res.="<div class='post'>";
         }
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             //$post=$this->getrow('posts',$post_id);
             $row[date]=substr($row[date], 0, 19);
             $row[user]=$this->username($row[user_id]);
@@ -3849,7 +3982,7 @@ class Data
             $this->html->SQL_error($sql);
         }
         $rows=pg_num_rows($cur);$start_time=$this->utils->get_microtime();
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $i++;
 
 
@@ -3905,7 +4038,7 @@ class Data
         if ($rows>0) {
             $res.="<div class='post'>";
         }
-        $result = pg_fetch_array($cur);
+        $result = pg_fetch_array($cur,NULL,PGSQL_ASSOC);
         $columnts= pg_num_fields($cur);
         $fieldnames = [];
         $fieldtypes = [];
@@ -3922,7 +4055,7 @@ class Data
         }
         $rows=pg_num_rows($cur);
 
-        while ($row = pg_fetch_array($cur)) {
+        while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $i++;
             $tbl.= "<tr class='$class'>";
             $tbl.= "<td>$i</td>";
