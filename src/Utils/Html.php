@@ -3107,8 +3107,6 @@ class Html
                         image_format: \'jpeg\',
                         '.$quality_js.'
 
-                        swfURL:\''.ASSETS_URI.'/assets/swf/webcam.swf\',
-
                         // flip horizontal (mirror mode)
                         '.$flip_js.'
                     });
