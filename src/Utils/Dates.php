@@ -1100,6 +1100,194 @@ class Dates
 
         return $result;
     }
+    public function dateformat($date='',$dateformat='d.m.Y')
+    {
+        $thedate=mktime(0, 0, 0, substr($date, 3, 2), substr($date, 0, 2), substr($date, 6, 4));
+        $longdate=date($dateformat, $thedate);
+        return $longdate;
+    }
+    public function split_date_range($df='',$dt='',$dateformat='d.m.Y'){
+        $df=$this->F_date($df);
+        $dt=$this->F_date($dt);
+        if($df=='')$df="01.01.".$this->F_thisyear();
+        if($dt=='')$dt="31.12.".($this->F_thisyear()+5);
+        $array[df_init]=$this->dateformat($df,$dateformat);
+        $df0='01.01.'.$this->F_extractyear($df)*1;
+        $weekday=$this->F_weekday($df)*1;
+        if($weekday>0){
+            $df=$this->F_dateadd($df,-$weekday+1);
+        }
+        $array[weekday]=$weekday;
+
+        $holidays=[];
+        $this_year=$this->F_thisyear();
+        $holidays_arr=range(2009, $this_year+2);
+        foreach ($holidays_arr as $year) {
+            $holidays_this=$this->holidays($year);
+            $holidays=array_merge($holidays, $holidays_this);
+        }
+        //echo $this->pre_display($holidays,$this_year); exit;
+
+        $range=[
+            'label'=>'Months',
+            'start'=>$this->dateformat($df,$dateformat),
+            'end'=>$this->dateformat($dt,$dateformat)
+        ];
+        $days_qty=$this->F_datediff($df,$dt);
+        if($days_qty>7){
+            $weeks_qty=floor($days_qty/7);
+            $dtw=$this->F_dateadd($df,-1);
+            for ($week=1; $week <= $weeks_qty; $week++) {
+                $dfw=$this->F_dateadd($dtw,1);
+                $dtw=$this->F_dateadd($dfw,6);
+                $week_range=[
+                    'label'=>"Week $week",
+                    'start'=>$this->dateformat($dfw,$dateformat),
+                    'end'=>$this->dateformat($dtw,$dateformat)
+                ];
+                $weeks[]=$week_range;
+            }
+        }
+        if($days_qty>1){
+            $months_qty=floor($days_qty/30);
+            //if($months_qty==0)$months_qty=1;
+            //$dtw=$this->F_dateadd($df,-1);
+            $month_nr=$this->F_extractmonth($df)*1;
+            $last_day=$this->lastday_in_month($df);
+            $month_range=[
+                'label'=>$GLOBALS[Monthesfull][$month_nr],
+                'start'=>$this->dateformat($df,$dateformat),
+                'end'=>$this->dateformat($last_day,$dateformat)
+            ];
+            $months[]=$month_range;
+            $dtw=$last_day;
+            //$dtw=$this->F_dateadd($df,-1);
+            for ($month=1; $month <= $months_qty; $month++) {
+                $dfw=$this->F_dateadd($dtw,1);
+                $dtw=$this->F_dateadd_month($dfw,1);
+                $dtw=$this->F_dateadd($dtw,-1);
+                $month_nr=$this->F_extractmonth($dfw)*1;
+                $month_range=[
+                    'label'=>$GLOBALS[Monthesfull][$month_nr],
+                    'start'=>$this->dateformat($dfw,$dateformat),
+                    'end'=>$this->dateformat($dtw,$dateformat)
+                ];
+                $months[]=$month_range;
+            }
+            $dtw=$this->F_dateadd($dtw,1);
+            $month_nr=$this->F_extractmonth($dt)*1;
+            $month_range=[
+                'label'=>$GLOBALS[Monthesfull][$month_nr],
+                'start'=>$this->dateformat($dtw,$dateformat),
+                'end'=>$this->dateformat($dt,$dateformat)
+            ];
+            $months[]=$month_range;
+        }
+        if($days_qty>365){
+            $years_qty=floor($days_qty/365);
+            //$df0='01.01.'.$this->F_extractyear($df0)*1;
+            $dtw=$this->F_dateadd($df0,-1);
+            for ($year=1; $year <= $years_qty; $year++) {
+                $dfw=$this->F_dateadd($dtw,1);
+                $dtw=$this->F_dateadd_year($dfw,1);
+                $dtw=$this->F_dateadd($dtw,-1);
+                $year_nr=$this->F_extractyear($dfw)*1;
+                $year_range=[
+                    'label'=>$year_nr,
+                    'start'=>$this->dateformat($dfw,$dateformat),
+                    'end'=>$this->dateformat($dtw,$dateformat)
+                ];
+                $years[]=$year_range;
+            }
+        }
+        $date=$this->F_dateadd($df,-1);
+        for ($day=1; $day <= $days_qty; $day++) {
+            $date=$this->F_dateadd($date,1);
+            $weekday=$this->F_weekday($date)*1;
+
+            unset($day_range);
+            $day_range=[
+                'label'=>$this->dateformat($date,$dateformat),
+                'start'=>$this->dateformat($date,$dateformat),
+                'end'=>$this->dateformat($date,$dateformat)
+            ];
+            if($weekday>5)$day_range['fontcolor']='#ff0000';
+            $days[]=$day_range;
+
+            unset($day_range);
+            $day_range=[
+                'label'=>$this->F_weekdayname($date),
+                'start'=>$this->dateformat($date,$dateformat),
+                'end'=>$this->dateformat($date,$dateformat),
+            ];
+            if(in_array($date, $holidays))$day_range['fontcolor']='#f8bd19';
+            if($weekday>5)$day_range['fontcolor']='#e44a00';
+
+            $days_w[]=$day_range;
+
+            unset($day_range);
+            $day_range=[
+                'label'=>$year=substr($date, 0, 2),
+                'start'=>$this->dateformat($date,$dateformat),
+                'end'=>$this->dateformat($date,$dateformat),
+            ];
+            if(in_array($date, $holidays))$day_range['fontcolor']='#f8bd19';
+            if($weekday>5)$day_range['fontcolor']='#e44a00';
+            $days_s[]=$day_range;
+
+            unset($day_range);
+            $day_range=[
+                'label'=>$year=substr($date, 0, 5),
+                'start'=>$this->dateformat($date,$dateformat),
+                'end'=>$this->dateformat($date,$dateformat),
+            ];
+            if(in_array($date, $holidays))$day_range['fontcolor']='#f8bd19';
+            if($weekday>5)$day_range['fontcolor']='#e44a00';
+            $days_m[]=$day_range;
+
+            if($weekday==6){
+                unset($day_range);
+                $day_range=[
+                    'start' => $this->dateformat($date,$dateformat),
+                    'end' => $this->dateformat($this->F_dateadd($date,2),$dateformat),
+                    'displayvalue' => ' ',
+                    'istrendzone' => '1',
+                    'alpha' => '20',
+                    'color' => '#e44a00'
+                ];
+                $weekends[]=$day_range;
+            }
+
+            if((in_array($date, $holidays))&&($weekday<6)){
+                //echo "$date<br>";
+                unset($day_range);
+                $day_range=[
+                    'start' => $this->dateformat($date,$dateformat),
+                    'end' => $this->dateformat($this->F_dateadd($date,1),$dateformat),
+                    'displayvalue' => ' ',
+                    'istrendzone' => '1',
+                    'alpha' => '20',
+                    'color' => '#f8bd19'
+                ];
+                $weekends[]=$day_range;
+            }
+        }
+        //echo $this->pre_display($holidays,"holidays");
+        $array['days_qty']=$days_qty;
+        $array['weeks_qty']=$weeks_qty;
+        $array['months_qty']=$months_qty;
+        $array['years_qty']=$years_qty;
+        $array['range']=$range;
+        $array['years']=$years;
+        $array['weeks']=$weeks;
+        $array['months']=$months;
+        $array['days']=$days;
+        $array['days_w']=$days_w;
+        $array['days_s']=$days_s;
+        $array['days_m']=$days_m;
+        $array['weekends']=$weekends;
+        return $array;
+    }
 
     public function timezone_PHP($tz){
         $array=[

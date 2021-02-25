@@ -267,7 +267,9 @@ class Db
         }
 
         if (count($_errors) > 0) {
+            $GLOBALS[db_errors_count]++;
             //$this->errStr .= '<div style="border:1px solid black; margin:4px; padding:4px; background-color:#FFDEAD;"><b>Query:</b> '.$this->last_query . '<br />'.implode('<br />', $_errors)."</div>";
+            $GLOBALS[db_last_error]=implode('<br />', $_errors);
             if ($_REQUEST[act]=='api') {
                 foreach ($_errors as $_error) {
                     $lines=explode("\n", $_error);
