@@ -209,7 +209,20 @@ class Html
             $sum=$zero;
             $curr="";
         } else {
-            $sum=number_format($sum, $dec, '.', $ts);
+
+            if ($this->utils->contains('accounting', $opt)) {
+                if($sum>0){
+                    $sum=number_format($sum, $dec, '.', $ts);
+                    $sum="$sum ";
+                }else{
+                    $sum=abs($sum);
+                    $sum=number_format($sum, $dec, '.', $ts);
+                    $sum="($sum)";
+                }
+
+            }else{
+                $sum=number_format($sum, $dec, '.', $ts);
+            }
             if ($curr!='') {
                 $sum.=" $curr";
             }
