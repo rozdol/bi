@@ -182,7 +182,13 @@ class Comm
         $message .= "Content-Transfer-Encoding: 8bit\n\n";
         $message .= $ical;
 
-        $mailsent = mail($to_address, $subject, $message, $headers);
+        if(mail($to_address, $subject, $message, $headers)){
+                    $stage_id=4007;
+                    $res=true;
+                }else{
+                    $stage_id=4006;
+                    $res=false;
+                }
 
         $stage_id=($mailsent==1)?4007:4006;
         if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
@@ -204,7 +210,7 @@ class Comm
         //echo $this->html->pre_display($vals,"vals");
         if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
 
-        return ($mailsent)?(true):(false);
+        return $res;
     }
 
     public function send_mail_aws($sender_email = '', $recipient_emails, $subject = 'email', $html_body = '', $plaintext_body='',$attachments = []){
@@ -785,7 +791,7 @@ class Comm
         $subject = "=?UTF-8?B?" . base64_encode($subject) . "?=";
         //$subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
         //$final_msg['multipart'] = "=?UTF-8?B?".base64_encode($final_msg['multipart'])."?=";
-        if (mail($to, $subject, $final_msg['multipart'], $final_msg['headers'])) {
+        if(mail($to, $subject, $final_msg['multipart'], $final_msg['headers'])) {
             $stage_id=4007;
             if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
             $vals=array(
@@ -910,11 +916,16 @@ class Comm
                 </html>";
             //echo $message;
             if ($GLOBALS['settings']['no_mail']!=1) {
-                $res=mail($to, $subject, $message, $headers);
+                if(mail($to, $subject, $message, $headers)){
+                    $stage_id=4007;
+                    $res=true;
+                }else{
+                    $stage_id=4006;
+                    $res=false;
+                }
                 //echo $this->html->pre_display($res,"res");
                 //$stage_id=($this->utils->contains('ERR',$data))?4006:4007;
                 //echo $this->html->area_display($res,"res");
-                $stage_id=($res==1)?4007:4006;
                 if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
                 $vals=array(
                     'name'=>$name,
