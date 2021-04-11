@@ -601,7 +601,19 @@ class Comm
         require_once FW_DIR.DS.'classes/PHPMailer/PHPMailerAutoload.php';
         if($body=='')$body=' ';
         $mail = new \PHPMailer;
-        $mail->isSendmail();
+        if($GLOBALS[settings][smtp_host]){
+            $mail->IsSMTP();
+            $mail->SMTPAuth   = true;
+            $mail->Port       =  $GLOBALS[settings][smtp_port];//465;// set the SMTP server port
+            $mail->Host       =  $GLOBALS[settings][smtp_host];//"ssl://smtp.gmail.com"; // SMTP server
+            $mail->Username   =  $GLOBALS[settings][smtp_user];//"test@gmail.com";       // SMTP server username
+            $mail->Password   =  $GLOBALS[settings][smtp_pass];
+            // $mail->Port       =  587;                   // set the SMTP server port
+            // $mail->Host       = "tls://smtp.gmail.com"; // SMTP server
+        }else{
+            $mail->isSendmail();
+        }
+
         $mail->setFrom($from, '');
         $mail->addReplyTo($from, '');
         $mail->addAddress($to, '');
@@ -613,64 +625,47 @@ class Comm
                 $file_name=basename($attachment);
                 $mail->addAttachment($attachment, $file_name);
             }else{
-                echo "File $file_name not found;<br>";
+                $res.= "File $file_name not found;<br>";
             }
 
         }
 
         if (!$mail->send()) {
             //echo $this->html->pre_display($mail, "result");
-            echo "Mailer Error: " . $mail->ErrorInfo."<br>";
-            echo "To:$to<br>";
-            echo "From:$from<br>";
-            echo "Subject:$subject<br>";
-            echo "body:$body<br>";
-            echo $this->html->pre_display($attachments,"attachments");
+            $res.= "Mailer Error: " . $mail->ErrorInfo."<br>";
+            $res.= "To:$to<br>";
+            $res.= "From:$from<br>";
+            $res.= "Subject:$subject<br>";
+            $res.= "body:$body<br>";
+            $res.= $this->html->pre_display($attachments,"attachments");
 
             $stage_id=4006;
-            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
-            $vals=array(
-                'name'=>$name,
-                'ref_name'=>'undefined',
-                'ref_id'=>0,
-                'type_id'=>4200,
-                'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
-                'message'=>$body,
-                'subject'=>$subject,
-                'destination'=>$to,
-                'source'=>$from,
-                'attachments'=>implode(", ",$attachments),
-                'function' => "send_attachment_mail",
-                'addinfo'=>$mail->ErrorInfo,
-                'data_json' => json_encode($mail)
-            );
-            //echo $this->html->pre_display($vals,"vals");
-            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
         } else {
             $stage_id=4007;
-            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
-            $vals=array(
-                'name'=>$name,
-                'ref_name'=>'undefined',
-                'ref_id'=>0,
-                'type_id'=>4200,
-                'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
-                'message'=>$body,
-                'subject'=>$subject,
-                'destination'=>$to,
-                'source'=>$from,
-                'attachments'=>implode(", ",$attachments),
-                'function' => "send_attachment_mail",
-                'addinfo'=>"",
-                'data_json' => json_encode($mail)
-            );
-            //echo $this->html->pre_display($vals,"vals");
-            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
-            echo "Message '$subject' sent from $from to $to!";
+
+            $res.="Message '$subject' sent from $from to $to!";
         }
+        if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+        $vals=array(
+            'name'=>$name,
+            'ref_name'=>'undefined',
+            'ref_id'=>0,
+            'type_id'=>4200,
+            'stage_id'=>$stage_id,
+            'user_id'=>$GLOBALS[uid],
+            'message'=>$body,
+            'subject'=>$subject,
+            'destination'=>$to,
+            'source'=>$from,
+            'attachments'=>implode(", ",$attachments),
+            'function' => "send_attachment_mail",
+            'addinfo'=>$mail->ErrorInfo,
+            'data_json' => json_encode($mail)
+        );
+        //echo $this->html->pre_display($vals,"vals");
+        if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
         unset($mail);
+        return $res;
     }
 
     public function send_announcement_mail($to = 'email@example.com', $from = 'it@example.com', $subject = 'Announcement', $description = '', $body = '', $attachments = [])
