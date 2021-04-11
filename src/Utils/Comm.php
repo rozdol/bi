@@ -705,10 +705,51 @@ class Comm
             echo $this->html->pre_display($mail, "result");
             echo "Mailer Error: " . $mail->ErrorInfo;
             unset($mail);
+
+            $stage_id=4006;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$body.$description,
+                'subject'=>$subject,
+                'source'=>$from,
+                'destination'=>$to,
+                'function' => "send_announcement_mail()",
+                'attachments'=>implode(", ",$attachments),
+                'addinfo'=>"",
+                'descr'=>$description
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             return "Mailer Error: " . $mail->ErrorInfo;
         } else {
             echo "Message sent  $to!";
             unset($mail);
+            $stage_id=4006;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$body.$description,
+                'subject'=>$subject,
+                'source'=>$from,
+                'destination'=>$to,
+                'function' => "send_announcement_mail()",
+                'attachments'=>implode(", ",$attachments),
+                'addinfo'=>"",
+                'descr'=>$description
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             return "Message sent  $to";
 
         }
