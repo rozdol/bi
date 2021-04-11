@@ -784,15 +784,16 @@ class Html
     }
     function error($msg = '')
     {
-        $this->utils->log("ERROR: $msg");
-        if($GLOBALS[offline_mode]){
-            $this->message($msg, 'ERROR');
-        }else{
-            echo $this->message($msg, 'ERROR', 'alert-error');
-            exit;
+        $msg=trim($msg);
+        if($msg!=''){
+            $this->utils->log("ERROR: $msg");
+            if($GLOBALS[offline_mode]){
+                $this->message($msg, 'ERROR');
+            }else{
+                echo $this->message($msg, 'ERROR', 'alert-error');
+                exit;
+            }
         }
-
-
     }
     function warn($msg = '')
     {
