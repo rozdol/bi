@@ -757,14 +757,21 @@ class Data
     }
     function add_menu($menu, $new_menu)
     {
-        //ex: add_menu('Data',['Partners'=>'#']);
         global  $gid;
-        //$gid=2;
+        //echo "adding menu:$menu<br>";
+        echo $this->html->message("adding menu:$menu");
+        //ex: add_menu('Data',['Partners'=>'#']);
+        if($gid==0)$gid=2;
+        $gid=2;
         //$gid2=$gid;
         $item_id=$this->db->getval("SELECT max(id) from menuitems where name='$menu'")*1;
-        //echo "[$menu] ID:$item_id<br>";
-        $parent_id=$this->db->getval("SELECT max(id) from menus where groupid=$gid and menuid=$item_id")*1;
-        //echo "Menu parent_id:$parent_id where menuid=$item_id<br>";
+
+        echo $this->html->message("[$menu] ID:$item_id");
+        $sql="SELECT max(id) from menus where groupid=$gid and menuid=$item_id";
+        echo $this->html->message("$sql","SQL");
+        $parent_id=$this->db->getval($sql)*1;
+
+        echo $this->html->message("Menu parent_id:$parent_id where menuid=$item_id");
         if ($parent_id>0) {
             $sorting=$this->db->getVal("select max(sort) from menus where groupid=$gid and parentid=$parent_id")*1;
             foreach ($new_menu as $key => $value) {
@@ -772,19 +779,26 @@ class Data
                 $menue_id=$this->db->getval("SELECT id from menuitems where name='$key' and link='$value'")*1;
                 if ($menue_id==0) {
                     $menue_id=$this->db->getval("INSERT into menuitems (name,link) values ('$key','$value'); SELECT MAX(id) from menuitems;");
-                    echo "Added menuitem: $key=>$value ID:($menue_id)<br>";
+                    echo $this->html->message("Added menuitem: $key=>$value ID:($menue_id)");
+                }else{
+                    echo $this->html->warn("Failed to add menuitem menue_id:$menue_id");
                 }
                 //$sql="INSERT into menuitems (name,link) values ('$key','$value');";
 
                 $menue_exist=$this->db->getval("SELECT id from menus where groupid=$gid and parentid=$parent_id and menuid=$menue_id")*1;
                 if ($menue_exist==0) {
                     $this->db->getval("insert into menus (groupid, parentid,menuid,sort) values ($gid,$parent_id,$menue_id,$sorting);");
-                    echo "Added menue (GID:$gid,PID:$parent_id,MID:$menue_id,SORT:$sorting)<br>";
+                    echo $this->html->message("Added menue (GID:$gid,PID:$parent_id,MID:$menue_id,SORT:$sorting)");
+                }else{
+                    echo $this->html->warn("Failed to add menue menue_exist:$menue_exist");
                 }
+
                 //$sql2="insert into menus (groupid, parentid,menuid,sort) values ($gid,$parent_id,$menue_id,$sorting);";
                 //echo "$key=>$value ($sorting) menue_id:$menue_id,<br>sql:$sql<br>sql2:$sql2<br><hr>";
                 //echo "<hr>";
             }
+        }else{
+            echo $this->html->warn("Parent menue not found");
         }
     }
     function menu($group_id)
@@ -792,6 +806,7 @@ class Data
         //$result=fast_menu($group_id);
 
         global  $gid;
+        if($gid==0)$gid=2;
         //$gid=2;
         $gid2=$gid;
         $out.="<!-- Beginning of compulsory code below -->
