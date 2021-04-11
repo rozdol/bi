@@ -267,7 +267,7 @@ class Comm
                 'user_id'=>$GLOBALS[uid],
                 'message'=>$plaintext_body.$html_body,
                 'subject'=>$subject,
-                'destination'=>$recipient_emails,
+                'destination'=>implode(', ',$recipient_emails),
                 'source'=>$sender_email,
                 'function' => "AWS",
                 'addinfo'=>"Reply:$messageId",
