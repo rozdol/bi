@@ -6,13 +6,30 @@ use Rozdol\Utils\Utils;
 use Rozdol\Dates\Dates;
 use Aws\Ses\SesClient;
 use Aws\Exception\AwsException;
+use Rozdol\Db\Db;
 
 //use \Sendgrid\Sendgrid;
 
 class Comm
 {
     private static $hInstance;
+    public function __construct()
+    {
+        $this->dates = Dates::getInstance();
+        $this->html = Html::getInstance();
+        $this->utils = Utils::getInstance();
 
+        $this->db = DB::getInstance(
+            $GLOBALS['DB']['DB_SERVER'],
+            $GLOBALS['DB']['DB_USER'],
+            $GLOBALS['DB']['DB_PASS'],
+            $GLOBALS['DB']['DB_NAME'],
+            $GLOBALS['DB']['DB_PORT']
+        );
+        $this->db->ShowErrors();
+        $res=$this->db->GetVar("SET DateStyle = 'German';");
+
+    }
     public static function getInstance()
     {
         if (!self::$hInstance) {
@@ -20,14 +37,13 @@ class Comm
         }
         return self::$hInstance;
     }
-
-    public function __construct()
+    private function table_exists($table)
     {
-        $this->dates = Dates::getInstance();
-        $this->html = Html::getInstance();
-        $this->utils = Utils::getInstance();
+        $sql="select count(*) from information_schema.tables where lower(table_name)=lower('$table')";
+        $count=$this->db->GetVal($sql)*1;
+        $res=($count!=0);
+        return $res;
     }
-
     public function sendIcalEvent($from_name, $from_address, $to_name, $to_address, $startTime, $endTime, $subject, $description, $location)
     {
         $domain = 'google.com';
@@ -168,6 +184,26 @@ class Comm
 
         $mailsent = mail($to_address, $subject, $message, $headers);
 
+        $stage_id=($mailsent==1)?4007:4006;
+        if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+        $vals=array(
+            'name'=>$name,
+            'ref_name'=>'undefined',
+            'ref_id'=>0,
+            'type_id'=>4200,
+            'stage_id'=>$stage_id,
+            'user_id'=>$GLOBALS[uid],
+            'message'=>"From:$from_name To:$to_name startTime:$startTime endTime:$endTime $description $location",
+            'subject'=>$subject,
+            'destination'=>$to_address,
+            'source'=>$from_address,
+            'function' => "sendIcalEvent",
+            'addinfo'=>"Reply:$mailsent",
+            'data_json' => json_encode($result)
+        );
+        //echo $this->html->pre_display($vals,"vals");
+        if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
+
         return ($mailsent)?(true):(false);
     }
 
@@ -210,8 +246,50 @@ class Comm
                 //'ConfigurationSetName' => $configuration_set,
             ]);
             $messageId = $result['MessageId'];
+
+            //echo $this->html->pre_display($res,"res");
+            //$stage_id=($this->utils->contains('ERR',$data))?4006:4007;
+            //echo $this->html->area_display($res,"res");
+            $stage_id=($messageId!='')?4007:4006;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$plaintext_body.$html_body,
+                'subject'=>$subject,
+                'destination'=>$recipient_emails,
+                'source'=>$sender_email,
+                'function' => "AWS",
+                'addinfo'=>"Reply:$messageId",
+                'data_json' => json_encode($result)
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             return $messageId;
         } catch (AwsException $e) {
+            $stage_id=4006;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$plaintext_body.$html_body,
+                'subject'=>$subject,
+                'destination'=>$recipient_emails,
+                'source'=>$sender_email,
+                'function' => "AWS",
+                'addinfo'=>"Reply:".$e->getAwsErrorMessage(),
+                'data_json' => json_encode($result)
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             return $e->getAwsErrorMessage();
             // output error message if fails
             //echo $this->html->message($e->getMessage());
@@ -262,11 +340,51 @@ class Comm
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         try {
             $response = $sendgrid->send($email);
+            $stage_id=4007;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$body,
+                'subject'=>$subject,
+                'destination'=>$to,
+                'source'=>$from,
+                'attachments'=>implode(", ",$attachments),
+                'function' => "sendgrid_file",
+                'addinfo'=>"",
+                'data_json' => json_encode($response)
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             // echo $this->html->pre_display($response->statusCode(), "statusCode");
             // echo $this->html->pre_display($response->headers(), "headers");
             // echo $this->html->pre_display($response->body(), "body");
             return 1;
         } catch (Exception $e) {
+            $stage_id=4006;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$body,
+                'subject'=>$subject,
+                'destination'=>$to,
+                'source'=>$from,
+                'attachments'=>implode(", ",$attachments),
+                'function' => "sendgrid_file",
+                'addinfo'=>"",
+                'data_json' => json_encode($e)
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             return 'Caught exception: '.  $e->getMessage();
         }
     }
@@ -299,11 +417,49 @@ class Comm
         $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
         try {
             $response = $sendgrid->send($email);
+            $stage_id=4007;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$body,
+                'subject'=>$subject,
+                'destination'=>$to,
+                'source'=>$from,
+                'function' => "sendgrid",
+                'addinfo'=>"",
+                'data_json' => json_encode($response)
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             // echo $this->html->pre_display($response->statusCode(), "statusCode");
             // echo $this->html->pre_display($response->headers(), "headers");
             // echo $this->html->pre_display($response->body(), "body");
             return 1;
         } catch (Exception $e) {
+            $stage_id=4006;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$body,
+                'subject'=>$subject,
+                'destination'=>$to,
+                'source'=>$from,
+                'function' => "sendgrid",
+                'addinfo'=>"",
+                'data_json' => json_encode($response)
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             return 'Caught exception: '.  $e->getMessage();
         }
     }
@@ -464,7 +620,48 @@ class Comm
             echo "Subject:$subject<br>";
             echo "body:$body<br>";
             echo $this->html->pre_display($attachments,"attachments");
+
+            $stage_id=4006;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$body,
+                'subject'=>$subject,
+                'destination'=>$to,
+                'source'=>$from,
+                'attachments'=>implode(", ",$attachments),
+                'function' => "send_attachment_mail",
+                'addinfo'=>$mail->ErrorInfo,
+                'data_json' => json_encode($mail)
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
         } else {
+            $stage_id=4007;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$body,
+                'subject'=>$subject,
+                'destination'=>$to,
+                'source'=>$from,
+                'attachments'=>implode(", ",$attachments),
+                'function' => "send_attachment_mail",
+                'addinfo'=>"",
+                'data_json' => json_encode($mail)
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             echo "Message '$subject' sent from $from to $to!";
         }
         unset($mail);
@@ -548,8 +745,46 @@ class Comm
         //$subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
         //$final_msg['multipart'] = "=?UTF-8?B?".base64_encode($final_msg['multipart'])."?=";
         if (mail($to, $subject, $final_msg['multipart'], $final_msg['headers'])) {
+            $stage_id=4007;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$body,
+                'subject'=>$subject,
+                'source'=>$from,
+                'destination'=>$to,
+                'function' => "send_announcement()",
+                'addinfo'=>"",
+                'descr'=>$description
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             return "Email successfully sent to $to<hr>";//.$final_msg['multipart'];
         } else {
+            $stage_id=4006;
+            if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+            $vals=array(
+                'name'=>$name,
+                'ref_name'=>'undefined',
+                'ref_id'=>0,
+                'type_id'=>4200,
+                'stage_id'=>$stage_id,
+                'user_id'=>$GLOBALS[uid],
+                'message'=>$body,
+                'subject'=>$subject,
+                'source'=>$from,
+                'destination'=>$to,
+                'function' => "send_announcement()",
+                'addinfo'=>"",
+                'descr'=>$description
+            );
+            //echo $this->html->pre_display($vals,"vals");
+            if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
             return "Email not sent to $to";
         }
     }
@@ -591,10 +826,12 @@ class Comm
         $mail_text.=$this->html->pre_display($_REQUEST, 'REQUEST').'<hr>';
 
         $mail=$this->sendmail_html($email, $email, $subject, $mail_text);
+        return $mail;
     }
 
     public function sendmail_html($to, $from, $subject, $message)
     {
+        //echo "var: sendmail_html($to, $from, $subject, $message)<br>";
         if ($from=='') {
             // $from_user=$this->data->get_row('users',$GLOBALS[uid]);
             // $from_username="$from_user[firstname] $from_user[surname]";
@@ -604,11 +841,11 @@ class Comm
         }
 
         if(getenv('AWS_USE_S3')==1){
-
             $result = $this->send_mail_aws($from, [$to], $subject, $message, $message);
             $status=(!$this->utils->contains('ERR',$result))?true:false;
             return $status;
         }else{
+            //echo "USING mail()<br>";
             $headers = "MIME-Version: 1.0\r\n";
             $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
             $headers  .= "From: $from\r\n";
@@ -632,10 +869,32 @@ class Comm
                 </html>";
             //echo $message;
             if ($GLOBALS['settings']['no_mail']!=1) {
-                mail($to, $subject, $message, $headers);
+                $res=mail($to, $subject, $message, $headers);
+                //echo $this->html->pre_display($res,"res");
+                //$stage_id=($this->utils->contains('ERR',$data))?4006:4007;
+                //echo $this->html->area_display($res,"res");
+                $stage_id=($res==1)?4007:4006;
+                if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+                $vals=array(
+                    'name'=>$name,
+                    'ref_name'=>'undefined',
+                    'ref_id'=>0,
+                    'type_id'=>4200,
+                    'stage_id'=>$stage_id,
+                    'user_id'=>$GLOBALS[uid],
+                    'message'=>$message,
+                    'subject'=>$subject,
+                    'source'=>$from,
+                    'destination'=>$to,
+                    'function' => "mail()",
+                    'addinfo'=>"Reply:$res"
+                );
+                //echo $this->html->pre_display($vals,"vals");
+                if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
+
             }
             //DB_log("SENT MAIL: $to, SUBJ:$subject, MESG:$message");
-            return true;
+            return $res;
         }
     }
 
@@ -649,6 +908,7 @@ class Comm
     }
     public function sendsms($number, $text)
     {
+        $number_orig=$number;
         //$smsQuery = $text;
         $smsQuery = urlEncode($text);
         $number = urlEncode($number);
@@ -681,7 +941,23 @@ class Comm
             $data = file_get_contents($qry);
         }
         $data=$this->utils->clean_content($data);
-        //DB_log("SENT SMS:$number:$text");
+        $stage_id=($this->utils->contains('ERR',$data))?4006:4007;
+        if($this->table_exists('messages'))$name="MSG-".sprintf("%05s", $this->db->getval("SELECT max(id) from messages")+1);
+        $vals=array(
+            'name'=>$name,
+            'ref_name'=>'undefined',
+            'ref_id'=>0,
+            'type_id'=>4207,
+            'stage_id'=>$stage_id,
+            'user_id'=>$GLOBALS[uid],
+            'message'=>$text,
+            'destination'=>$number_orig,
+            'function' => "clicatel",
+            'addinfo'=>"Reply:$data",
+            'source'=>'System',
+        );
+        //echo $this->html->pre_display($vals,"vals");
+        if($this->table_exists('messages'))$this->db->insert_db('messages',$vals);
         return $data;
     }
 
