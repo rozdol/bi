@@ -474,7 +474,7 @@ class Router
             if ($access['view_debug']) {
                 $body.= "<span media='print' class='noPrint'>";
                 //$body.= "<div class='span12'>".$this->html->array_display2_textarea($this->data->sql_to_array("SELECT * from $what where id=$id")[0], "DATA:$what($id)")."</div>";
-                $body.= "<div class='span12'>".$this->html->array_display2D($this->data->sql_to_array("SELECT * from $what where id=$id")[0], "DATA:$what($id)")."</div>";
+                $body.= "<div class='span12'>".$this->html->array_display2D($this->data->get_row($what,$id), "DB DATA: $what($id)",800,'align_left')."</div>";
                 $body.= "</span>";
             }
 

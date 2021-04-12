@@ -601,6 +601,7 @@ class Comm
         require_once FW_DIR.DS.'classes/PHPMailer/PHPMailerAutoload.php';
         if($body=='')$body=' ';
         $mail = new \PHPMailer;
+        $mail->CharSet = 'UTF-8';
         if($GLOBALS[settings][smtp_host]){
             $mail->IsSMTP();
             $mail->SMTPAuth   = true;

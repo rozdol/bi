@@ -2448,7 +2448,7 @@ class Html
         return $tbl;
     }
 
-    function array_display2D($array = [], $title = '')
+    function array_display2D($array = [], $title = '', $max_lenght=0, $align_left='')
     {
         //echo $this->pre_display($array, $title);
         $i=0;
@@ -2456,17 +2456,26 @@ class Html
         $head=$this->tablehead('', '', '', '', $fields);
         //$head="<table>";
         foreach ($array as $key => $val) {
-            $field_type_prim=gettype($val);
-            if (is_numeric($val)) {
-                $class='n';
-            } else {
-                $class='';
+            if($align_left==''){
+                if (is_numeric($val)) {
+                    $class='n';
+                } else {
+                    $class='';
+                }
+            }
+            if ($this->utils->isJSON($val)) {
+                $array=json_decode($val,true);
+                $val=$this->array_nested_display($array,$max_lenght);
+                $isJSON=true;
+            }else{
+                $val=htmlspecialchars($val);
             }
 
+            if(($max_lenght>0)&&(!$isJSON))$val=$this->utf8->utf8_cutByPixel($val, $max_lenght, false);
             $rows.= "<tr class=''>";
             $rows.="<td class='n'>$i</td>";
             $rows.="<td class=''><b>$key</b></td>";
-            $rows.= "<td class='$class'>".htmlspecialchars($val)."</td>";
+            $rows.= "<td class='$class'>$val</td>";
             $rows.= "</tr>";
             $i++;
             //echo $this->pre_display($row,$row_key);
@@ -2480,14 +2489,15 @@ class Html
         return $tbl;
     }
 
-    function array_nested_display($array = [])
+    function array_nested_display($array = [],$max_lenght=0)
     {
         $out= "<table class='table table-bordered table-morecondensed table-notfull' >";
         foreach ($array as $key => $value) {
             $out.= "<tr><td class='n'>{$key}:</td><td>";
             if (is_array($value)) {
-                $out.=$this->array_nested_display($value);
+                $out.=$this->array_nested_display($value, $max_lenght);
             } else {
+                if(($max_lenght>0))$value=$this->utf8->utf8_cutByPixel($value, $max_lenght, false);
                 $out.= "<b>$value</b>";
             }
             $out.= "</td></tr>";
