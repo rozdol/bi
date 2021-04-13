@@ -313,7 +313,7 @@ class Data
                 $res=$this->db->GetVar($sql);
                 // $sql="update accesslevel set access='1' where groupid=2;";
                 // $res=$this->db->GetVar($sql);
-                echo "<span class='alert alert-info'>Access item <b>$access_item</b> is added!</span><br>";
+                echo $this->html->message("Access item <b>$access_item</b> is added!");
             }
 
             if ($access_item!='main_delete') {
@@ -325,7 +325,27 @@ class Data
                     $cur= $this->db->GetVal($sql);
                 }
             }
-            echo "<br>";
+            //echo "<br>";
+        }
+        return true;
+    }
+
+    function add_access_to_groups($access_arr=[]){
+        //echo $this->html->pre_display($access_arr,"access_arr");
+        foreach ($access_arr as $access_item => $groups) {
+            //echo $this->html->pre_display($groups,"groups $access_item");
+            $accid=$this->db->getval("SELECT id from accessitems where name='$access_item' order by id asc limit 1");
+            foreach ($groups as $group) {
+                $gid=$this->db->getval("SELECT id from groups where name='$group' order by id asc limit 1");
+                $sql="UPDATE accesslevel set access='1' where groupid=$gid and accessid=$accid";
+
+                if (($accid>0)&&($gid>0)) {
+                    //echo "$sql<br>";
+                    $cur= $this->db->GetVal($sql);
+                    echo $this->html->message("Access item <b>$access_item</b> is allowed for group $group!");
+                }
+            }
+
         }
         return true;
     }
