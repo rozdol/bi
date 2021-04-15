@@ -2606,11 +2606,16 @@ class Data
         return $res;
     }
 
-    function rev_docs2obj($id, $ref_table)
+    function rev_docs2obj($id, $ref_table, $no_edit='')
     {
         $sql="select ' <a href=\"?act=details&what=$ref_table&id='||t.id||'\">'||t.name||'</a><span onclick=\"confirmation(''?csrf=$GLOBALS[csrf]&act=delete&what=docs2obj&id='||d.id||''')\" style=\"cursor: pointer; cursor: hand; \">[-]</span>' from $ref_table t, docs2obj d where d.doc_id=$id and d.ref_table='$ref_table' and d.ref_id=t.id";
-        $res=$this->utils->F_tostring($this->db->GetResults($sql));
-        $res.="<a href='?act=add&what=docs2obj&ref_table=$ref_table&doc_id=$id'>[+]</a>";
+        if($no_edit!='')$sql="select ' <a href=\"?act=details&what=$ref_table&id='||t.id||'\">'||t.name||'</a>' from $ref_table t, docs2obj d where d.doc_id=$id and d.ref_table='$ref_table' and d.ref_id=t.id";
+        if($no_edit==''){
+            $res=$this->utils->F_tostring($this->db->GetResults($sql));
+        }else{
+            $res=$this->utils->F_tostring($this->db->GetResults($sql),1);
+        }
+        if($no_edit=='')$res.="<a href='?act=add&what=docs2obj&ref_table=$ref_table&doc_id=$id'>[+]</a>";
         //$res.="<a href='?act=edit&what=docs2obj&refid=$res[id]'>[+]</a>";
         //$res.="<a href='?act=add&what=$ref_table&docid=$res[id]'>[New]</a>";
         return $res;
