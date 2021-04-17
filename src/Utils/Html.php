@@ -910,6 +910,7 @@ class Html
     public function putHeader($title = '', $css = array(), $scripts = array())
     {
         header('X-Accel-Buffering: no');
+        header('Content-Encoding: none;');
         global $act, $what, $owner;
         $bs=$GLOBALS['bootstrap_ver'];
         $jq=$GLOBALS['jquery_ver'];
