@@ -1064,7 +1064,13 @@ class Html
                     toastr.info(data['message'],data['title'],{ $toastr_options });
                 });
 
-                var channel = pusher.subscribe('".$GLOBALS[domain]."-channel-".$GLOBALS[gid]."');
+                var channel = pusher.subscribe('".$GLOBALS[domain]."-channel-gid-".$GLOBALS[gid]."');
+                channel.bind('".$GLOBALS[domain]."-event', function(data) {
+                   // alert(JSON.stringify(data));
+                    toastr.info(data['message'],data['title'],{ $toastr_options });
+                });
+
+                var channel = pusher.subscribe('".$GLOBALS[domain]."-channel-uid-".$GLOBALS[uid]."');
                 channel.bind('".$GLOBALS[domain]."-event', function(data) {
                    // alert(JSON.stringify(data));
                     toastr.info(data['message'],data['title'],{ $toastr_options });
