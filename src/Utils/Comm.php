@@ -46,9 +46,30 @@ class Comm
         return $res;
     }
 
-    public function pusher($message='', $title='', $gid=0){
+    public function is_connected($site="www.example.com",$port=80)
+    {
+        $connected = @fsockopen($site, $port);
+        if ($connected){
+            $is_conn = true; //action when connected
+            fclose($connected);
+        }else{
+            $is_conn = false; //action in connection failure
+        }
+            return $is_conn;
+        }
+
+    public function pusher($message='', $title='', $gid=0, $uid=0){
+        $block_internet=$GLOBALS['block_internet'];
+        if ($block_internet>0) {
+            return false;
+        }
+        $res[message]=$message;
+        $res[title]=$title;
+        $res[gid]=$gid;
+        $res[uid]=$uid;
+
         $app_id=getenv(PUSHER_APP_ID);
-        if(($message!='')&&($app_id!='')){
+        if(($message!='')&&($app_id!='')&&(class_exists('\Pusher\Pusher'))&&($this->is_connected("api-eu.pusher.com"))){
             $options = array(
                 'cluster' => getenv(PUSHER_CLUSTER),
                 'useTLS' => true
@@ -64,13 +85,25 @@ class Comm
 
             $data['message'] = $message;
             if($gid>0){
-                $pusher->trigger($GLOBALS[domain].'-channel-'.$GLOBALS[gid],$GLOBALS[domain].'-event',$data);
+                $channel=$GLOBALS[domain].'-channel-gid-'.$gid;
+                $event=$GLOBALS[domain].'-event';
+            }elseif($uid>0){
+                $channel=$GLOBALS[domain].'-channel-uid-'.$uid;
+                $event=$GLOBALS[domain].'-event';
             }else{
-                $pusher->trigger($GLOBALS[domain].'-channel-all',$GLOBALS[domain].'-event',$data);
+                $channel=$GLOBALS[domain].'-channel-all';
+                $event=$GLOBALS[domain].'-event';
             }
+            $pusher->trigger($channel,$event,$data);
+            $res[status]=1;
         }else{
-            return;
+            $res[status]=0;
+            if(!class_exists('\Pusher\Pusher')) $res[error] = "ERROR: Class Pusher does not exist.";
+            if($app_id=='') $res[error] = "ERROR: No PUSHER_APP_ID.";
+            if($message=='') $res[error] = "ERROR: Empty Message.";
+            if(!$this->is_connected("api-eu.pusher.com")) $res[error] = "ERROR: No internet";
         }
+        return $res;
     }
     public function sendIcalEvent($from_name, $from_address, $to_name, $to_address, $startTime, $endTime, $subject, $description, $location)
     {
