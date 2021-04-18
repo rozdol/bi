@@ -910,7 +910,7 @@ class Html
     public function putHeader($title = '', $css = array(), $scripts = array())
     {
         header('X-Accel-Buffering: no');
-        header('Content-Encoding: none;');
+        // header('Content-Encoding: none;');
         global $act, $what, $owner;
         $bs=$GLOBALS['bootstrap_ver'];
         $jq=$GLOBALS['jquery_ver'];
@@ -1010,6 +1010,7 @@ class Html
 
                 <link href="'.ASSETS_URI.'/assets/css/dropdown/dropdown.css" media="screen" rel="stylesheet" type="text/css" />
                 <link href="'.ASSETS_URI.'/assets/css/datepicker.css" media="screen" rel="stylesheet" type="text/css" />
+                <link href="'.ASSETS_URI.'/assets/css/toastr.min.css" media="screen" rel="stylesheet" type="text/css" />
                 <link href="'.ASSETS_URI.'/assets/css/dropdown/themes/black/default.ultimate.css" media="screen" rel="stylesheet" type="text/css" />
                 <link href="'.ASSETS_URI.'/assets/css/ffupload/css/style.css" rel="stylesheet" >
                 <link href="'.ASSETS_URI.'/assets/css/ffupload/css/jquery.fileupload-ui.css" rel="stylesheet" >
@@ -1031,11 +1032,54 @@ class Html
                 }
             }
         } else {
+            if($GLOBALS[gid]>1){
+            $toastr_options="
+                        'closeButton': true,
+                        'debug': false,
+                        'newestOnTop': true,
+                        'progressBar': true,
+                        'positionClass': 'toast-top-right',
+                        'preventDuplicates': false,
+                        'onclick': null,
+                        'showDuration': '1000',
+                        'hideDuration': '1000',
+                        'timeOut': '10000',
+                        'extendedTimeOut': '1000',
+                        'showEasing': 'swing',
+                        'hideEasing': 'linear',
+                        'showMethod': 'fadeIn',
+                        'hideMethod': 'fadeOut'
+                        ";
+            $pusher_js="<script>
+            // Enable pusher logging - don't include this in production
+                // Pusher.logToConsole = true;
+
+                var pusher = new Pusher('".getenv(PUSHER_KEY)."', {
+                    cluster: 'eu'
+                });
+
+                var channel = pusher.subscribe('".$GLOBALS[domain]."-channel-all');
+                channel.bind('".$GLOBALS[domain]."-event', function(data) {
+                    // alert(JSON.stringify(data));
+                    toastr.info(data['message'],data['title'],{ $toastr_options });
+                });
+
+                var channel = pusher.subscribe('".$GLOBALS[domain]."-channel-".$GLOBALS[gid]."');
+                channel.bind('".$GLOBALS[domain]."-event', function(data) {
+                   // alert(JSON.stringify(data));
+                    toastr.info(data['message'],data['title'],{ $toastr_options });
+                });
+
+                </script>";
+            }
             $content['header']['scripts']='
             <script src="'.ASSETS_URI.'/assets/js/jquery-'.$jq.'.min.js" type="text/javascript"></script>
             <script src="'.ASSETS_URI.'/assets/js/jquery.ajaxq-0.0.1.js" type="text/javascript"></script>
             <script src="'.ASSETS_URI.'/assets/js/jquery.validate.js" type="text/javascript"></script>
             '.$bootstrap_js.'
+            <script src="'.ASSETS_URI.'/assets/js/pusher.min.js"></script>
+            <script src="'.ASSETS_URI.'/assets/js/toastr.min.js"></script>
+            '.$pusher_js.'
             <script src="'.ASSETS_URI.'/assets/js/jquery.dropdown.js"></script>
             <script src="'.ASSETS_URI.'/assets/js/jquery.jeditable.mini.js"></script>
             <script src="'.ASSETS_URI.'/assets/js/jquery.tablesorter.js"></script>
@@ -1052,6 +1096,7 @@ class Html
 
             <script src="'.ASSETS_URI.'/assets/fusioncharts/js/fusioncharts.js"></script>
             <script src="'.ASSETS_URI.'/assets/fusioncharts/js/themes/fusioncharts.theme.fint.js"></script>
+
 
 
             ';

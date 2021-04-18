@@ -7,6 +7,7 @@ use Rozdol\Dates\Dates;
 use Aws\Ses\SesClient;
 use Aws\Exception\AwsException;
 use Rozdol\Db\Db;
+use Pusher\Pusher\Pusher;
 
 //use \Sendgrid\Sendgrid;
 
@@ -43,6 +44,32 @@ class Comm
         $count=$this->db->GetVal($sql)*1;
         $res=($count!=0);
         return $res;
+    }
+
+    public function pusher($message='', $title='', $gid=0){
+        if($message!=''){
+            $options = array(
+                'cluster' => getenv(PUSHER_CLUSTER),
+                'useTLS' => true
+            );
+            $pusher = new \Pusher\Pusher(
+                getenv(PUSHER_KEY),
+                getenv(PUSHER_SECRET),
+                getenv(PUSHER_APP_ID),
+                $options
+            );
+
+            if($title!='')$data['title'] = $title;
+
+            $data['message'] = $message;
+            if($gid>0){
+                $pusher->trigger($GLOBALS[domain].'-channel-'.$GLOBALS[gid],$GLOBALS[domain].'-event',$data);
+            }else{
+                $pusher->trigger($GLOBALS[domain].'-channel-all',$GLOBALS[domain].'-event',$data);
+            }
+        }else{
+            return;
+        }
     }
     public function sendIcalEvent($from_name, $from_address, $to_name, $to_address, $startTime, $endTime, $subject, $description, $location)
     {
