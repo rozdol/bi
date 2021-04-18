@@ -47,7 +47,8 @@ class Comm
     }
 
     public function pusher($message='', $title='', $gid=0){
-        if($message!=''){
+        $app_id=getenv(PUSHER_APP_ID);
+        if(($message!='')&&($app_id!='')){
             $options = array(
                 'cluster' => getenv(PUSHER_CLUSTER),
                 'useTLS' => true
