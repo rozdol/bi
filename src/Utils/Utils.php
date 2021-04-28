@@ -178,10 +178,14 @@ class Utils
         return $res;
     }
 
-    public function contains($str, $instr)
+    public function contains($str, $instr,$ignorecase=0)
     {
         $result=0;
-        $pos = strpos($instr, $str);
+        if($ignorecase==0){
+            $pos = strpos($instr, $str);
+        }else{
+            $pos = stripos($instr, $str);
+        }
         if ($pos === false) {
             $result=0;
         } else {

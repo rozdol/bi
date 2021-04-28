@@ -790,7 +790,11 @@ class Html
             if($GLOBALS[offline_mode]){
                 $this->message($msg, 'ERROR');
             }else{
-                echo $this->message($msg, 'ERROR', 'alert-error');
+                $message=$this->message($msg, 'ERROR', 'alert-error');
+                echo $message;
+                echo '<script>$("#livestatus").html("'.$message.'");</script>'."\n";
+                ob_flush();
+                flush();
                 exit;
             }
         }
