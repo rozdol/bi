@@ -1857,7 +1857,7 @@ class Html
             echo "<div class='error'>".pg_last_error()."<br><b>".$sql."</b></div>" ;
         }
 
-        $txt = "<select NAME='$lname' class='ui-widget ui-state-default ui-corner-all $class' ID='id_$lname' tabindex='$GLOBALS[tabindex]' $opts>\n";
+        $txt = "<SELECT NAME='$lname' class='ui-widget ui-state-default ui-corner-all $class' ID='id_$lname' tabindex='$GLOBALS[tabindex]' $opts>\n";
         if ($all <> '') {
             $txt = "$txt<OPTION SELECTED VALUE='$def'>$all</OPTION>\n";
         } else {
@@ -1874,6 +1874,8 @@ class Html
             if (($id == $def)&&($def<>'')&&($sell=='')) {
                 $sel = 'SELECTED';
             }
+            $name=str_ireplace(" ","",$name);
+            $name=trim($name);
             //if (length($name) > 40){$name="...".substr($name,0,15).substr($name,length($name)-15,15);}
             $txt = "$txt<OPTION $sel VALUE='$id' style='$style'>$name</OPTION>\n";
         }
