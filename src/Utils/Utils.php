@@ -1022,9 +1022,13 @@ class Utils
     }
 
 
-    public function post_error($msg)
+    public function post_error($msg,$location="E")
     {
-        $_POST[backtoedit]=1;
+        if($location=="E"){
+            $_POST[backtoedit]=1;
+        }else{
+            $_POST[backtodetails]=1;
+        }
         $_POST[noduplicate]=1;
         $GLOBALS[error_message].=$msg;
     }
