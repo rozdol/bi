@@ -812,6 +812,7 @@ class Html
     function message($msg = '', $title = '', $class = 'alert-info')
     {
         if($GLOBALS[offline_mode]){
+            if($title=='')$title=$class;
             $GLOBALS[offline_messages][]=strip_tags("$title: $msg");
         }else{
             if ($this->utils->contains('alert-', $class)>0) {
