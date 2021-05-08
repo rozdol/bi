@@ -2381,6 +2381,7 @@ class Html
     function link_button($title = '', $link = '', $class = '', $warn = '')
     {
         $title=\util::l($title);
+        $warn=\util::l($warn);
         //$out="<a href='$link'><i class='btn btn-mini $class'>$title</i></a>";
         $link=htmlspecialchars($link);
         if ($warn=='') {
@@ -2393,6 +2394,8 @@ class Html
 
     function link_badge($title = '', $link = '', $class = '', $warn = '')
     {
+        $title=\util::l($title);
+        $warn=\util::l($warn);
         //$out="<a href='$link'><i class='btn btn-mini $class'>$title</i></a>";
         $link=htmlspecialchars($link);
         if ($warn=='') {
@@ -2406,6 +2409,8 @@ class Html
 
     function link_label($title = '', $link = '', $class = '', $warn = '')
     {
+        $title=\util::l($title);
+        $warn=\util::l($warn);
         //$out="<a href='$link'><i class='btn btn-mini $class'>$title</i></a>";
         $link=htmlspecialchars($link);
         if ($warn=='') {
@@ -2419,11 +2424,15 @@ class Html
 
     function confirm_with_comment($title = '', $link = '', $class = '', $warn = '')
     {
+        $title=\util::l($title);
+        $warn=\util::l($warn);
             $out="<span class='btn btn-mini btn-$class' onclick=\"leavecomment('$link','$warn');\" style=\"cursor: pointer; cursor: hand; \">$title</span>";
         return $out;
     }
     function confirm_action($title = '', $link = '', $class = '', $warn = '')
     {
+        $title=\util::l($title);
+        $warn=\util::l($warn);
             $out="<span class='btn btn-mini btn-$class' onclick=\"confirmation('$link','$warn');\" style=\"cursor: pointer; cursor: hand; \">$title</span>";
         return $out;
     }
