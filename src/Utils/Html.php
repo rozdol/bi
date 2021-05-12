@@ -1522,7 +1522,7 @@ class Html
             //$label=$name;
             $label=$name;
         }
-        $label=\util::l(strtolower($label));
+        $label=\util::l($label);
         $res="<label>$label</label>
             <input type='text' name='$name' value='$value' class='span12' placeholder='$placeholder'/ $disabled>";
 
@@ -1554,7 +1554,7 @@ class Html
         if ($label=='') {
             $label=$name;
         }
-        $label=\util::l(strtolower($label));
+        $label=\util::l($label);
         $res="<label>$label</label>
             <input type='password' name='$name' value='$value' class='span12' placeholder='$placeholder' tabindex='$GLOBALS[tabindex]'/ $disabled>";
 
@@ -1586,7 +1586,7 @@ class Html
         if ($label=='') {
             $label=$name;
         }
-        $label=\util::l(strtolower($label));
+        $label=\util::l($label);
         $res="<label>$label</label>
                 <input type='text' data-datepicker='datepicker' name='$name' value='$value'  class='$class'' placeholder='$placeholder'/ $disabled>";
 
@@ -1608,7 +1608,7 @@ class Html
         if ($label=='') {
             $label=$name;
         }
-        $label=\util::l(strtolower($label));
+        $label=\util::l($label);
         if ($properties=='') {
             $rows='4';
         }
@@ -1634,7 +1634,7 @@ class Html
         if ($label=='') {
             $label=$name;
         }
-        $label=\util::l(strtolower($label));
+        $label=\util::l($label);
         if ($value>0) {
             $chkd='checked';
         } else {
@@ -1661,7 +1661,7 @@ class Html
         if ($label=='') {
             $label=$name;
         }
-        $label=\util::l(strtolower($label));
+        $label=\util::l($label);
         if ($value>0) {
             $chkd='checked';
         } else {

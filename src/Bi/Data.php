@@ -3109,7 +3109,7 @@ class Data
             $del_btn.= ":: <i class='icon-trash withpointer' onclick=\"confirmation('?csrf=$GLOBALS[csrf]&act=delete&what=$what&id=$id','$text')\" onMouseOver=\"this.className='icon-trash icon-white withpointer black'\" onMouseOut=\"this.className='icon-trash withpointer'\"></i> ".\util::l('Delete');
         }
         $qr="<a href='?act=pdf&what=pdf_qr&acttag=d&whattag=$whattag&id=$id'><i class='icon-qrcode withpointer'></i> QR</a>";
-        $out.="<div class='alert alert-info'>$fav $edit :: <a href='?act=edit&table=notify&refid=$id&tablename=$what'><img src='".ASSETS_URI."/assets/img/custom/MailSend.png'> ".\util::l('Notify')." </a> :: $qr $del_btn | $more $isnotified</div>";
+        $out.="<div class='alert alert-info'>$fav $edit :: <a href='?act=edit&table=notify&refid=$id&tablename=$what'><img src='".ASSETS_URI."/assets/img/custom/MailSend.png'> ".\util::l('Notify')." </a> :: $qr $del_btn $more $isnotified</div>";
         return "<span media='print' class='noPrint'>$out</span>";
     }
     function readconfig($what)
