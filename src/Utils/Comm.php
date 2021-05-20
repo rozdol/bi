@@ -1019,6 +1019,7 @@ class Comm
     {
         $number_orig=$number;
         //$smsQuery = $text;
+        if($GLOBALS[db_name]!='')$text=$GLOBALS[db_name].":$text";
         $smsQuery = urlEncode($text);
         $number = urlEncode($number);
         $clickatel_user=$GLOBALS['clickatel_user'];
