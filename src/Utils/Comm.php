@@ -921,8 +921,9 @@ class Comm
         }
         $mail_text=$msg;
         $mail_text.="<hr>";
+        $mail_text.="<b>Time:</b>".date('Y-m-d H:i:s',time()).'<hr>';
         $mail_text.="<b>APP:</b>".$GLOBALS['db_name'].'<hr>';
-        $mail_text.="<b>IP:</b>".$GLOBALS['ip'].'<hr>';
+        $mail_text.="<b>IP:</b>".$GLOBALS['ip'].' -> '.$_SERVER[SERVER_ADDR].'<hr>';
         $mail_text.="<b>User:</b>".$GLOBALS['username'].'<hr>';
 
         $mail_text.=$this->html->pre_display($_GET, 'GET').'<hr>';
