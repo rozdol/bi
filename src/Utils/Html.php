@@ -1681,6 +1681,60 @@ class Html
 
         return $res;
     }
+
+    function form_json($json=''){
+        $settings=json_decode($json, TRUE);
+        foreach ($settings as $setting => $value) {
+            $setting_arr=explode("_", $setting);
+            //$value_type=$setting_arr[count($setting_arr)-1];
+            $value_type=array_pop($setting_arr);
+            $setting_name=implode("_", $setting_arr);
+            $setting_name_clean=str_ireplace("_", " ", $setting_name);
+            $fields[]=[
+                'setting_name'=>$setting_name,
+                'setting_name_clean'=>$setting_name_clean,
+                'value_type'=>$value_type,
+                'value'=>$value,
+            ];
+
+            if($value_type=='chk'){
+                $out.=$this->form_chekbox("json_".$setting,$value,$setting_name_clean,'',0,'span12');
+            }elseif(($value_type=='text')||($value_type=='num')){
+                $out.=$this->form_text("json_".$setting,$value,$setting_name_clean,'',0,'span12');
+            }
+            if($value_type=='date'){
+                $out.=$this->form_date("json_".$setting,$value,$setting_name_clean,'',0,'span12');
+            }
+            if($value_type=='area'){
+                $out.=$this->form_textarea("json_".$setting,$value,$setting_name_clean,'',0,'','span12');
+            }
+        }
+        $fileds_json=json_encode($fields);
+        //$out.=$this->form_chekbox("json_test",1,'test_id','',0,'span12');
+        return $out;
+    }
+
+    function save_settings($json){
+        //echo $this->pre_display($json,"json");
+        $settings=json_decode($json, TRUE);
+        //echo $this->pre_display($settings,"settings");
+        foreach ($settings as $setting => $value) {
+
+            $setting_arr=explode("_", $setting);
+            $value_type=$setting_arr[count($setting_arr)-1];
+            if($value_type=='date'){
+                $settings1[$setting]=$this->readRQd("json_".$setting);
+            }elseif(($value_type=='text')||$value_type=='area'){
+                $settings1[$setting]=$this->readRQ("json_".$setting);
+            }elseif(($value_type=='chk')||$value_type=='num'){
+                $settings1[$setting]=$this->readRQn("json_".$setting);
+            }
+        }
+
+        $settings_json=json_encode($settings1);
+        //echo $this->pre_display($settings_json,"settings_json");
+        return $settings_json;
+    }
     function boolean($value = '')
     {
         if (($value=='')||(strtolower($value)=='f')||(strtolower($value)=='false')||($value==0)) {
