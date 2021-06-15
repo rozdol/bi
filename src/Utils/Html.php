@@ -926,6 +926,7 @@ class Html
             <link href="'.ASSETS_URI.'/assets/css/glyphicons-h.css" rel="stylesheet">
             <link href="'.ASSETS_URI.'/assets/css/glyphicons.css" rel="stylesheet">
             <link href="'.ASSETS_URI.'/assets/css/FCcheckbox.css" rel="stylesheet">
+            <link href="'.ASSETS_URI.'/assets/fa5/css/all.css" rel="stylesheet">
             ';
             $bootstrap_ej='
            <link href="'.ASSETS_URI.'assets/EJ/Content/ejthemes/ej.widgets.core.min.css" rel="stylesheet" />
