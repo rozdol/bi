@@ -845,6 +845,18 @@ class Html
         echo $out;
         if($exit)exit;
     }
+    function card($data=['title'=>'Orders Received', 'icon'=>'cart-plus', 'value'=>486,'title2'=>'Completed Orders','value2'=>351, 'color'=>'blue']){
+        $card='<div class="span3">
+            <div class="card bg-c-'.$data[color].' order-card">
+                <div class="card-block">
+                    <h4 class="">'.$data[title].'</h4>
+                    <h2 class="text-right  text-end"><i class="fa fa-'.$data[icon].' f-left"></i><span>'.$data[value].'</span></h2>
+                    <p class="">'.$data[title2].'<span class="f-right">'.$data[value2].'</span></p>
+                </div>
+            </div>
+        </div>';
+        return $card;
+    }
     function pre_display($text = '', $title = '', $class = '', $code = 0)
     {
         if ($_REQUEST[act]=='api') {
