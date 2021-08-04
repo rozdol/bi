@@ -873,8 +873,13 @@ class Dates
         if ($w>5) {
             return 1;
         }
-        $holidays=explode(",", $days);
         $md = date("d.m", strtotime($date));
+        $holidays_full=explode(",", $days);
+        foreach ($holidays_full as $holiday) {
+            $short=substr($holiday,0,5);
+            $holidays[]=$short;
+            if($short==$md)return 1;
+        }
         if (in_array($md, $holidays)) {
             return 1;
         }

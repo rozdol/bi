@@ -3320,4 +3320,46 @@ $outfields
             return "No $filename found.";
         }
     }
+
+    function bin2ascii($data){
+        $byte_arr = unpack("C*", $data);
+        foreach ($byte_arr as $byte) {
+            $i++;
+            $len++;
+            $hex_array[]=substr('00000000'.dechex($byte),-2);
+            $char_arr[]=mb_chr($byte);
+        }
+        foreach ($hex_array as $value) {
+            $col++;
+            if($col>16){
+                $col=1;
+                $row++;
+                $hex_cols="$hex_cols\n";
+                $char2_cols="$char2_cols\n";
+            }
+            $hex_cols="$hex_cols $value";
+            $chr=mb_chr((hexdec("$value")));
+            if($chr=="\n")$chr="¶";
+            if($chr=="\r")$chr="¶";
+            $char2_cols="$char2_cols ".$chr;
+        }
+        foreach ($char_arr as $value) {
+            $col++;
+            if($col>16){
+                $col=0;
+                $row++;
+                $char_cols="$char_cols\n";
+            }
+            $char_cols="$char_cols $value";
+        }
+        $hex_str=implode("",$hex_array);
+        $chars=implode("",$char_arr);
+        $res[len]=$len;
+        $res[hex_str]=$hex_str;
+        $res[chars]=$chars;
+        $res[hex_cols]=$hex_cols;
+        $res[char_cols]=$char_cols;
+        $res[char2_cols]=$char2_cols;
+        return $res;
+    }
 }
