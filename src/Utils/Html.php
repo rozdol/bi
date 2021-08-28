@@ -2019,11 +2019,12 @@ class Html
         </div>";
     }
 
-    public function collapsable($content = '', $title = '', $collapsed = true, $class = '', $header = '', $footer = '', $icon = 'icon-folder-open')
+    public function collapsable($content = '', $title = '', $collapsed = true, $class = '', $header = '', $footer = '', $icon = 'icon-folder-open', $full=0)
     {
         if ($collapsed) {
             $in='in';
         }
+        $collapsable_class=($full==1)?'collapsablefull':'collapsable';
         $class_id=preg_replace("/[^a-z0-9]+/i", "", $title);
 
         $label= "<label class='badge-collapsable $class'><button type='button' style='margin-left:10px;' class='btn btn-micro' data-toggle='collapse' data-target='#collapsable_$class_id'><span class='$icon'></span></button> $title</label>";
@@ -2034,8 +2035,8 @@ class Html
         if ($footer) {
             $footer="<div class='collapse-footer'>$footer</div>";
         }
-        $out.="<div class='collapsable'>$label
-        <div class='collapsable $class'>
+        $out.="<div class='$collapsable_class'>$label
+        <div class='$collapsable_class $class'>
         $header
         <div class='collapse $class $in' id='collapsable_$class_id' >
             <div class='inside-collapse-disable'>$content</div>
