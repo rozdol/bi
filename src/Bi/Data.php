@@ -1417,20 +1417,24 @@ class Data
     function obj_namelist($table = 'partners', $ids = array(), $detalize = 1, $delim = ',', $show_ids = 0, $max = 10)
     {
         $tmp=array();
-        if (count($ids)<=$max) {
-            foreach ($ids as $id) {
+        $count=count($ids);
+        $remaining=$count-$max;
+        foreach ($ids as $id) {
+            $i++;
+            if ($i<=$max) {
                 if ($detalize==1) {
                     $tmp[]=$this->detalize($table, $id, 10);
                 } else {
                     $tmp[]=$this->get_name($table, $id);
                 }
+            }else{
+                $tmp[]="+$remaining";
+                break;
             }
-            $res=implode($delim, $tmp);
-            if ($show_ids==1) {
-                $res="$res(".implode($delim, $ids).")";
-            }
-        } else {
-            $res="More than $max";
+        }
+        $res=implode($delim, $tmp);
+        if ($show_ids==1) {
+            $res="$res(".implode($delim, $ids).")";
         }
 
         return $res;
