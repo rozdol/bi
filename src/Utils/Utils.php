@@ -2629,16 +2629,16 @@ $outfields
             $toc=$file_data['toc'];
         }
 
-        //echo $this->pre_display($file_data);
+        //echo $this->pre_display($file_data,'$file_data');//exit;
         foreach ($toc as $item => $values) {
             if ($item!='') {
-                //echo $this->pre_display($values);
+                // echo $this->pre_display($values,"TOC");
                 $xls_range=$this->xls_range($values['range']);
                 $file_data[strtolower(str_ireplace(' ', '_', $values['table_name']))] = $this->excel_to_array($file, $values['sheet'], $xls_range, $values['key']);
                 //$this->array_to_sql($file_data[$values['table_name']],$values['key']);
             }
         }
-        //echo $this->pre_display($file_data,'$file_data');//exit;
+        // echo $this->pre_display($file_data,'$file_data');exit;
         foreach ($file_data as $name => $values) {
             //if($GLOBALS['log_level']>2)echo $this->pre_display($values,"$name");
             $name=strtolower(str_ireplace(' ', '_', $name));
@@ -2721,15 +2721,16 @@ $outfields
                             $out.=("<span class='badge red'>Error in cell '$tmp'".$e->getMessage()."</span><br>");
                         }
                     }
-
+                    // if($val=='')$val="n_$col";
                     $class=(is_numeric($val))?'n':'';
                     $out.= "<td class='$class'>$val</td>";
                     $row_array[]=$val;
                 }
                 if (!$header) {
                     $row_array = array_map('strtolower', $row_array);
+                    // echo $this->pre_display($row_array,"row_array");
                     $row_array=str_ireplace(' ', '_', $row_array);
-                    $row_array=str_ireplace(':', '', $row_array);
+                    $row_array=str_ireplace([':','+','-','/','\\','(',')','[',']','{','}',], '', $row_array);
                     $header = $row_array;
                 } elseif ($index_filed==0) {
                     $data[] = array_combine($header, $row_array);
