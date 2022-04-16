@@ -444,8 +444,8 @@ class Data
     function chk_fails($descr = '')
     {
         global $ip;
-        $sql="delete from failed_logins where date_time<=CURRENT_TIMESTAMP - INTERVAL '10 minutes'";
-        $times=$this->db->GetVal($sql);
+        // $sql="delete from failed_logins where date_time<=CURRENT_TIMESTAMP - INTERVAL '10 minutes'";
+        // $times=$this->db->GetVal($sql);
         $sql="insert into failed_logins (date_time, ip, descr) values (CURRENT_TIMESTAMP, '$ip','$descr')";
         $sql=$this->db->GetVal($sql);
         $sql="select count(*) from failed_logins where ip='$ip' and date_time>=CURRENT_TIMESTAMP - INTERVAL '1 minutes'";
@@ -465,11 +465,11 @@ class Data
             }
         }
         if ($times==6) {
-            $sql="insert into blacklist_ip (date_time, ip, descr) values (CURRENT_TIMESTAMP + INTERVAL '1 minutes', '$ip','$descr')";
+            $sql="insert into blacklist_ip (date_time, ip, descr) values (CURRENT_TIMESTAMP + INTERVAL '1 minutes', '$ip','Blocked for 1 minute')";
             $sql=$this->db->GetVal($sql);
             echo "<br>Block<br>";
             $owner=$GLOBALS['owner'];
-            $text="IS($owner):Blocked IP $ip for 10 minutes due to multiple brute-force attempts $descr";
+            $text="IS($owner):Blocked IP $ip for 1 minute due to multiple brute-force attempts $descr";
             $text=substr($text, 0, 200);
             $this->comm->sms2admin($text);
 
@@ -479,6 +479,26 @@ class Data
             if (($to!='')&&($from!='')) {
                 $mail=$this->comm->sendmail_html($to, $from, $subject, $text);
             }
+        }
+        $sql="select count(*) from failed_logins where ip='$ip' and date_time>=CURRENT_TIMESTAMP - INTERVAL '20 minutes'";
+        $times=$this->db->GetVal($sql);
+        if ($times>=10) {
+            $sql="insert into blacklist_ip (date_time, ip, descr) values (CURRENT_TIMESTAMP + INTERVAL '10 minutes', '$ip','Blocked for 10 minutes')";
+            $sql=$this->db->GetVal($sql);
+            echo "<br>Block<br>";
+            $owner=$GLOBALS['owner'];
+            $text="IS($owner):Blocked IP $ip for 10 minute due to multiple brute-force attempts $descr";
+            $text=substr($text, 0, 200);
+            $this->comm->sms2admin($text);
+
+            $to=$GLOBALS['admin_mail'];
+            $from=$GLOBALS['is_mail'];
+            $subject="System alert (Brute force attempt)";
+            if (($to!='')&&($from!='')) {
+                $mail=$this->comm->sendmail_html($to, $from, $subject, $text);
+            }
+            echo $this->html->refreshpage('https://www.police.gov.cy/police/police.nsf/All/671EB91BDCAA303EC22584000041D696?OpenDocument', 10, "Submitting your request request for investigation ...");
+            exit;
         }
     }
     function chk_ip($redirect)
@@ -492,6 +512,14 @@ class Data
 
         $bipfile=$GLOBALS['settings']['bipfile'];
         $use_bip=$GLOBALS['settings']['use_bip'];
+
+        $blacklist_ip = $this->db->getVal("select count(*) from blacklist_ip where ip='$realip' and date_time>=CURRENT_TIMESTAMP")*1;
+        if($blacklist_ip>0){
+            //echo $this->html->refreshpage('https://www.police.gov.cy/police/police.nsf/All/671EB91BDCAA303EC22584000041D696?OpenDocument', 10, "Submitting your request request for investigation ...");
+            // exit;
+            echo $this->html->notFound("bc0.$realip.a0c");
+            exit;
+        }
 
         if($bipfile){
             if((!file_exists($bipfile))) {
