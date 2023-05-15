@@ -1917,6 +1917,27 @@ class Html
         return $txt;
     }
 
+    function btnlist($lname='',$sql='',$sell='',$all='', $opts='',$def=''){
+        $out.="<div class='btn-group' data-toggle='buttons'>";
+        if (!($cur = pg_query($sql))) {echo "<div class='error'>".pg_last_error()."<br><b>".$sql."</b></div>" ;}
+        while ($line = pg_fetch_array($cur)) {
+            $id =   $line[0];
+            $name=$line[1];
+            $style=$line[2];
+            
+        //foreach($vals as $value){
+            $color="";
+            $active="";
+            
+            if($id==$sell){$color="btn-info"; $active='checked';}
+
+            $out.="<label class='btn btn-mini btn-default $active $color'>
+                                <input type='radio' name='$lname' value='$id' style='$style' $active> $name </label>";
+        }
+        $out.="</div>";
+        return $out;
+    }
+
     function htlist($lname = '', $sql = '', $sell = '', $all = '', $opts = '', $def = '', $class = '')
     {
         $GLOBALS[tabindex]++;
