@@ -244,7 +244,7 @@ class Dates
         list($day2,$month2,$year2) = explode('.', $date2);
         $date2 = "{$month2}/{$day2}/{$year2}";
         $date2 = strtotime($date2);
-        if (($base=='')||($base=='365')||($base=='A/360'||($base=='Actual/360'))) {
+        if (($base=='')||($base=='365')||($base=='366')||($base=='A/360'||($base=='Actual/360'))) {
             $res = round(($date2 - $date1)/(3600*24), 0);
         }
         if ($base=='30/360') {
