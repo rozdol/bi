@@ -887,14 +887,23 @@ class Dates
     }
     public function F_dateaddworking($date, $days, $calendar)
     {
+
+        $daysadded=0;
         $new_date=$date;
         $i=0;
+        $isholiday=$this->F_dateisholiday($new_date, $calendar);
+        if($isholiday){
+            $day_of_week=$this->F_weekday($new_date);
+            if($day_of_week==6)$new_date=$this->F_dateadd_day($new_date,-1);
+            if($day_of_week==7)$new_date=$this->F_dateadd_day($new_date,+1);
+        }
+
         if ($days>=0) {
             while ($daysadded<$days) {
                 $i++;
                 $new_date=$this->F_dateadd($date, $i);
-                $idholiday=$this->F_dateisholiday($new_date, $calendar);
-                if ($idholiday==0) {
+                $isholiday=$this->F_dateisholiday($new_date, $calendar);
+                if ($isholiday==0) {
                     $daysadded++;
                 }
             }
@@ -903,13 +912,12 @@ class Dates
             while ($daysadded<$days) {
                 $i--;
                 $new_date=$this->F_dateadd($date, $i);
-                $idholiday=$this->F_dateisholiday($new_date, $calendar);
-                if ($idholiday==0) {
+                $isholiday=$this->F_dateisholiday($new_date, $calendar);
+                if ($isholiday==0) {
                     $daysadded++;
                 }
             }
         }
-
         return $new_date;
     }
     public function F_dateadd($date = '', $days = 0, $workingonly = 0, $ignore_weekends = 0)
@@ -949,16 +957,20 @@ class Dates
         }
         return $newdate;
     }
-    public function F_dateadd_month($date = '', $val = 1, $ignore_weekends = 0)
+    public function F_dateadd_month_old($date = '', $val = 1, $ignore_weekends = 0)
     {
+        $date_orig=$date;
         $date=(mktime(0, 0, 0, substr($date, 3, 2), (substr($date, 0, 2)), substr($date, 6, 4)));
         if ($val<0) {
             $sign='';
         } else {
             $sign='+';
         }
+
         $newdate = strtotime("$sign $val month", $date) ;
+
         $newdate = date('d.m.Y', $newdate);
+        echo $this->pre_display([$date_orig, $val,$newdate],"newdate");
         if($ignore_weekends>0){
             $day_of_week=$this->F_weekday($newdate);
             if($day_of_week==6)$newdate=$this->F_dateadd_day($newdate,-1);
@@ -966,6 +978,37 @@ class Dates
         }
         return $newdate;
     }
+
+    public function F_dateadd_month($date_orig = '', $val = 1, $ignore_weekends = 0)
+    {
+        if ($val<0) {
+            $sign='';
+        } else {
+            $sign='+';
+        }
+
+        $date = new DateTime($date_orig);
+        $originalDay = $date->format('d');
+        $date->modify("$sign $val month");
+        $newDay = $date->format('d');
+
+        if ($originalDay !== $newDay) {
+            $date->modify('last day of last month');
+        } else {
+            $date->setDate($date->format('Y'), $date->format('m'), $originalDay);
+        }
+        $newdate=$date->format('d.m.Y');
+
+        // echo $this->pre_display([$date_orig, $val,$newdate],"newdate");
+
+        if($ignore_weekends>0){
+            $day_of_week=$this->F_weekday($newdate);
+            if($day_of_week==6)$newdate=$this->F_dateadd_day($newdate,-1);
+            if($day_of_week==7)$newdate=$this->F_dateadd_day($newdate,+1);
+        }
+        return $newdate;
+    }
+
     public function F_dateadd_week($date = '', $val = 1, $ignore_weekends = 0)
     {
         $date=(mktime(0, 0, 0, substr($date, 3, 2), (substr($date, 0, 2)), substr($date, 6, 4)));
