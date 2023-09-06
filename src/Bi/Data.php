@@ -4137,9 +4137,9 @@ class Data
                 $tbl.= "<td class='$class'>$row[$j]</td>";
                 $j++;
             }
-            $tbl.= "</tr>";
+            $tbl.= "</tr>\n";
         }
-        $tbl.="</table>";
+        $tbl.="</table>\n\n";
 
         if ($title!='') {
             $out.=$this->html->tag($title, 'foldered');

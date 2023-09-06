@@ -2004,13 +2004,13 @@ class Html
         return $out;
     }
 
-    function dropdown_list_array($caption = '', $filed = '', $list = [], $defaultvalue = '', $hidden = '')
+    function dropdown_list_array($caption = '', $filed = '', $list = [], $defaultvalue = '', $hidden = '', $class = '')
     {
         if ($hidden!='') {
             $class="hidden";
         }
 
-        $htlist = "<select NAME='$filed' class='ui-widget ui-state-default ui-corner-all' ID='id_$filed'>\n";
+        $htlist = "<select NAME='$filed' class='ui-widget ui-state-default ui-corner-all $class' ID='id_$filed' tabindex='$GLOBALS[tabindex]>\n";
         $htlist = "$htlist<OPTION VALUE=''>None</OPTION>\n";
 
         foreach ($list as $key => $value) {
@@ -2020,9 +2020,16 @@ class Html
             }
         }
         $htlist = "$htlist</SELECT>\n";
-        $out.="";
-        $caption=\util::l($caption);
-        $out.="<dl><dt class='$class'><label>$caption</label>$htlist</dt></dl>";
+        $out="";
+        if($caption!=''){
+            $caption=\util::l($caption);
+            // $out.="<dt class='$class'><label>$caption</label>$htlist</dt>";
+            $out.="<label>$caption</label>$htlist";
+        }else{
+            $out=$htlist;
+        }
+        
+
         return $out;
     }
 
