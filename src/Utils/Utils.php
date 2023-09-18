@@ -271,10 +271,12 @@ class Utils
         $sum=$matches[0][0]*1;
         return $sum;
     }
-    public function cleannumber($sum, $dec = '')
+    public function cleannumber($sum, $dec = '', $thousands = '')
     {
 
-
+        if($thousands != ''){
+            $sum=str_ireplace($thousands, "", $sum);
+        }
         $multiplier=1;
         if ($dec!='') {
             $sum=str_ireplace(",", ".", $sum);
@@ -2365,7 +2367,7 @@ $outfields
         return $data;
     }
 
-    public function csv_to_array($data = '', $delimiter = "\t")
+    public function csv_to_array($data = '', $delimiter = "\t", $trim=0)
     {
         $header = null;
         $csv=[];
@@ -2373,7 +2375,7 @@ $outfields
         foreach ($rows as &$row) {
             $i++;
             $row = str_getcsv($row, $delimiter);
-
+            if($trim>0)$row = array_map('trim',$row);
             if (!$header) {
                 $header = $row;
                 $fileds=count($row);

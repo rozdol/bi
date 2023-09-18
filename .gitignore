@@ -1,3 +1,4 @@
 composer.lock
 ToBeTransferred*.*
 vendor/
+.DS_Store
