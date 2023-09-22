@@ -179,7 +179,11 @@ class Dates
         return $next_date;
     }
     public function is_indaterange($date = '', $date1 = '', $date2 = '', $include_today = 0)
-    {
+    {            
+        if($include_today==2)
+            return (($this->is_later($date, $date1, 1))&&($this->is_earlier($date, $date2, 0)));
+        if($include_today==3)
+            return (($this->is_later($date, $date1, 0))&&($this->is_earlier($date, $date2, 1)));
         return (($this->is_later($date, $date1, $include_today))&&($this->is_earlier($date, $date2, $include_today)));
     }
     public function is_later($date1, $date2, $include_today = 0)
