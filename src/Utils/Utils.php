@@ -1424,11 +1424,13 @@ class Utils
         $out.= "<?php\n//Details $tablename
     \$res=\$this->db->GetRow(\"select * from \$what where id=\$id\");
     \$partner=\$this->data->detalize('partners', \$res[partner_id]);
+    \$currency=\$this->data->get_name('listitems',\$res[currency_id]);
+    \$type=\$this->data->get_name('listitems',\$res[type_id]);
     \$date=\$this->html->readRQd('date',1);
     \$out.= \"<h1>\$res[name]</h1>\";
     \$out.=\$this->data->details_bar(\$what,\$id);
 
-    \$out.= \"<table class='table table-morecondensed table-notfull'>\";";
+    \$out.= \"<table class='table table-morecondensed table-notfull'>\";\n";
         $i = pg_num_fields($cur);
         for ($j = 0; $j < $i; $j++) {
             //echo "column $j\n";
@@ -1437,10 +1439,10 @@ class Utils
             //$out.= "F:$fieldname:$fieldtype\n";
             $ok="";
 
-            if ((($fieldtype=='int4')||($fieldtype=='int2')||($fieldtype=='bool')||($fieldtype=='int8')||($fieldtype=='float8')||($fieldtype=='integer')||($fieldtype=='float'))&&($ok=="")) {
-                $out.= "\$out.=\"<tr><td class='mr'><b>".str_replace('_', ' ', ucfirst($fieldname)).": </b></td><td class='mt'>\$res[$fieldname]</td></tr>\";\n";
+            if ((($fieldtype=='int4')||($fieldtype=='int2')||($fieldtype=='bool')||($fieldtype=='int8')||($fieldtype=='float8')||($fieldtype=='integer')||($fieldtype=='float')||($fieldtype=='numeric'))&&($ok=="")) {
+                $out.= "if (\$res[$fieldname]<>0) \$out.=\"<tr><td class='mr'><b>".str_replace('_', ' ', ucfirst($fieldname)).": </b></td><td class='mt'>\$res[$fieldname]</td></tr>\";\n";
             } else {
-                $out.= "\$out.=\"<tr><td class='mr'><b>".str_replace('_', ' ', ucfirst($fieldname)).": </b></td><td class='mt'>\$res[$fieldname]</td></tr>\";\n";
+                $out.= "if (\$res[$fieldname]!='') \$out.=\"<tr><td class='mr'><b>".str_replace('_', ' ', ucfirst($fieldname)).": </b></td><td class='mt'>\$res[$fieldname]</td></tr>\";\n";
             }
 
             if ($fieldname!='id') {
@@ -1452,7 +1454,19 @@ class Utils
         $out.= "$out1";
         $out.= "\$out.=\"</table>\";
 
-    if(\$res[descr])\$out.= \"Description:<br><pre>\$res[descr]</pre>\";\n";
+    if(\$res[descr])\$out.= \"Description:<br><pre>\$res[descr]</pre>\";
+    if(\$res[addinfo])\$out.= \"Additional info:<br><pre>\$res[addinfo]</pre>\";\n
+    ";
+    $out.= "
+    \$_POST[ref_name]=\$what;
+    \$_POST[ref_table]=\$what;
+    \$_POST[tablename]=\$what;
+    \$_POST[ref_id]=\$id;
+    \$_POST[refid]=\$id;
+    \$_POST[title]='Parties involved';
+    \$out.=\$this->show('partner2obj');
+    ";
+
         $out.= "
     \$dname=\$this->data->docs2obj(\$id,\$what);
     \$out.=\"<b>Documents:</b> \$dname<br>\";
@@ -1461,10 +1475,11 @@ class Utils
     \$_POST[tablename]=\$what;
     \$_POST[refid]=\$id;
     \$_POST[reffinfo]=\"&tablename=\$what&refid=\$id\";
-    \$out.=\$this->show('schedules');
-    \$out.=\$this->show('comments');
-    \$out.=\$this->report('posts');
-    \$out.=\$this->report('db_changes');
+    \$out_add.=\$this->show('schedules');
+    \$out_add.=\$this->show('comments');
+    \$out_add.=\$this->report('posts');
+    \$out_add.=\$this->report('db_changes');
+    \$out.=\$this->html->collapsable(\$out_add, 'Additional Data',0,'','','','icon-folder-open',1);
     \$body.=\$out;
     ";
 
@@ -1490,13 +1505,13 @@ class Utils
             //echo "column $j\n";
             $fieldname = pg_field_name($cur, $j);
             $fieldtype = pg_field_type($cur, $j);
-            //$out.= "F:$fieldname:$fieldtype\n";
+            // $out.= "F:$fieldname:$fieldtype\n";
             $ok="";
-            if (($fieldtype=='date')&&($ok=="")) {
+            if ((($fieldtype=='date')||($fieldtype=='timestamp'))&&($ok=="")) {
                 $ok=1;
                 $out1.="$$fieldname=\$this->html->readRQd('$fieldname',1);\n";
             } else {
-                if ((($fieldtype=='int4')||($fieldtype=='int2')||($fieldtype=='bool')||($fieldtype=='int8')||($fieldtype=='float8')||($fieldtype=='integer')||($fieldtype=='float'))&&($ok=="")) {
+                if ((($fieldtype=='int4')||($fieldtype=='int2')||($fieldtype=='bool')||($fieldtype=='int8')||($fieldtype=='float8')||($fieldtype=='integer')||($fieldtype=='float')||($fieldtype=='numeric'))&&($ok=="")) {
                     $out1.="$$fieldname=\$this->html->readRQn('$fieldname');\n";
                 } else {
                     $out1.="$$fieldname=\$this->html->readRQ('$fieldname');\n";
