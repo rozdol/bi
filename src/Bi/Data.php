@@ -1826,12 +1826,13 @@ class Data
             $logoutbtn='| <a href="?act=logout"><i class="icon-off icon-white"></i></a>';
             if (!$GLOBALS[settings][no_nenu_alerts]) {
                 if ($this->table_exists('useralerts')) {
-                    $myunread=$this->db->GetVal("select count(*) from useralerts where userid=$uid and wasread='0'");
-                    $myunreadsent=$this->db->GetVal("select count(*) from useralerts where fromuserid=$uid and wasread='0'");
+                    $myunread=$this->db->GetVal("select count(*) from useralerts where userid=$uid and wasread='0'")*1;
+                    $myunreadsent=$this->db->GetVal("select count(*) from useralerts where fromuserid=$uid and wasread='0'")*1;
+                    $total_alerts=$myunread+$myunreadsent;
                     $myunread=$myunread>0?        "<a href='?act=show&what=useralerts&unread=1&received=1'><span class='badge red' onMouseover=\"showhint('Unread by me', this, event, '');\">$myunread</span></a>":0;
                     $myunreadsent=$myunreadsent>0?"<a href='?act=show&what=useralerts&unread=1&sent=1'><span class='badge badge-info' onMouseover=\"showhint('Not yet recieved', this, event, '');\">$myunreadsent</span></a>":0;
                     $alerts="$myunread/$myunreadsent";
-                    $alrts=' | Alerts:'.$alerts;
+                    if ($total_alerts>0) $alrts=' | Alerts:'.$alerts;
                 }
             }
 
@@ -1857,6 +1858,7 @@ class Data
                 $sql_run="select count(*) from clientrequests where revisedby=0 and confirmedby>0 and id in (select ref_id from watchlist where ref_table='clientrequests' and user_id=$GLOBALS[uid])  $sql";
                 $requestsnotrevisedbyme =$this->db->getval($sql_run)*1;
                 //echo $this->html->pre_display($sql_run,"data");
+                $total_requests=$requestsnotapproved+$requestsnotcomplete+$requeststoberevisedbyme+$requestsnotrevisedbyme;
 
                 $requestsnotapproved=$requestsnotapproved>0?"<a href='?act=show&what=clientrequests&nopager=1&notapproved=1'><span class='badge red' onMouseover=\"showhint('New not approved', this, event, '');\">$requestsnotapproved</span></a>":"-";
                 $requestsnotcomplete=$requestsnotcomplete>0?"<a href='?act=show&what=clientrequests&nopager=1&approved=1&notconfirmed=1'><span class='badge' onMouseover=\"showhint('Approved incomplete', this, event, '');\">$requestsnotcomplete</span></a>":"-";
@@ -1864,6 +1866,7 @@ class Data
                 $requeststoberevisedbyme=$requeststoberevisedbyme>0?"<a href='?act=show&what=clientrequests&nopager=1&approved=&notconfirmed=1&torevisebyme=1'><span class='badge' onMouseover=\"showhint('Incomplete to be revised by me', this, event, '');\">$requeststoberevisedbyme</span></a>":"-";
 
                 $requests="$requestsnotapproved/$requestsnotcomplete/$requeststoberevisedbyme/$requestsnotrevisedbyme";
+                
                 /*
                 $access['home_clietrequests_our_incomplete']=1;
                 if($access['home_clietrequests_our_incomplete']){
@@ -1873,7 +1876,7 @@ class Data
                     $requests="$requests/$requestsourincomplete";
                 }
                 */
-                $reqs=' | Req.:'.$requests;
+                if ($total_requests>0)$reqs=' | Req.:'.$requests;
             }
 
             // if($this->table_exists('documents')){
@@ -1908,8 +1911,8 @@ class Data
                 }
             }
 
-
-            if($GLOBALS[workgroup][id]>0)$workgroup_name="@".strtolower($GLOBALS[workgroup][name]).":".$this->detalize('partners',$GLOBALS[is_owner_id]);
+            $pname=trim($this->get_val('partners','alias',$GLOBALS[is_owner_id]));
+            if($GLOBALS[workgroup][id]>0)$workgroup_name="@".strtolower($GLOBALS[workgroup][name]).":<a href='?act=details&what=partners&id=$GLOBALS[is_owner_id]'>$pname</a>";
             $logininfo='<i class="icon-user icon-white"></i> <a href="?act=report&what=myprofile" ><span style="color:#fff;">'.$username.'</span></a>'.$workgroup_name.$docs.$reqs.$alrts.$rate;
             if(getenv('BRAND_NAME')!='')$logininfo=getenv('BRAND_NAME').' | '.$logininfo;
         } else {
