@@ -425,15 +425,21 @@ class Router
                 }
             }
         }
+        $found_init=False;
+        $found_out=False;
+
+        $procedure_init_file=APP_DIR.DS.'actions'.DS.$function.DS.'_init.php';
+        if (file_exists($procedure_init_file)&&(!$found_init)) {
+            $found_init=True;
+            require $procedure_init_file;
+        }
 
         $procedure_init_file=FW_DIR.DS.'actions'.DS.$function.DS.'_init.php';
-        if (file_exists($procedure_init_file)) {
+        if (file_exists($procedure_init_file)&&(!$found_init)) {
+            $found_init=True;
             require $procedure_init_file;
         }
-        $procedure_init_file=APP_DIR.DS.'actions'.DS.$function.DS.'_init.php';
-        if (file_exists($procedure_init_file)) {
-            require $procedure_init_file;
-        }
+        
         $procedure_file=APP_DIR.DS.'actions'.DS.$function.DS.strtolower(str_replace("\\", "/", $what)). '.php';
         if (file_exists($procedure_file)) {
             require $procedure_file;
@@ -457,12 +463,14 @@ class Router
             }
         }
         $procedure_out_file=APP_DIR.DS.'actions'.DS.$function.DS.'_out.php';
-        if (file_exists($procedure_out_file)) {
+        if (file_exists($procedure_out_file)&&(!$found_out)) {
+            $found_out=True;
             require $procedure_out_file;
         }
 
         $procedure_out_file=FW_DIR.DS.'actions'.DS.$function.DS.'_out.php';
-        if (file_exists($procedure_out_file)) {
+        if (file_exists($procedure_out_file)&&(!$found_out)) {
+            $found_out=True;
             require $procedure_out_file;
         }
 
