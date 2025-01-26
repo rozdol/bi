@@ -63,10 +63,10 @@ class Comm
         if ($block_internet>0) {
             return false;
         }
-        $res[message]=$message;
-        $res[title]=$title;
-        $res[gid]=$gid;
-        $res[uid]=$uid;
+        $res['message']=$message;
+        $res['title']=$title;
+        $res['gid']=$gid;
+        $res['uid']=$uid;
 
         $app_id=getenv(PUSHER_APP_ID);
         if(($message!='')&&($app_id!='')&&(class_exists('\Pusher\Pusher'))&&($this->is_connected("api-eu.pusher.com"))){
@@ -85,23 +85,23 @@ class Comm
 
             $data['message'] = $message;
             if($gid>0){
-                $channel=$GLOBALS[domain].'-channel-gid-'.$gid;
-                $event=$GLOBALS[domain].'-event';
+                $channel=$GLOBALS['domain'].'-channel-gid-'.$gid;
+                $event=$GLOBALS['domain'].'-event';
             }elseif($uid>0){
-                $channel=$GLOBALS[domain].'-channel-uid-'.$uid;
-                $event=$GLOBALS[domain].'-event';
+                $channel=$GLOBALS['domain'].'-channel-uid-'.$uid;
+                $event=$GLOBALS['domain'].'-event';
             }else{
-                $channel=$GLOBALS[domain].'-channel-all';
-                $event=$GLOBALS[domain].'-event';
+                $channel=$GLOBALS['domain'].'-channel-all';
+                $event=$GLOBALS['domain'].'-event';
             }
             $pusher->trigger($channel,$event,$data);
-            $res[status]=1;
+            $res['status']=1;
         }else{
-            $res[status]=0;
-            if(!class_exists('\Pusher\Pusher')) $res[error] = "ERROR: Class Pusher does not exist.";
-            if($app_id=='') $res[error] = "ERROR: No PUSHER_APP_ID.";
-            if($message=='') $res[error] = "ERROR: Empty Message.";
-            if(!$this->is_connected("api-eu.pusher.com")) $res[error] = "ERROR: No internet";
+            $res['status']=0;
+            if(!class_exists('\Pusher\Pusher')) $res['error'] = "ERROR: Class Pusher does not exist.";
+            if($app_id=='') $res['error'] = "ERROR: No PUSHER_APP_ID.";
+            if($message=='') $res['error'] = "ERROR: Empty Message.";
+            if(!$this->is_connected("api-eu.pusher.com")) $res['error'] = "ERROR: No internet";
         }
         return $res;
     }
@@ -259,7 +259,7 @@ class Comm
             'ref_id'=>0,
             'type_id'=>4200,
             'stage_id'=>$stage_id,
-            'user_id'=>$GLOBALS[uid],
+            'user_id'=>$GLOBALS['uid'],
             'message'=>"From:$from_name To:$to_name startTime:$startTime endTime:$endTime $description $location",
             'subject'=>$subject,
             'destination'=>$to_address,
@@ -325,7 +325,7 @@ class Comm
                 'ref_id'=>0,
                 'type_id'=>4200,
                 'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'message'=>$plaintext_body.$html_body,
                 'subject'=>$subject,
                 'destination'=>implode(', ', $recipient_emails),
@@ -346,7 +346,7 @@ class Comm
                 'ref_id'=>0,
                 'type_id'=>4200,
                 'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'message'=>$plaintext_body.$html_body,
                 'subject'=>$subject,
                 'destination'=>$recipient_emails,
@@ -375,8 +375,8 @@ class Comm
             $html=file_get_contents($source_file);
             $html = str_replace("<%body%>", $body, $html);
             $html = str_replace("<%subscription_id%>", $subscription_id, $html);
-            $html = str_replace("<%site_url%>", $GLOBALS[URL], $html);
-            $html = str_replace("<%brand_name%>", $GLOBALS[settings][brand_name], $html);
+            $html = str_replace("<%site_url%>", $GLOBALS['URL'], $html);
+            $html = str_replace("<%brand_name%>", $GLOBALS['settings']['brand_name'], $html);
         }
 
         $email = new \SendGrid\Mail\Mail();
@@ -415,7 +415,7 @@ class Comm
                 'ref_id'=>0,
                 'type_id'=>4200,
                 'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'message'=>$body,
                 'subject'=>$subject,
                 'destination'=>$to,
@@ -440,7 +440,7 @@ class Comm
                 'ref_id'=>0,
                 'type_id'=>4200,
                 'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'message'=>$body,
                 'subject'=>$subject,
                 'destination'=>$to,
@@ -468,8 +468,8 @@ class Comm
             $html=file_get_contents($source_file);
             $html = str_replace("<%body%>", $body, $html);
             $html = str_replace("<%subscription_id%>", $subscription_id, $html);
-            $html = str_replace("<%site_url%>", $GLOBALS[URL], $html);
-            $html = str_replace("<%brand_name%>", $GLOBALS[settings][brand_name], $html);
+            $html = str_replace("<%site_url%>", $GLOBALS['URL'], $html);
+            $html = str_replace("<%brand_name%>", $GLOBALS['settings']['brand_name'], $html);
         }
 
         $email = new \SendGrid\Mail\Mail();
@@ -492,7 +492,7 @@ class Comm
                 'ref_id'=>0,
                 'type_id'=>4200,
                 'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'message'=>$body,
                 'subject'=>$subject,
                 'destination'=>$to,
@@ -516,7 +516,7 @@ class Comm
                 'ref_id'=>0,
                 'type_id'=>4200,
                 'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'message'=>$body,
                 'subject'=>$subject,
                 'destination'=>$to,
@@ -547,8 +547,8 @@ class Comm
             $html=file_get_contents($source_file);
             $html = str_replace("<%body%>", $body, $html);
             $html = str_replace("<%subscription_id%>", $subscription_id, $html);
-            $html = str_replace("<%site_url%>", $GLOBALS[URL], $html);
-            $html = str_replace("<%brand_name%>", $GLOBALS[settings][brand_name], $html);
+            $html = str_replace("<%site_url%>", $GLOBALS['URL'], $html);
+            $html = str_replace("<%brand_name%>", $GLOBALS['settings']['brand_name'], $html);
         }
         $content = new \SendGrid\Content("text/html", $html);
 
@@ -663,13 +663,13 @@ class Comm
         if($body=='')$body=' ';
         $mail = new \PHPMailer;
         $mail->CharSet = 'UTF-8';
-        if($GLOBALS[settings][smtp_host]){
+        if($GLOBALS['settings']['smtp_host']){
             $mail->IsSMTP();
             $mail->SMTPAuth   = true;
-            $mail->Port       =  $GLOBALS[settings][smtp_port];//465;// set the SMTP server port
-            $mail->Host       =  $GLOBALS[settings][smtp_host];//"ssl://smtp.gmail.com"; // SMTP server
-            $mail->Username   =  $GLOBALS[settings][smtp_user];//"test@gmail.com";       // SMTP server username
-            $mail->Password   =  $GLOBALS[settings][smtp_pass];
+            $mail->Port       =  $GLOBALS['settings']['smtp_port'];//465;// set the SMTP server port
+            $mail->Host       =  $GLOBALS['settings']['smtp_host'];//"ssl://smtp.gmail.com"; // SMTP server
+            $mail->Username   =  $GLOBALS['settings']['smtp_user'];//"test@gmail.com";       // SMTP server username
+            $mail->Password   =  $GLOBALS['settings']['smtp_pass'];
             // $mail->Port       =  587;                   // set the SMTP server port
             // $mail->Host       = "tls://smtp.gmail.com"; // SMTP server
         }else{
@@ -714,7 +714,7 @@ class Comm
             'ref_id'=>0,
             'type_id'=>4200,
             'stage_id'=>$stage_id,
-            'user_id'=>$GLOBALS[uid],
+            'user_id'=>$GLOBALS['uid'],
             'message'=>$body,
             'subject'=>$subject,
             'destination'=>$to,
@@ -777,7 +777,7 @@ class Comm
                 'ref_id'=>0,
                 'type_id'=>4200,
                 'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'message'=>$body.$description,
                 'subject'=>$subject,
                 'source'=>$from,
@@ -801,7 +801,7 @@ class Comm
                 'ref_id'=>0,
                 'type_id'=>4200,
                 'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'message'=>$body.$description,
                 'subject'=>$subject,
                 'source'=>$from,
@@ -857,7 +857,7 @@ class Comm
                 'ref_id'=>0,
                 'type_id'=>4200,
                 'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'message'=>$body,
                 'subject'=>$subject,
                 'source'=>$from,
@@ -878,7 +878,7 @@ class Comm
                 'ref_id'=>0,
                 'type_id'=>4200,
                 'stage_id'=>$stage_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'message'=>$body,
                 'subject'=>$subject,
                 'source'=>$from,
@@ -898,7 +898,7 @@ class Comm
         $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
         $headers  .= "From: $from\r\n";
             //options to send to cc+bcc
-            //$headers .= "Cc: [email]maa@p-i-s.cXom[/email]\r\n";
+            //$headers .= "Cc: ['email']maa@p-i-s.cXom[/email]\r\n";
             //$headers .= "Bcc: [email]email@maaking.cXom[/email]\r\n";
         $source_file= DATA_DIR . DS .'templates'. DS .'email.html';
         //$source_file= TMPLTS_DIR;
@@ -923,7 +923,7 @@ class Comm
         $mail_text.="<hr>";
         $mail_text.="<b>Time:</b>".date('Y-m-d H:i:s',time()).'<hr>';
         $mail_text.="<b>APP:</b>".$GLOBALS['db_name'].'<hr>';
-        $mail_text.="<b>IP:</b>".$GLOBALS['ip'].' -> '.$_SERVER[SERVER_ADDR].'<hr>';
+        $mail_text.="<b>IP:</b>".$GLOBALS['ip'].' -> '.$_SERVER['SERVER_ADDR'].'<hr>';
         $mail_text.="<b>User:</b>".$GLOBALS['username'].'<hr>';
 
         $mail_text.=$this->html->pre_display($_GET, 'GET').'<hr>';
@@ -991,7 +991,7 @@ class Comm
                     'ref_id'=>0,
                     'type_id'=>4200,
                     'stage_id'=>$stage_id,
-                    'user_id'=>$GLOBALS[uid],
+                    'user_id'=>$GLOBALS['uid'],
                     'message'=>$message,
                     'subject'=>$subject,
                     'source'=>$from,
@@ -1011,7 +1011,7 @@ class Comm
 
     public function sms2admin($text)
     {
-        $mobile=$GLOBALS[admin_tel];
+        $mobile=$GLOBALS['admin_tel'];
         if ($mobile!='') {
             $click=$this->sendsms($mobile, $text);
         }
@@ -1020,7 +1020,7 @@ class Comm
     {
         $number_orig=$number;
         //$smsQuery = $text;
-        if($GLOBALS[db_name]!='')$text=$GLOBALS[db_name].":$text";
+        if($GLOBALS['db_name']!='')$text=$GLOBALS['db_name'].":$text";
         $smsQuery = urlEncode($text);
         $number = urlEncode($number);
         $clickatel_user=$GLOBALS['clickatel_user'];
@@ -1060,7 +1060,7 @@ class Comm
             'ref_id'=>0,
             'type_id'=>4207,
             'stage_id'=>$stage_id,
-            'user_id'=>$GLOBALS[uid],
+            'user_id'=>$GLOBALS['uid'],
             'message'=>$text,
             'destination'=>$number_orig,
             'function' => "clicatel",
@@ -1251,7 +1251,7 @@ class Comm
         //echo $this->html->pre_display($json,"json");
         $array = json_decode($json,TRUE);
         //echo $this->html->pre_display($array,"array");
-        $time=$array[Cube][Cube]['@attributes'][time];
+        $time=$array['Cube']['Cube']['@attributes']['time'];
         //echo $this->html->pre_display($time,"time");
         $date=$this->dates->F_date($time);
         //echo $this->html->pre_display($time,"time3");
@@ -1274,8 +1274,8 @@ class Comm
                 $result[$key]=round($value/$rate, 4);
             }
         }
-        $res[date]=$date;
-        $res[rates]=$result;
+        $res['date']=$date;
+        $res['rates']=$result;
         return $res;
     }
     public function getResultFromYQL($yql_query, $env = '')

@@ -36,7 +36,7 @@ class Dates
     {
             list($day,$month,$year) = explode('.', $date);
             $month=$month*1;
-            $month=strtoupper($GLOBALS[Monthes][$month]);
+            $month=strtoupper($GLOBALS['Monthes'][$month]);
             $year=substr($year, 2, 2);
             $res="{$month}{$year}";
           return $res;
@@ -334,7 +334,7 @@ class Dates
                 }
             }
         } else {//months
-            $GLOBALS[monthes]=array_map('strtolower', $GLOBALS[Monthes]);
+            $GLOBALS['monthes']=array_map('strtolower', $GLOBALS['Monthes']);
         }
         $date=$year;
         return $date;
@@ -360,7 +360,8 @@ class Dates
         $tz = 'Europe/Nicosia';
         $timestamp = time();
         $dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
-        date_timezone_set($tz);
+        $tz = new DateTimeZone($tz); 
+        date_timezone_set($dt, $tz);
         $dt->setTimestamp($timestamp); //adjust the object to correct timestamp
         //echo $dt->format('d.m.Y, H:i:s');
 
@@ -496,8 +497,8 @@ class Dates
         "26.12.$year" //New Year Eve
         );
 
-        $GLOBALS[settings][holidays]=str_ireplace(';',',',$GLOBALS[settings][holidays]);
-        $extra_holidays_tmp=array_map('trim', explode(',',$GLOBALS[settings][holidays]));
+        $GLOBALS['settings']['holidays']=str_ireplace(';',',',$GLOBALS['settings']['holidays']);
+        $extra_holidays_tmp=array_map('trim', explode(',',$GLOBALS['settings']['holidays']));
         foreach ($extra_holidays_tmp as $day) {
             if (strpos($day, strval($year)) !== false)$extra_holidays[]=$day;
         }
@@ -872,7 +873,7 @@ class Dates
     public function F_dateisholiday($date, $calendar)
     {
         //$days=$this->data->readconfig($calendar);
-        $days=$GLOBALS[calendar];
+        $days=$GLOBALS['calendar'];
         $w = date("N", strtotime($date));
         if ($w>5) {
             return 1;
@@ -1072,17 +1073,17 @@ class Dates
         $datetime="$date $time";
         $usdate="$y-$m-$d";
         $usdatetime="$y-$m-$d $time";
-        $res[datetime]=$datetime;
-        $res[date]=$date;
-        $res[time]=$time;
-        $res[usdate]=$usdate;
-        $res[usdatetime]=$usdatetime;
-        $res[y]=$y;
-        $res[m]=$m;
-        $res[d]=$d;
-        $res[hr]=$hr;
-        $res[mn]=$mn;
-        $res[sc]=$sc;
+        $res['datetime']=$datetime;
+        $res['date']=$date;
+        $res['time']=$time;
+        $res['usdate']=$usdate;
+        $res['usdatetime']=$usdatetime;
+        $res['y']=$y;
+        $res['m']=$m;
+        $res['d']=$d;
+        $res['hr']=$hr;
+        $res['mn']=$mn;
+        $res['sc']=$sc;
         return $res;
     }
     public function F_weekday($date)
@@ -1163,13 +1164,13 @@ class Dates
         $dt=$this->F_date($dt);
         if($df=='')$df="01.01.".$this->F_thisyear();
         if($dt=='')$dt="31.12.".($this->F_thisyear()+5);
-        $array[df_init]=$this->dateformat($df,$dateformat);
+        $array['df_init']=$this->dateformat($df,$dateformat);
         $df0='01.01.'.$this->F_extractyear($df)*1;
         $weekday=$this->F_weekday($df)*1;
         if($weekday>0){
             $df=$this->F_dateadd($df,-$weekday+1);
         }
-        $array[weekday]=$weekday;
+        $array['weekday']=$weekday;
 
         $holidays=[];
         $this_year=$this->F_thisyear();
@@ -1207,7 +1208,7 @@ class Dates
             $month_nr=$this->F_extractmonth($df)*1;
             $last_day=$this->lastday_in_month($df);
             $month_range=[
-                'label'=>$GLOBALS[Monthesfull][$month_nr],
+                'label'=>$GLOBALS['Monthesfull'][$month_nr],
                 'start'=>$this->dateformat($df,$dateformat),
                 'end'=>$this->dateformat($last_day,$dateformat)
             ];
@@ -1220,7 +1221,7 @@ class Dates
                 $dtw=$this->F_dateadd($dtw,-1);
                 $month_nr=$this->F_extractmonth($dfw)*1;
                 $month_range=[
-                    'label'=>$GLOBALS[Monthesfull][$month_nr],
+                    'label'=>$GLOBALS['Monthesfull'][$month_nr],
                     'start'=>$this->dateformat($dfw,$dateformat),
                     'end'=>$this->dateformat($dtw,$dateformat)
                 ];
@@ -1229,7 +1230,7 @@ class Dates
             $dtw=$this->F_dateadd($dtw,1);
             $month_nr=$this->F_extractmonth($dt)*1;
             $month_range=[
-                'label'=>$GLOBALS[Monthesfull][$month_nr],
+                'label'=>$GLOBALS['Monthesfull'][$month_nr],
                 'start'=>$this->dateformat($dtw,$dateformat),
                 'end'=>$this->dateformat($dt,$dateformat)
             ];

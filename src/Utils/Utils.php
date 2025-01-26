@@ -51,7 +51,7 @@ class Utils
     function unzip($path, $pathto){
         $pathinfo = pathinfo($path);
         //echo $this->pre_display($pathinfo,"pathinfo $path");
-        $zip_basename=$pathinfo[basename];
+        $zip_basename=$pathinfo['basename'];
 
         $deflated=$pathto.DS.$zip_basename;
         if (!file_exists($deflated)) {
@@ -77,9 +77,9 @@ class Utils
         }else{
             return ['error'=>"Can not open archive $path"];
         }
-        $result[path]=$deflated;
-        $result[folder]=$zip_basename;
-        $result[files]=$files;
+        $result['path']=$deflated;
+        $result['folder']=$zip_basename;
+        $result['files']=$files;
         return $result;
     }
 
@@ -145,8 +145,8 @@ class Utils
                 }
             }
         }
-        $res[deleted_files]=$deleted_files;
-        $res[ommited_files]=$ommited_files;
+        $res['deleted_files']=$deleted_files;
+        $res['ommited_files']=$ommited_files;
         return $res;
     }
 
@@ -156,23 +156,23 @@ class Utils
             foreach ($objects as $object) {
                 if ($object != "." && $object != "..") {
                     if (is_dir($dir."/".$object)){
-                        $res[folders][]=$dir."/".$object;
+                        $res['folders'][]=$dir."/".$object;
                         $this->delete_dir($dir."/".$object, $res);
                     }
                     else{
-                        $res[files][]=$dir."/".$object;
+                        $res['files'][]=$dir."/".$object;
                         if(unlink($dir."/".$object)){
-                            $res[deleted_files][]=$dir."/".$object;
+                            $res['deleted_files'][]=$dir."/".$object;
                         }else{
-                            $res[ommited_files][]=$dir."/".$object;
+                            $res['ommited_files'][]=$dir."/".$object;
                         }
                     }
                 }
             }
             if(rmdir($dir)){
-                $res[deleted_folders][]=$dir;
+                $res['deleted_folders'][]=$dir;
             }else{
-                $res[ommited_folders][]=$dir;
+                $res['ommited_folders'][]=$dir;
             }
         }
         return $res;
@@ -348,7 +348,7 @@ class Utils
             mkdir($log_folder, 0777, true);
         }
         $log_filename=$log_folder.'log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
-        $log  = date("d.m.y G:i").' - '.$_SERVER['REMOTE_ADDR'].' - '.$GLOBALS[username].' - '.$data.PHP_EOL;
+        $log  = date("d.m.y G:i").' - '.$_SERVER['REMOTE_ADDR'].' - '.$GLOBALS['username'].' - '.$data.PHP_EOL;
         if(file_put_contents($log_filename, $log, FILE_APPEND)){
             return true;
         }else{
@@ -480,7 +480,7 @@ class Utils
     }
     public function exportcsv($csv = [], $short = '')
     {
-        if ($GLOBALS[settings][no_export]) {
+        if ($GLOBALS['settings']['no_export']) {
             return;
         }
         if (is_array($csv)) {
@@ -705,7 +705,7 @@ class Utils
         $FC->setSWFPath(FW_DIR.'/classes/FusionCharts/');
         $FC->setChartParams($strParam);
 
-        $datasets=$data[datasets];
+        $datasets=$data['datasets'];
         foreach ($datasets as $key => $value) {
             $i++;
             $series=$datasets[$key];
@@ -1035,16 +1035,16 @@ class Utils
     public function post_error($msg,$location="E")
     {
         if($location=="E"){
-            $_POST[backtoedit]=1;
+            $_POST['backtoedit']=1;
         }else{
-            $_POST[backtodetails]=1;
+            $_POST['backtodetails']=1;
         }
-        $_POST[noduplicate]=1;
-        $GLOBALS[error_message].=$msg;
+        $_POST['noduplicate']=1;
+        $GLOBALS['error_message'].=$msg;
     }
     public function post_message($msg)
     {
-        $GLOBALS[info_message].='<div class=\'alert\'>'.$msg.'</div>';
+        $GLOBALS['info_message'].='<div class=\'alert\'>'.$msg.'</div>';
     }
     public function clientInSameSubnet($client_ip = false, $server_ip = false)
     {
@@ -1738,7 +1738,7 @@ $outfields
         $uncoded = "";
         $chr;
         for ($i = 0; $i <= strlen($coded) - 1; $i++) {
-            $chr = $coded{$i};
+            $chr = $coded[$i];
             $ord = ord($chr);
           //$coded .= ($ord >= 65 and $ord <= 122 ) ?
             $uncoded .= ($chr >= "a" and $chr <= "z" or $chr >= "A" and $chr <= "Z") ?
@@ -1759,12 +1759,12 @@ $outfields
         $coded = "";
         $chr;
         for ($i = 0; $i <= strlen($uncoded) - 1; $i++) {
-            $chr = $uncoded{$i};
+            $chr = $uncoded[$i];
             $ord = ord($chr);
             //  $coded .= $i.":".$chr.":".$ord."|";
 
             $coded .= ($ord >= 65 and $ord <= 122 ) ?
-                $key{($ord - 65)} :
+                $key[($ord - 65)] :
             //$chr."|";
             $chr;
         }
@@ -1778,7 +1778,7 @@ $outfields
         $uncoded = "";
         $chr;
         for ($i = strlen($coded) - 1; $i >= 0; $i--) {
-            $chr = $coded{$i};
+            $chr = $coded[$i];
             $uncoded .= ($chr >= "a" and $chr <= "z" or $chr >= "A" and $chr <= "Z") ?
                 chr(65 + strpos($key, $chr) % 26) :
             $chr;
@@ -1851,9 +1851,9 @@ $outfields
                 }
             }
         }
-        $res[closest_arr]=$closest_arr;
-        $res[closest]=$closest;
-        $res[shortest]=$shortest;
+        $res['closest_arr']=$closest_arr;
+        $res['closest']=$closest;
+        $res['shortest']=$shortest;
 
         return $res;
     }
@@ -1901,9 +1901,9 @@ $outfields
         }
 
 
-        $res[closest_arr]=$closest_arr;
-        $res[closest]=$closest;
-        $res[shortest]=$shortest;
+        $res['closest_arr']=$closest_arr;
+        $res['closest']=$closest;
+        $res['shortest']=$shortest;
 
         return $res;
     }
@@ -1959,7 +1959,7 @@ $outfields
                     <th>$totalrecs</th>";
         foreach ($totals as $total) {
             if ($j<=$y) {
-                if (($j==1)&&($opt[title]!='')) {
+                if (($j==1)&&($opt['title']!='')) {
                     $out.="<th>$opt[title]</th>";
                 } elseif ($total!="") {
                     $out.="<th class='n'>".$this->money($total)."</th>";
@@ -2506,7 +2506,7 @@ $outfields
         $sql="PRAGMA table_info('$table_name')";
         $result = $this->sql->query($sql) or $this->error('SQLite3: '.$this->sql->lastErrorMsg().' in:<br>'.$sql);
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            if ($row[name]==$field_name) {
+            if ($row['name']==$field_name) {
                 $filed_exists=true;
             }
         }
@@ -3191,7 +3191,7 @@ $outfields
 
     function pre_display($text = '', $title = '', $class = '', $code = 0)
     {
-        if ($_REQUEST[act]=='api') {
+        if ($_REQUEST['act']=='api') {
             if ($title=='') {
                 $title='output';
             }
@@ -3372,12 +3372,12 @@ $outfields
         }
         $hex_str=implode("",$hex_array);
         $chars=implode("",$char_arr);
-        $res[len]=$len;
-        $res[hex_str]=$hex_str;
-        $res[chars]=$chars;
-        $res[hex_cols]=$hex_cols;
-        $res[char_cols]=$char_cols;
-        $res[char2_cols]=$char2_cols;
+        $res['len']=$len;
+        $res['hex_str']=$hex_str;
+        $res['chars']=$chars;
+        $res['hex_cols']=$hex_cols;
+        $res['char_cols']=$char_cols;
+        $res['char2_cols']=$char2_cols;
         return $res;
     }
 }

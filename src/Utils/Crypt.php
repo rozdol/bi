@@ -150,8 +150,8 @@ class Crypt
     function csrf_chk()
     {
         $unsafe_acts=array('save','delete','append');
-        if (is_array($GLOBALS[unsafe_acts])) {
-            $unsafe_acts=array_merge($unsafe_acts, $GLOBALS[unsafe_acts]);
+        if (is_array($GLOBALS['unsafe_acts'])) {
+            $unsafe_acts=array_merge($unsafe_acts, $GLOBALS['unsafe_acts']);
         }
         //echo $this->html->pre_display($unsafe_acts,"result");
         $ignore_obj=array('shoppingcart','webcam','dropzone');

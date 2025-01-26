@@ -35,7 +35,7 @@ class App
 
 
         date_default_timezone_set('Etc/GMT'); //Europe/Athens Etc/GMT // UTC +00:00
-        $GLOBALS[timezone]=date_default_timezone_get();
+        $GLOBALS['timezone']=date_default_timezone_get();
         ini_set('memory_limit', '-1');
         //$this->db->DebugOn();
 

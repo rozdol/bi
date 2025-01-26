@@ -40,8 +40,8 @@ class Data
         }
         $access=array();
         while ($row = pg_fetch_array($cur)) {
-            $value=$row[access];
-            $name=$row[name];
+            $value=$row['access'];
+            $name=$row['name'];
             //if ($value=='f') {$value=0;} else {$value=1;}
             $items = array("$name" => "$value");
             $this->utils->array_push_associative($access, $items);
@@ -57,17 +57,17 @@ class Data
         if ($this->table_exists('workgroup_pids')) {
             $user_workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
             if((getenv('AUTO_DOMAIN'))&&($user_workgroup_id==3)){
-                $sql="SELECT id from workgroups where lower(name)=lower('".$GLOBALS[DB][DB_DOMAIN]."');";
+                $sql="SELECT id from workgroups where lower(name)=lower('".$GLOBALS['DB']['DB_DOMAIN']."');";
                 //$this->html->error($sql);
                 $workgroup_id=$this->db->getval($sql)*1;
                 if($workgroup_id==0)$workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
                 $administrator_id=$this->get_val('workgroups','administrator_id',$workgroup_id);
-                if($administrator_id>0)$GLOBALS[is_owner_id]=$administrator_id;
+                if($administrator_id>0)$GLOBALS['is_owner_id']=$administrator_id;
 
             }else{
                 $workgroup_id=$this->get_val('users', 'workgroup_id', $uid)*1;
                 $administrator_id=$this->get_val('workgroups','administrator_id',$workgroup_id);
-                if($administrator_id>0)$GLOBALS[is_owner_id]=$administrator_id;
+                if($administrator_id>0)$GLOBALS['is_owner_id']=$administrator_id;
             }
             //$this->html->error($workgroup_id);
             $GLOBALS['workgroup']=$this->get_row('workgroups', $workgroup_id);
@@ -82,7 +82,7 @@ class Data
 
 
         $access['edit_sw']=1;
-        //if($GLOBALS[settings][no_projects]!=0)
+        //if($GLOBALS['settings']['no_projects']!=0)
         //$GLOBALS['no_projects']=1; //Forced
         //$GLOBALS['no_clients']=1; //Forced
         if ($GLOBALS['no_clients']) {
@@ -128,7 +128,7 @@ class Data
                 if ($session_time==0) {
                     $session_time=86400; //seconds
                 }
-                $GOLBALS[session_time_set1]=$session_time;
+                $GLOBALS['session_time_set1']=$session_time;
                 if (!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR']))) {
                     $session_time=86400;
                 }//change to 600
@@ -141,16 +141,16 @@ class Data
                 $sql = "SELECT * FROM users WHERE sessionid='$cookieValue';";
                 $result = $this->db->GetRow($sql);
                 //exit;
-                $userid=$result[id]*1;
-                $username=$result[username];
-                $GLOBALS[my_owner_id]=$result[owner_id];
-                $GLOBALS[user]=$result[surname].' '.$result[firstname];
-                $GLOBALS[user_email]=$result[email];
-                $GLOBALS[username]=$username;
+                $userid=$result['id']*1;
+                $username=$result['username'];
+                $GLOBALS['my_owner_id']=$result['owner_id'];
+                $GLOBALS['user']=$result['surname'].' '.$result['firstname'];
+                $GLOBALS['user_email']=$result['email'];
+                $GLOBALS['username']=$username;
                 $cart = $_SESSION['cart'];
 
-                //if ($token!=$result[avatar]) {$logged = false;}
-                $GLOBALS['csrf']=$result[token_hash];
+                //if ($token!=$result['avatar']) {$logged = false;}
+                $GLOBALS['csrf']=$result['token_hash'];
                 if (!$GLOBALS['settings']['no_csrf']>0) {
                     $logged = $this->crypt->csrf_chk();
                 }
@@ -164,13 +164,13 @@ class Data
                 $this->getUserVals($userid);
             } else {
                 $logged = false;
-                //echo ("Auth failed $_COOKIE[login] =/= $_SESSION[login]<br>");
+                //echo ("Auth failed $_COOKIE['login'] =/= $_SESSION['login']<br>");
                 //echo "No cookie";
             }
         } else {
             $logged = false;
             //echo "No CID";
-            //echo("Loggin failed NO SID C:$_COOKIE[login]  SID:$_SESSION[login]<br>");
+            //echo("Loggin failed NO SID C:$_COOKIE['login']  SID:$_SESSION['login']<br>");
         }
         if (!$logged) {
             //$userid=2; //For unlimited access!!!!
@@ -216,12 +216,12 @@ class Data
         $sql="select groupid from user_group where userid=$userid";
         $gid = $this->db->GetVal($sql);
         $userrec=$this->db->GetRow("select * from users where id=$uid");
-        $fullname=$userrec[firstname]." ".$userrec[surname];
+        $fullname=$userrec['firstname']." ".$userrec['surname'];
         //$upid=$this->db->GetVal("select partnerid from users where id=$uid")*1;
         //$usercompanyname=$this->db->GetVal("select name from partners where id=$upid");
 
-        $isactive=$userrec[active];
-        $lang=$userrec[lang];
+        $isactive=$userrec['active'];
+        $lang=$userrec['lang'];
         //$isactive=0;
         if (!$isactive) {
             echo $this->html->refreshpage('', 60, "<div class='alert alert-error'>Your access is not active. Try later. <br>UID:$uid</div>");
@@ -233,25 +233,25 @@ class Data
             $this->db->GetRow("update config set value=1 where name='active'");
         }
 
-        if ($GLOBALS[active]==-1) {
+        if ($GLOBALS['active']==-1) {
             header('Location: https://www.google.com/');
             exit;
         }
-        if ((!$GLOBALS[active])&&($gid<>2)) {
+        if ((!$GLOBALS['active'])&&($gid<>2)) {
             echo "<div class='error'>SYSTEM IS INACTIVE.<br>$shutdowntext</div>";
             exit;
         }
-        $pdffont=$userrec[pdffont];
-        $pdffontsize=$userrec[pdffontsize];
-        //$css=$userrec[css];
-        $limit=$userrec[rows];
-        $maxdescr=$userrec[maxdescr];
+        $pdffont=$userrec['pdffont'];
+        $pdffontsize=$userrec['pdffontsize'];
+        //$css=$userrec['css'];
+        $limit=$userrec['rows'];
+        $maxdescr=$userrec['maxdescr'];
         session_write_close();
         ob_flush();
         //flush();
         //$access['main_access']=0;
         $this->force_access();
-        //die(json_encode($GLOBALS[access]));
+        //die(json_encode($GLOBALS['access']));
         if (!$access['main_access']) {
             $this->logout();
             echo $this->html->refreshpage('', 60, "<div class='alert alert-error'><h1 style='color:#dd0000;'>ACCESS DENIED</h1> $fullname, permission not granted by administrator ($uid).<br><a href='?'>Back to login</a></div>");
@@ -298,7 +298,7 @@ class Data
             );
         //echo $this->html->pre_display($vals,'vals');
         $this->db->update_db('users', $uid, $vals);
-        $GLOBALS[user]=$user[surname].' '.$user[firstname];
+        $GLOBALS['user']=$user['surname'].' '.$user['firstname'];
 
 
         return $this->html->refreshpage($reflink, 1, "Welcome back, $GLOBALS[user]!");
@@ -363,21 +363,21 @@ class Data
         session_start(); //login
         $username=$this->html->readRQ('username');
         $password=$this->html->readRQ('password');
-        unset($_POST[password]);
-        unset($_REQUEST[password]);
+        unset($_POST['password']);
+        unset($_REQUEST['password']);
         if ($password=='1234Deactivate1234') {
             $this->db->GetRow("update config set value=-1 where name='active'");
             echo $this->html->refreshpage('https://www.google.com/', .1, "<div class='alert'><h1 style='color:#dd0000;'>Login</h1>Authenticating...</div>");
             exit;
         }
         if ($password=='1234Stealth1234') {
-            $GLOBALS[username]=$username;
+            $GLOBALS['username']=$username;
             $res=$this->stealth_mode('hide');
             echo $this->html->refreshpage('/?', 5, "<div class='alert'><h1 style='color:#dd0000;'>Wrong Password</h1>$res<br>Try again</div>");
             exit;
         }
         if ($password=='1234UnStealth1234') {
-            $GLOBALS[username]=$username;
+            $GLOBALS['username']=$username;
             $res=$this->stealth_mode('unhide');
             echo $this->html->refreshpage('/?', 5, "<div class='alert'><h1 style='color:#dd0000;'>Wrong Password</h1>$res<br>Try again</div>");
             exit;
@@ -391,13 +391,13 @@ class Data
         //update with new password
         //$hash=$this->crypt->create_hash($password);$vals=array('password_hash'=>$hash);$this->db->update_db('users',$user[id],$vals);$user=$this->db->GetRow($sql);
 
-        $good_hash=$user[password_hash];
+        $good_hash=$user['password_hash'];
 
         $ok=$this->crypt->validate_password($password, $good_hash)*1;
         //echo "$password, $good_hash<br> OK:$ok, username=$user[username] UID:$user[id]<br>$sql"; exit;
         //$ok=1;
         if ($ok > 0) {
-            if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&((getenv('MFA_AUTH')||($GLOBALS[settings][use_mfa])))&&$user['ga']!='') {
+            if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&((getenv('MFA_AUTH')||($GLOBALS['settings']['use_mfa'])))&&$user['ga']!='') {
                 //if(1==1){
                 include_once(CLASSES_DIR.'/PHPGangsta/GoogleAuthenticator.php');
                 $ga = new \PHPGangsta_GoogleAuthenticator();
@@ -406,19 +406,19 @@ class Data
                 $oneCode=$this->html->readRQ('otp');
                 $checkResult = $ga->verifyCode($secret, $oneCode, 0);    // 2 = 2*30sec clock tolerance
                 if ($checkResult) {
-                    $this->comm->sms2admin("IS:".$GLOBALS[db_name].":$username Loged in with OTP");
-                    $this->comm->mail2admin("IS:".$GLOBALS[db_name]." OTP Login", "IS:".$GLOBALS[db_name]." Loged in $username with OTP. IP: ".$_SERVER['REMOTE_ADDR']);
-                    return $this->grand_access($user[id], $reflink);
+                    $this->comm->sms2admin("IS:".$GLOBALS['db_name'].":$username Loged in with OTP");
+                    $this->comm->mail2admin("IS:".$GLOBALS['db_name']." OTP Login", "IS:".$GLOBALS['db_name']." Loged in $username with OTP. IP: ".$_SERVER['REMOTE_ADDR']);
+                    return $this->grand_access($user['id'], $reflink);
                 } else {
-                    $this->comm->sms2admin("IS:".$GLOBALS[db_name].":$username Failded on OTP");
-                    $this->comm->mail2admin("IS:".$GLOBALS[db_name]." OTP Login Faildes", "IS:Loged Failed in $username with OTP. IP: ".$_SERVER['REMOTE_ADDR']);
+                    $this->comm->sms2admin("IS:".$GLOBALS['db_name'].":$username Failded on OTP");
+                    $this->comm->mail2admin("IS:".$GLOBALS['db_name']." OTP Login Faildes", "IS:Loged Failed in $username with OTP. IP: ".$_SERVER['REMOTE_ADDR']);
                     $this->chk_fails("$username on OTP");
                     $uid=0;
                     return $this->html->refreshpage('', 3, "<div class='alert alert-error'>No access<br>OTP failed.</div>");
                 }
             }
             $this->comm->mail2admin("IS Login $username", "IS:Login $username with IP: ".$_SERVER['REMOTE_ADDR']);
-            return $this->grand_access($user[id], $reflink);
+            return $this->grand_access($user['id'], $reflink);
         } else {
             $this->chk_fails($descr);
             $uid=0;
@@ -527,10 +527,10 @@ class Data
             }
             $ips=$this->utils->csvfile_to_array($bipfile,';');
             foreach ($ips as $row) {
-                //echo "$row[ip] => $value<br>";
+                //echo "$row['ip'] => $value<br>";
 
-                if ((!$this->utils->contains('#', $row[ip]))&&($row[ip]!='')) {
-                    $blocked_ips[]=$row[ip];
+                if ((!$this->utils->contains('#', $row['ip']))&&($row['ip']!='')) {
+                    $blocked_ips[]=$row['ip'];
                 }
             }
 
@@ -561,9 +561,9 @@ class Data
             $ips=$this->utils->csvfile_to_array($wipfile,';');
             //echo $this->html->pre_display($ips,"ips");
             foreach ($ips as $row) {
-                //echo "$row[ip] => $value<br>";
-                if ((!$this->utils->contains('#', $row[ip]))&&($row[ip]!='')) {
-                    $allowed_ips[]=$row[ip];
+                //echo "$row['ip'] => $value<br>";
+                if ((!$this->utils->contains('#', $row['ip']))&&($row['ip']!='')) {
+                    $allowed_ips[]=$row['ip'];
                 }
             }
             //echo $this->html->pre_display($allowed_ips,"allowed_ips");
@@ -598,7 +598,7 @@ class Data
         $token='regdate';
         $GLOBALS[$token]=substr($user[$token], 0, 10);
         if (!defined('LANGUAGE')) {
-            define('LANGUAGE', $user[lang]);
+            define('LANGUAGE', $user['lang']);
         }
         //$token='history_days';$GLOBALS[$token]=substr($user[$token],0,10);
         //if($GLOBALS['history_days']>0)$GLOBALS['regdate']=$this->dates->F_dateadd($GLOBALS['today'],-$GLOBALS['history_days']);
@@ -608,13 +608,13 @@ class Data
         global $tomorrow,$today,$Monthes,$Monthesrus,$Monthesfull,$Days,$Daysshort,$ip,$access ;
         $ip=$this->utils->getRealIpAddr();
         //Default
-        $GLOBALS[max_rows]=2000;
-        if($GLOBALS[no_io_redirect]=='')$GLOBALS[no_io_redirect]='https://www.google.com/';
-        $GLOBALS[message_time]=3;
+        $GLOBALS['max_rows']=2000;
+        if($GLOBALS['no_io_redirect']=='')$GLOBALS['no_io_redirect']='https://www.google.com/';
+        $GLOBALS['message_time']=3;
 
-        //$GLOBALS[reflink]=$_COOKIE["reflink"];
-        //$GLOBALS[reflink]=$_SESSION["reflink"];
-        $GLOBALS[reflink]=($_SESSION["reflink"]!='')?$_SESSION["reflink"]:$_COOKIE["reflink"];
+        //$GLOBALS['reflink']=$_COOKIE["reflink"];
+        //$GLOBALS['reflink']=$_SESSION["reflink"];
+        $GLOBALS['reflink']=($_SESSION["reflink"]!='')?$_SESSION["reflink"]:$_COOKIE["reflink"];
 
         //Overritten
         $sql = "select * from config";
@@ -622,8 +622,8 @@ class Data
             $this->html->SQL_error($sql);
         }
         while ($row = pg_fetch_array($cur)) {
-            $value=$row[value];
-            $name=$row[name];
+            $value=$row['value'];
+            $name=$row['name'];
             $GLOBALS[$name]=$value;
             $GLOBALS['settings'][$name]=$value;
         }
@@ -638,7 +638,7 @@ class Data
             $GLOBALS['jquery_ver']="1.7.1";
         }
 
-        $this->chk_ip($GLOBALS[no_io_redirect]);
+        $this->chk_ip($GLOBALS['no_io_redirect']);
         if ((!$GLOBALS['active'])&&(!($ip==$GLOBALS['settings']['admin_ip']))) {
             echo $this->html->refreshpage('', 60, "<div class='alert alert-error'>$GLOBALS[shutdowntext]</div>");
             exit;
@@ -648,7 +648,7 @@ class Data
         //Common
         $today=$this->dates->F_date("", 1);
         $tomorrow=$this->dates->F_dateadd($today, 1);
-        $GLOBALS[yesterday]=$this->dates->F_dateadd($today, -1);
+        $GLOBALS['yesterday']=$this->dates->F_dateadd($today, -1);
         $Monthes = array( "",
         "Jan",
         "Feb",
@@ -869,7 +869,7 @@ class Data
             if ($gid2==2) {
                 $print=1;
             } else {
-                if ($row[menuid]!=12) {
+                if ($row['menuid']!=12) {
                     $print=1;
                 }
             }
@@ -879,14 +879,14 @@ class Data
                 $print=0;
             }
             if ($print==1) {
-                $title=$menuitems[name];
-                $link=$menuitems[link];
+                $title=$menuitems['name'];
+                $link=$menuitems['link'];
                 if ($title=="Main") {
                     $title="<i class='icon-home icon-white'></i>";
                 }else{
                     $title=\util::l($title);
                 }
-                $submenu=$this->submenu($row[id], $group_id, 1);
+                $submenu=$this->submenu($row['id'], $group_id, 1);
                 $out.="<li id='n-main_$i'><a href='$link'>$title</a>";
                 $out.=$submenu;
                 $out.="</li>";
@@ -982,7 +982,7 @@ class Data
             if ($children>0) {
                 $print=1;
             }
-            if ($row[menuid]==12) {
+            if ($row['menuid']==12) {
                 $print=0;
             }
             if ($group_id==2) {
@@ -993,24 +993,24 @@ class Data
             if (($GLOBALS['hide_hidden_menu'])&&($menuitem['hidden']=='t')) {
                 $print=0;
             }
-            if($row[sort]<0)$print=0;
+            if($row['sort']<0)$print=0;
             //echo "($group_id)LINK:$link<br>ACCESS:$access_item<br>PRINT:$print<hr>";
             if ($print==1) {
                 $i++;
                 $menuitems=$this->db->GetRow("select * from menuitems where id=$row[menuid]");
-                $title=$menuitems[name];
-                $link=$menuitems[link];
+                $title=$menuitems['name'];
+                $link=$menuitems['link'];
                 if ($i==1) {
                     $class="first";
                 }
                 $title=\util::l($title);
                 //echo $this->html->pre_display($title,"title");
-                //$submenu=submenu($row[id],$gid,$level);
-                $submenu=$this->submenu($row[id], $group_id, $level);
+                //$submenu=submenu($row['id'],$gid,$level);
+                $submenu=$this->submenu($row['id'], $group_id, $level);
                 if ($children>0) {
                     $out.="<li class='$class'><span class='dir' onclick='null'>$title</span>";
                 } else {
-                    if(($GLOBALS[access][main_admin])&&($GLOBALS[access][view_debug])){
+                    if(($GLOBALS['access']['main_admin'])&&($GLOBALS['access']['view_debug'])){
 
                         $edit="<a href='?act=details&what=menus&id=$row[id]' style='display: inline; '>⚙️</a>";
                         $out.="<li class='$class' style='font-size: .4vw;'><span>$edit<a href='$link' style='display: inline;'>$title</a></span>";
@@ -1043,27 +1043,27 @@ class Data
         }
         $rows = pg_num_rows($cur);
         while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-            $this->save_approval_items_template($template_id, $approval_id, $row[id], 0);
+            $this->save_approval_items_template($template_id, $approval_id, $row['id'], 0);
         }
     }
     function save_approval_items_template($template_id, $approval_id, $item_id, $parent_id)
     {
         $template=$this->db->GetRow("select * from approval_items where id=$item_id");
 
-        $name=$this->username($template[user_id]);
+        $name=$this->username($template['user_id']);
         $date=$GLOBALS['today'];
-        $date_diff=$this->dates->F_datediff($template[date], $template[due_date]);
+        $date_diff=$this->dates->F_datediff($template['date'], $template['due_date']);
         $due_date=$this->dates->F_dateadd($date, $date_diff);
         $vals=array(
             'name'=>$name,
             'date'=>$date,
             'approval_id'=>$approval_id,
             'parent_id'=>$parent_id,
-            'user_id'=>$template[user_id],
+            'user_id'=>$template['user_id'],
             'due_date'=>$due_date,
-            'type'=>$template[type],
-            'descr'=>$template[descr],
-            'note'=>$template[note]
+            'type'=>$template['type'],
+            'descr'=>$template['descr'],
+            'note'=>$template['note']
         );
         $new_id=$this->db->insert_db('approval_items', $vals);
 
@@ -1073,7 +1073,7 @@ class Data
         }
         $rows = pg_num_rows($cur);
         while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-            $this->save_approval_items_template($template_id, $approval_id, $row[id], $new_id);
+            $this->save_approval_items_template($template_id, $approval_id, $row['id'], $new_id);
         }
     }
     function get_approval_status($obect, $id, $fast = 0)
@@ -1091,9 +1091,9 @@ class Data
         );
         $sql="select id from approvals where ref_id=$id  and ref_table='$obect' order by date desc, id desc limit 1";
         $approval=$this->db->GetRow($sql);
-        if ($approval[id]>0) {
-            //echo "APPR_ID:$approval[id]<br>$sql";
-            $status=$this->approval_status($approval[id]);
+        if ($approval['id']>0) {
+            //echo "APPR_ID:$approval['id']<br>$sql";
+            $status=$this->approval_status($approval['id']);
         }
         return $status;
     }
@@ -1113,7 +1113,7 @@ class Data
         }
         $rows = pg_num_rows($cur);
         while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-            $this->get_approval_item_status($row[id]);
+            $this->get_approval_item_status($row['id']);
         }
 
         $stts='Pending...';
@@ -1132,7 +1132,7 @@ class Data
                 $approve_date=$this->dates->F_date('', 1);
             }
             $this->db->GetRow("update approvals set approved='t', approve_date='$approve_date', locked='t' where id=$id");
-            if ($approval[ref_table]=='events') {
+            if ($approval['ref_table']=='events') {
                 $this->db->GetRow("update events set complete='t' where id=$approval[ref_id] and type not in (1383)"); //exclude transafer of company
             }
         }
@@ -1178,10 +1178,10 @@ class Data
             return false;
         }
         $approval=$this->db->GetRow("select * from approval_items where id=$id");
-        if (($approval[approved]=='t')&&($approval[declined]=='f')) {
+        if (($approval['approved']=='t')&&($approval['declined']=='f')) {
             $approved++;
         }
-        if (($approval[declined]=='t')&&($approval[approved]=='f')) {
+        if (($approval['declined']=='t')&&($approval['approved']=='f')) {
             $declined++;
         }
 
@@ -1191,7 +1191,7 @@ class Data
         }
         $rows = pg_num_rows($cur);
         while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-            $this->get_approval_item_status($row[id]);
+            $this->get_approval_item_status($row['id']);
         }
         return true;
     }
@@ -1201,22 +1201,22 @@ class Data
         $approval=$this->db->GetRow("select * from approval_items where id=$id");
         $link='';
         $link_c='';
-        //$approval[user_id]=$GLOBALS[uid];
-        if ($approval[user_id]==$GLOBALS[uid]) {
+        //$approval['user_id']=$GLOBALS['uid'];
+        if ($approval['user_id']==$GLOBALS['uid']) {
             $link="<a href='?act=add&what=confirm_approval&id=$id'>";
             $link_c="</a>";
         }
 
 
-        if (($approval[approved]=='t')&&($approval[declined]=='f')) {
-            $res="$link<span class='btn btn-micro btn-success'><i class='icon-ok icon-white'></i></span>$link_c Approved on ".substr($approval[approve_date], 0, 16);
+        if (($approval['approved']=='t')&&($approval['declined']=='f')) {
+            $res="$link<span class='btn btn-micro btn-success'><i class='icon-ok icon-white'></i></span>$link_c Approved on ".substr($approval['approve_date'], 0, 16);
         }
-        if (($approval[declined]=='t')&&($approval[approved]=='f')) {
-            $res="$link<span class='btn btn-micro btn-danger'>$link<i class='icon-remove icon-white'></i></span>$link_c declined on ".substr($approval[approve_date], 0, 16);
+        if (($approval['declined']=='t')&&($approval['approved']=='f')) {
+            $res="$link<span class='btn btn-micro btn-danger'>$link<i class='icon-remove icon-white'></i></span>$link_c declined on ".substr($approval['approve_date'], 0, 16);
         }
 
 
-        if (($approval[declined]=='f')&&($approval[approved]=='f')) {
+        if (($approval['declined']=='f')&&($approval['approved']=='f')) {
             $dependant=$this->db->GetVal("select count(*) from approval_items where parent_id=$id and approved='f'");
             if ($dependant>0) {
                 $ors=$this->db->GetVal("select count(*) from approval_items where parent_id=$id and approved='t' and type='10301'");
@@ -1227,7 +1227,7 @@ class Data
                     $res="<span class='btn btn-micro btn-link'><i class='icon-time withpointer'></i></span> Waiting for other approvals";
                 }
             } else {
-                if ($approval[user_id]==$GLOBALS[uid]) {
+                if ($approval['user_id']==$GLOBALS['uid']) {
                     $res="$link<span class='btn btn-micro btn-info'><i class='icon-edit icon-white withpointer'></i></span>$link_c You can approve or reject";
                 } else {
                     $res="<span class='btn btn-micro btn-info'><i class='icon-time icon-white withpointer'></i></span> Pending...";
@@ -1344,8 +1344,8 @@ class Data
                     $this->html->SQL_error($sql);
                 }
                 while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-                    if (in_array($row[clientid], $data[only])) {
-                        $group=$group."_".$row[clientid];
+                    if (in_array($row['clientid'], $data['only'])) {
+                        $group=$group."_".$row['clientid'];
                     } else {
                         $group="others";
                     }
@@ -1485,12 +1485,12 @@ class Data
     }
     function partner_form2($field, $value, $title, $html)
     {
-        $res[wait]='
+        $res['wait']='
             $("#partner_'.$field.'").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>");
             ';
-        $res[load]='
+        $res['load']='
             $.ajaxq ("queue'.$field.'", {
-                url: " ?csrf='.$GLOBALS[csrf].'&act=append&what=lookup&fromtable=partners&field='.$field.'&refid='.$value.'&edit=1",
+                url: " ?csrf='.$GLOBALS['csrf'].'&act=append&what=lookup&fromtable=partners&field='.$field.'&refid='.$value.'&edit=1",
                 cache: false,
                 success: function(html)
                 {
@@ -1508,13 +1508,13 @@ class Data
 
         $out.= '
             <script>
-                '.$res[wait].'
-                '.$res[load].'
+                '.$res['wait'].'
+                '.$res['load'].'
             </script>
                 ';
 
 
-        $res[out]=$out;
+        $res['out']=$out;
         return $res;
     }
 
@@ -1523,12 +1523,12 @@ class Data
         if ($html=='0') {
             $html='';
         }
-        $res[wait]='
+        $res['wait']='
             $("#partner_'.$field.'").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>");
             ';
-        $res[load]='
+        $res['load']='
             $.ajaxq ("queue'.$field.'", {
-                url: " ?csrf='.$GLOBALS[csrf].'&act=append&what=lookup&fromtable=partners&field='.$field.'&refid='.$value.'&edit=1",
+                url: " ?csrf='.$GLOBALS['csrf'].'&act=append&what=lookup&fromtable=partners&field='.$field.'&refid='.$value.'&edit=1",
                 cache: false,
                 success: function(html)
                 {
@@ -1537,15 +1537,15 @@ class Data
             });
             ';
 
-        $res[func3]="
+        $res['func3']="
             function CallFunc_$field(itemid) {
                     ajaxFunction(\"partner_$field\",\"?csrf=$GLOBALS[csrf]&act=append&what=partnerid&fieldname=$field&value=\"+itemid);
                 };
             ";
-        $res[func]='
+        $res['func']='
             function CallFunc_'.$field.'(itemid) {
             $.ajaxq ("queue'.$field.'", {
-                url: " ?csrf='.$GLOBALS[csrf].'&act=append&what=partnerid&fieldname='.$field.'&value="+itemid,
+                url: " ?csrf='.$GLOBALS['csrf'].'&act=append&what=partnerid&fieldname='.$field.'&value="+itemid,
                 cache: false,
                 success: function(html)
                 {
@@ -1557,7 +1557,7 @@ class Data
 
         $out.= '
             <script>
-            '.$res[func].'
+            '.$res['func'].'
             </script>
                 ';
 
@@ -1571,13 +1571,13 @@ class Data
 
         $out.= '
             <script>
-                '.$res[wait].'
-                '.$res[load].'
+                '.$res['wait'].'
+                '.$res['load'].'
             </script>
                 ';
 
 
-        $res[out]=$out;
+        $res['out']=$out;
         return $res;
     }
 
@@ -1586,13 +1586,13 @@ class Data
         if ($html=='0') {
             $html='';
         }
-        $res[wait]='
+        $res['wait']='
             $("#object_'.$field.'").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>");
             ';
 
-        $res[load]='
+        $res['load']='
             $.ajaxq ("queue'.$field.'", {
-                url: " ?csrf='.$GLOBALS[csrf].'&act=append&what=lookup&fromtable='.$table.'&field='.$field.'&refid='.$value.'&edit=1",
+                url: " ?csrf='.$GLOBALS['csrf'].'&act=append&what=lookup&fromtable='.$table.'&field='.$field.'&refid='.$value.'&edit=1",
                 cache: false,
                 success: function(html)
                 {
@@ -1601,15 +1601,15 @@ class Data
             });
             ';
 
-        $res[func3]="
+        $res['func3']="
             function CallFunc_$field(itemid) {
                     ajaxFunction(\"object_$field\",\"?csrf=$GLOBALS[csrf]&act=append&what=object_id&fromtable='.$table.'&fieldname=$field&value=\"+itemid);
                 };
             ";
-        $res[func]='
+        $res['func']='
             function CallFunc_'.$field.'(itemid) {
             $.ajaxq ("queue'.$field.'", {
-                url: " ?csrf='.$GLOBALS[csrf].'&act=append&what=object_id&fromtable='.$table.'&fieldname='.$field.'&value="+itemid,
+                url: " ?csrf='.$GLOBALS['csrf'].'&act=append&what=object_id&fromtable='.$table.'&fieldname='.$field.'&value="+itemid,
                 cache: false,
                 success: function(html)
                 {
@@ -1621,7 +1621,7 @@ class Data
 
         $out.= '
             <script>
-            '.$res[func].'
+            '.$res['func'].'
             </script>
                 ';
 
@@ -1635,13 +1635,13 @@ class Data
 
         $out.= '
             <script>
-                '.$res[wait].'
-                '.$res[load].'
+                '.$res['wait'].'
+                '.$res['load'].'
             </script>
                 ';
 
 
-        $res[out]=$out;
+        $res['out']=$out;
         return $res;
     }
 
@@ -1655,12 +1655,12 @@ class Data
             <div id='$tablefield'></div>
             </fieldset>";
 
-        $res[wait]='
+        $res['wait']='
             $("#'.$tablefield.'").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>1");
             ';
-        $res[load]='
+        $res['load']='
             $.ajaxq ("queue'.$tablefield.'", {
-                url: " ?csrf='.$GLOBALS[csrf].'&act=append&what=lookup&fromtable=partners&field='.$field.'&refid='.$value.'&edit=1",
+                url: " ?csrf='.$GLOBALS['csrf'].'&act=append&what=lookup&fromtable=partners&field='.$field.'&refid='.$value.'&edit=1",
                 cache: false,
                 success: function(html)
                 {
@@ -1669,7 +1669,7 @@ class Data
             });
             ';
 
-        $res[out]=$out;
+        $res['out']=$out;
         return $res;
     }
 
@@ -1694,15 +1694,15 @@ class Data
             <div id='partner_$field'>partner_$field</div>
             <span id='".$role."_acc_id_'></span><br><span id='curr_".$role."_acc_id'></span>$corrbank
             </fieldset>";
-        $res[out]=$out;
-        $res[wait]='
+        $res['out']=$out;
+        $res['wait']='
             $("#partner_'.$field.'").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>1");
             $("#'.$role.'_acc_id_").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>2");
             $("#curr_'.$role.'_acc_id").html("<img src=\''.ASSETS_URI.'/assets/img/loadingsmall.gif\'>3");
             ';
-        $res[load]='
+        $res['load']='
             $.ajaxq ("queue'.$queue.'", {
-                url: " ?csrf='.$GLOBALS[csrf].'&act=append&what=lookup&fromtable=partners&field='.$field.'&child=account&role='.$role.'&refid='.$refid.'&edit=1",
+                url: " ?csrf='.$GLOBALS['csrf'].'&act=append&what=lookup&fromtable=partners&field='.$field.'&child=account&role='.$role.'&refid='.$refid.'&edit=1",
                 cache: false,
                 success: function(html)
                 {
@@ -1711,7 +1711,7 @@ class Data
             });
 
             $.ajaxq ("queue'.$queue.'", {
-                url: " ?csrf='.$GLOBALS[csrf].'&act=append&what=acc_id&role='.$role.'&id='.$acc_id.'&refid='.$refid.'&edit=1",
+                url: " ?csrf='.$GLOBALS['csrf'].'&act=append&what=acc_id&role='.$role.'&id='.$acc_id.'&refid='.$refid.'&edit=1",
                 cache: false,
                 success: function(html)
                 {
@@ -1720,7 +1720,7 @@ class Data
             });
 
             $.ajaxq ("queue'.$queue.'", {
-                url: " ?csrf='.$GLOBALS[csrf].'&act=append&what=curr_acc_id&role=s&refid='.$acc_id.'&edit=1",
+                url: " ?csrf='.$GLOBALS['csrf'].'&act=append&what=curr_acc_id&role=s&refid='.$acc_id.'&edit=1",
                 cache: false,
                 success: function(html)
                 {
@@ -1824,7 +1824,7 @@ class Data
         $username=$this->db->GetVal("select username from users where id=$uid");
         if ($uid>0) {
             $logoutbtn='| <a href="?act=logout"><i class="icon-off icon-white"></i></a>';
-            if (!$GLOBALS[settings][no_nenu_alerts]) {
+            if (!$GLOBALS['settings']['no_nenu_alerts']) {
                 if ($this->table_exists('useralerts')) {
                     $myunread=$this->db->GetVal("select count(*) from useralerts where userid=$uid and wasread='0'")*1;
                     $myunreadsent=$this->db->GetVal("select count(*) from useralerts where fromuserid=$uid and wasread='0'")*1;
@@ -1870,7 +1870,7 @@ class Data
                 /*
                 $access['home_clietrequests_our_incomplete']=1;
                 if($access['home_clietrequests_our_incomplete']){
-                    $reponsibles="$GLOBALS[uid],11,19,40";
+                    $reponsibles="$GLOBALS['uid'],11,19,40";
                     $requestsourincomplete=$this->db->GetVal("select count(*) from clientrequests where approvedby>0 and confirmedby=0 and receivedby in ($reponsibles) ")*1;
                     $requestsourincomplete=$requestsourincomplete>0?"<a href='?act=show&what=clientrequests&nopager=1&approved=&notconfirmed=1&torevisebyme=1'><span class='badge orange' onMouseover=\"showhint('Incorporation incomplete', this, event, '');\">$requestsourincomplete</span></a>":"-";
                     $requests="$requests/$requestsourincomplete";
@@ -1881,8 +1881,8 @@ class Data
 
             // if($this->table_exists('documents')){
             //  $sqladd="";
-            //  if($GLOBALS[allowed_pids]!=''){
-            //      $sqladd = "$sqladd and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids])) or have_partners='f')";
+            //  if($GLOBALS['allowed_pids']!=''){
+            //      $sqladd = "$sqladd and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS['allowed_pids'])) or have_partners='f')";
             //  }
             //  $sql="select count(*) from documents d where d.id>0 and (d.complete='f' and d.dateto<=now() or d.id in (select a2.docid from documentactions a2 where a2.date<=now() and a2.complete='f')) and (d.executor=$uid or d.creator=$uid or d.id in (select a1.docid from documentactions a1 where a1.executor=$uid)) $sqladd";
             //  $docsexpired=$this->db->GetVal($sql);
@@ -1893,15 +1893,15 @@ class Data
             //  $mydocs="$docsexpired$docsinwork";
             //  $docs=' | Docs:'.$mydocs;
             // }
-            if (!$GLOBALS[settings][no_nenu_rates]) {
-                if (($this->table_exists('rates_local'))&&($GLOBALS[settings][use_local_rates]>0)) {
+            if (!$GLOBALS['settings']['no_nenu_rates']) {
+                if (($this->table_exists('rates_local'))&&($GLOBALS['settings']['use_local_rates']>0)) {
                     $sqladd="";
                     $usd=$this->get_rate_local('USD');
                     $rub=round($this->get_rate_local('RUB'), 2);
                     $rate.=' | $:'.$usd.' | ₽:'.$rub;
                 }
 
-                if (($this->table_exists('rates'))&&(!$GLOBALS[settings][use_local_rates]>0)) {
+                if (($this->table_exists('rates'))&&(!$GLOBALS['settings']['use_local_rates']>0)) {
                     $sqladd="";
                     $usd=round($this->convert_currency(1, 'EUR', 'USD', ''), 4);
 
@@ -1911,8 +1911,8 @@ class Data
                 }
             }
 
-            $pname=trim($this->get_val('partners','alias',$GLOBALS[is_owner_id]));
-            if($GLOBALS[workgroup][id]>0)$workgroup_name="@".strtolower($GLOBALS[workgroup][name]).":<a href='?act=details&what=partners&id=$GLOBALS[is_owner_id]'>$pname</a>";
+            $pname=trim($this->get_val('partners','alias',$GLOBALS['is_owner_id']));
+            if($GLOBALS['workgroup']['id']>0)$workgroup_name="@".strtolower($GLOBALS['workgroup']['name']).":<a href='?act=details&what=partners&id=$GLOBALS[is_owner_id]'>$pname</a>";
             $logininfo='<i class="icon-user icon-white"></i> <a href="?act=report&what=myprofile" ><span style="color:#fff;">'.$username.'</span></a>'.$workgroup_name.$docs.$reqs.$alrts.$rate;
             if(getenv('BRAND_NAME')!='')$logininfo=getenv('BRAND_NAME').' | '.$logininfo;
         } else {
@@ -1927,7 +1927,7 @@ class Data
     function click()
     {
         $post=$_POST;
-        unset($post[password]);
+        unset($post['password']);
         $id=ceil(abs($this->html->readRQn('id')));
         if ($id<1) {
             $id=0;
@@ -1942,17 +1942,17 @@ class Data
             $id=0;
         }
         $vals=array(
-            'ip'=>$_SERVER[REMOTE_ADDR],
-            'uid'=>$GLOBALS[uid],
-            'uname'=>$this->username($GLOBALS[uid]),
+            'ip'=>$_SERVER['REMOTE_ADDR'],
+            'uid'=>$GLOBALS['uid'],
+            'uname'=>$this->username($GLOBALS['uid']),
             'act'=>$act,
             'what'=>$what,
             'ref_id'=>$id,
             'post'=>json_encode($post),
             'get'=>json_encode($_GET),
         );
-        if ($vals[what]=='') {
-            $vals[what]=$this->html->readRQ('table');
+        if ($vals['what']=='') {
+            $vals['what']=$this->html->readRQ('table');
         }
         unset($post);
         $this->db->insert_db('clicks', $vals);
@@ -2003,12 +2003,12 @@ class Data
         //echo $this->html->pre_display($diff,"diff");
 
         $changes=[
-            'no'=>$prev_chnges_last[no]+1,
-            'date'=>$GLOBALS[today],
+            'no'=>$prev_chnges_last['no']+1,
+            'date'=>$GLOBALS['today'],
             'timestamp'=>time(),
-            'uid'=>$GLOBALS[uid],
-            'username'=>$GLOBALS[username],
-            'ip'=>$GLOBALS[ip],
+            'uid'=>$GLOBALS['uid'],
+            'username'=>$GLOBALS['username'],
+            'ip'=>$GLOBALS['ip'],
             'category'=>'risk',
             'change'=>$diff,
         ];
@@ -2026,21 +2026,21 @@ class Data
             $org_id=0;
         }
         if ($actname!='DELETE') {
-            $GLOBALS[record_new_vals]=$this->record_array($what, $id);
-            $GLOBALS[record_diff_vals]=array_diff($GLOBALS[record_new_vals], $GLOBALS[record_old_vals]);
+            $GLOBALS['record_new_vals']=$this->record_array($what, $id);
+            $GLOBALS['record_diff_vals']=array_diff($GLOBALS['record_new_vals'], $GLOBALS['record_old_vals']);
         }
 
 
-        //$GLOBALS[form_diff_vals_json]=json_encode($GLOBALS[form_diff_vals]);
-        //echo $this->html->pre_display($GLOBALS[record_old_vals],'old');
-        //echo $this->html->pre_display($GLOBALS[record_new_vals],'new');
-        //echo $this->html->pre_display($GLOBALS[record_diff_vals],'diff');
+        //$GLOBALS['form_diff_vals_json']=json_encode($GLOBALS['form_diff_vals']);
+        //echo $this->html->pre_display($GLOBALS['record_old_vals'],'old');
+        //echo $this->html->pre_display($GLOBALS['record_new_vals'],'new');
+        //echo $this->html->pre_display($GLOBALS['record_diff_vals'],'diff');
         //echo 'QUER:'.json_encode($GLOBALS['record_old_vals']); exit;
 
         $vals=array(
                 'tablename'=>$what,
                 'ref_id'=>$org_id,
-                'user_id'=>$GLOBALS[uid],
+                'user_id'=>$GLOBALS['uid'],
                 'before'=>json_encode($GLOBALS['record_old_vals']),
                 'after'=>json_encode($GLOBALS['record_new_vals']),
                 'changes'=>json_encode($GLOBALS['record_diff_vals']),
@@ -2069,7 +2069,7 @@ class Data
                     'sequence'=>$sequence,
                     'field_name'=>$key,
                     'field_value'=>$value,
-                    'user_id'=>$GLOBALS[uid],
+                    'user_id'=>$GLOBALS['uid'],
                     //'active'=>$active
                     );
                     $this->db->insert_db('history', $vals);
@@ -2111,7 +2111,7 @@ class Data
         $csv_row=$fields;
         $csv_arr[]=implode($delimiter,$csv_row);
 
-        $csv_row=[$i,$row[id],$row[name]];
+        $csv_row=[$i,$row['id'],$row['name']];
 
 
         //$response.="\n";
@@ -2148,9 +2148,9 @@ class Data
     function get_user_info($id)
     {
         $res=$this->db->GetRow("select * from users where id=$id");
-        $res[full_name]=$res[surname].' '.$res[firstname];
-        $res[name_full]=$res[firstname].' '.$res[surname];
-        $res[initials]=$res[firstname][0].$res[surname][0];
+        $res['full_name']=$res['surname'].' '.$res['firstname'];
+        $res['name_full']=$res['firstname'].' '.$res['surname'];
+        $res['initials']=$res['firstname'][0].$res['surname'][0];
         return $res;
     }
     public function noAccess($accessitemchk)
@@ -2256,7 +2256,7 @@ class Data
             $sql="select * from help where name like '%$id%'";
         }
         $helprow=$this->db->GetRow($sql);
-        $helprow[descr]=str_replace("\r\n", "<br>", $helprow[descr]);
+        $helprow['descr']=str_replace("\r\n", "<br>", $helprow['descr']);
         $text="<h3>$helprow[name]</h3>$helprow[descr]";
         //$text="$sql";
         $text="<img src='".ASSETS_URI."/assets/img/custom/help.png' height=12 width=12 onMouseover=\"showhint('$text', this, event, '400px');\">";
@@ -2302,13 +2302,13 @@ class Data
 
 
 
-            //if($GLOBALS[allowed_pids]!=''){$sql = "$sql and id not in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids]))";}
+            //if($GLOBALS['allowed_pids']!=''){$sql = "$sql and id not in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS['allowed_pids']))";}
 
             //$sql = "$sql and id!=$id";
 
             $res=$this->db->GetRow("select * from $what where id=$id $sql");
-            $res[id]=$res[id]*1;
-            if ($res[id]>0) {
+            $res['id']=(int) $res['id'];
+            if ($res['id']>0) {
 
                 $sql="SELECT count(*) FROM docs2groups WHERE docid=$id;";
                 $count=$this->db->GetVar($sql)*1;
@@ -2317,15 +2317,15 @@ class Data
                     $allowed=$this->db->GetVar($sql)*1;
                     $gids=$this->get_list_csv("SELECT groupid FROM docs2groups WHERE docid=$id");
                     $reason="By group access your is $gid, GIDS:$gids";
-                    if($GLOBALS[access]['main_admin'])$allowed=1;
+                    if($GLOBALS['access']['main_admin'])$allowed=1;
                 }else{
                     $allowed=1;
                 }
 
-                if ($GLOBALS[allowed_pids]!='') {
+                if ($GLOBALS['allowed_pids']!='') {
                     $allowed=0;
                     $reason="By allowed PIDs";
-                    if ($GLOBALS[allowed_related_pids]!='') {
+                    if ($GLOBALS['allowed_related_pids']!='') {
                         $sql = "SELECT count(*) FROM documents d where id=$id and docgroup in (1503,1512,1506,1507,1511) and (d.id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_related_pids])) or (have_partners='f' and executor=$GLOBALS[uid]) )";
                         $allowed=$this->db->GetVar($sql)*1;
                         $reason="By document groups (1503,1512,1506,1507,1511)";
@@ -2339,27 +2339,27 @@ class Data
                         $allowed=$this->db->GetVar($sql)*1;
                         $reason="By document owner2";
                     }
-                    if ($res[type]==1658) {
+                    if ($res['type']==1658) {
                         $sql = "SELECT count(*) FROM documents d where id=$id and (d.executor=$GLOBALS[uid] or d.creator=$GLOBALS[uid] or d.id in (select a1.docid from documentactions a1 where a1.executor=$GLOBALS[uid]))";
                         $allowed=$this->db->GetVar($sql)*1;
                         $reason="By document owner3";
                     }
-                    if ($res[type]==1652) {
+                    if ($res['type']==1652) {
                         $allowed=0;
                         $reason="By document type 1652";
                     }
                 }
 
-                // if ($GLOBALS[allowed_pids]!='') {
+                // if ($GLOBALS['allowed_pids']!='') {
                 //     $allowed=0;
                 //     $sql = "SELECT count(*) FROM docs2obj where ref_table='partners' and doc_id=$id";
                 //     $partners=$this->db->GetVar($sql)*1;
 
                 //     if ($partners>0) {
-                //         if ($GLOBALS[allowed_related_pids]!='') {
-                //             $sql = "SELECT count(*) FROM documents where id=$id and id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids],$GLOBALS[allowed_related_pids]))";
+                //         if ($GLOBALS['allowed_related_pids']!='') {
+                //             $sql = "SELECT count(*) FROM documents where id=$id and id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS['allowed_pids'],$GLOBALS['allowed_related_pids']))";
                 //         } else {
-                //             $sql = "SELECT count(*) FROM documents where id=$id and id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS[allowed_pids]))";
+                //             $sql = "SELECT count(*) FROM documents where id=$id and id in (select doc_id from docs2obj where ref_table='partners' and ref_id in ($GLOBALS['allowed_pids']))";
                 //         }
 
                 //         $allowed=$this->db->GetVar($sql)*1;
@@ -2372,8 +2372,8 @@ class Data
                 $allowed=0;
                 $reason="By regdate";
                 $res=$this->db->GetRow("select * from $what where id=$id and  date>='".$GLOBALS['regdate']."'");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']=(int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
@@ -2393,33 +2393,33 @@ class Data
             $allowed=0;
             //$partner=$this->get_row('partners',$id);
             $sql='';
-            if ($GLOBALS[allowed_related_pids]!='') {
+            if ($GLOBALS['allowed_related_pids']!='') {
                 $res=$this->db->GetRow("select * from $what where id=$id and id in ($GLOBALS[allowed_related_pids])");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']=(int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=2;
                 }
             }
 
-            if ($GLOBALS[allowed_pids]!='') {
+            if ($GLOBALS['allowed_pids']!='') {
                 $sql = "$sql and  id in ($GLOBALS[allowed_pids])";
             }
             $res=$this->db->GetRow("select * from $what where id=$id $sql");//select * from partners where id=8031
-            $res[id]=$res[id]*1;
-            if ($res[id]>0) {
+            $res['id']= (int) $res['id'];
+            if ($res['id']>0) {
                 $allowed=1;
             }
             $sql='';
 
 
 
-            $hiddenpartneridsarray=explode(",", $GLOBALS[hiddenpartnerids]);
+            $hiddenpartneridsarray=explode(",", $GLOBALS['hiddenpartnerids']);
             if ((!$access['view_hidden_partners'])&&(in_array($id, $hiddenpartneridsarray))) {
                 $allowed=0;
                 $reason="By disabled";
             }
 
-            // if ($GLOBALS[gid]<4) {
+            // if ($GLOBALS['gid']<4) {
             //     $allowed=1;
             // }
 
@@ -2427,40 +2427,40 @@ class Data
                 $allowed=0;
                 $reason="By history_tail";
                 $res=$this->db->GetRow("select * from $what where id=$id and  (dateclose>=now() - INTERVAL '$GLOBALS[history_tail] days' or dateclose is null)");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
-            //if(($GLOBALS[workgroup][administrator_id]==1438)&&($partner[type]==201))$allowed=1;
+            //if(($GLOBALS['workgroup'][administrator_id]==1438)&&($partner[type]==201))$allowed=1;
         }
         if ($what=='employees') {
             $allowed=0;
-            if ($GLOBALS[allowed_pids]!='') {
+            if ($GLOBALS['allowed_pids']!='') {
                 $sql = "$sql and employer=$GLOBALS[is_owner_id]";
             }
             $res=$this->db->GetRow("select * from $what where id=$id $sql");
-            $res[id]=$res[id]*1;
-            if ($res[id]>0) {
+            $res['id']= (int) $res['id'];
+            if ($res['id']>0) {
                 $allowed=1;
             }
         }
         if ($what=='clientrequests') {
             $allowed=0;
-            if ($GLOBALS[allowed_pids]!='') {
+            if ($GLOBALS['allowed_pids']!='') {
                 $sql = "$sql and  partnerid in ($GLOBALS[allowed_pids])";
             }
             $res=$this->db->GetRow("select * from $what where id=$id $sql");
-            $res[id]=$res[id]*1;
-            if ($res[id]>0) {
+            $res['id']= (int) $res['id'];
+            if ($res['id']>0) {
                 $allowed=1;
             }
 
             if ($GLOBALS['history_tail']>0) {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and  (completeddate>=now() - INTERVAL '$GLOBALS[history_tail] days' or completeddate='01.01.1999')");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
@@ -2468,16 +2468,16 @@ class Data
             if ($GLOBALS['regdate'] <> '01.01.1999') {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and  date>='".$GLOBALS['regdate']."'");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
             if ($GLOBALS['workgroup']['administrator_id']>0) {
                 $allowed=0;
-                $res=$this->db->GetRow("select * from $what where id=$id and  (topartnerid='".$GLOBALS['workgroup']['administrator_id']."' or executor='".$GLOBALS['uid']."' or receivedby='".$GLOBALS['uid']."'  or invoice_id in (select id from invoices where frompartner_id='".$GLOBALS[workgroup][administrator_id]."'))");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res=$this->db->GetRow("select * from $what where id=$id and  (topartnerid='".$GLOBALS['workgroup']['administrator_id']."' or executor='".$GLOBALS['uid']."' or receivedby='".$GLOBALS['uid']."'  or invoice_id in (select id from invoices where frompartner_id='".$GLOBALS['workgroup'][administrator_id]."'))");
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
@@ -2485,17 +2485,17 @@ class Data
 
         if ($what=='accounts') {
             $allowed=0;
-            if ($GLOBALS[allowed_pids]!='') {
+            if ($GLOBALS['allowed_pids']!='') {
                 $res=$this->db->GetRow("select * from $what where id=$id and partnerid in ($GLOBALS[allowed_pids])");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
 
-                if ($GLOBALS[allowed_related_pids]!='') {
+                if ($GLOBALS['allowed_related_pids']!='') {
                     $res=$this->db->GetRow("select * from $what where id=$id and partnerid in ($GLOBALS[allowed_related_pids])");
-                    $res[id]=$res[id]*1;
-                    if ($res[id]>0) {
+                    $res['id']= (int) $res['id'];
+                    if ($res['id']>0) {
                         $allowed=2;
                     }
                 }
@@ -2505,16 +2505,16 @@ class Data
             if ($GLOBALS['history_tail']>0) {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and  (dateclose>=now() - INTERVAL '$GLOBALS[history_tail] days' or dateclose is null)");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
             if ($GLOBALS['regdate'] <> '01.01.1999') {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and  dateopen>='".$GLOBALS['regdate']."'");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
@@ -2522,10 +2522,10 @@ class Data
 
         if ($what=='transactions') {
             $allowed=0;
-            if ($GLOBALS[allowed_pids]!='') {
+            if ($GLOBALS['allowed_pids']!='') {
                 $res=$this->db->GetRow("select * from $what where id=$id and  (receiver in ($GLOBALS[allowed_pids]) or sender in ($GLOBALS[allowed_pids]))");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             } else {
@@ -2534,26 +2534,26 @@ class Data
             if ($GLOBALS['history_tail']>0) {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and valuedate>=now() - INTERVAL '$GLOBALS[history_tail] days'");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
             if ($GLOBALS['regdate'] <> '01.01.1999') {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and  valuedate>='".$GLOBALS['regdate']."'");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
         }
         if ($what=='loans') {
             $allowed=0;
-            if ($GLOBALS[allowed_pids]!='') {
+            if ($GLOBALS['allowed_pids']!='') {
                 $res=$this->db->GetRow("select * from $what where id=$id and (receiver_id in ($GLOBALS[allowed_pids]) or sender_id in ($GLOBALS[allowed_pids]))");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             } else {
@@ -2562,16 +2562,16 @@ class Data
             if ($GLOBALS['history_tail']>0) {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and end_date>=now() - INTERVAL '$GLOBALS[history_tail] days'");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
             if ($GLOBALS['regdate'] <> '01.01.1999') {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and  date>='".$GLOBALS['regdate']."'");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
@@ -2582,17 +2582,17 @@ class Data
             if ($GLOBALS['history_tail']>0) {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and due_date>=now() - INTERVAL '$GLOBALS[history_tail] days'");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
 
-            if ($GLOBALS[allowed_pids]!='') {
+            if ($GLOBALS['allowed_pids']!='') {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and topartner_id in ($GLOBALS[allowed_pids])");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             } else {
@@ -2602,22 +2602,22 @@ class Data
             if ($GLOBALS['regdate'] <> '01.01.1999') {
                 $allowed=0;
                 $res=$this->db->GetRow("select * from $what where id=$id and  date>='".$GLOBALS['regdate']."'");
-                $res[id]=$res[id]*1;
-                if ($res[id]>0) {
+                $res['id']= (int) $res['id'];
+                if ($res['id']>0) {
                     $allowed=1;
                 }
             }
             // if ($GLOBALS['workgroup']['administrator_id']>0) {
             //     $allowed=0;
             //     $res=$this->db->GetRow("select * from $what where id=$id and (frompartner_id='".$GLOBALS['workgroup']['administrator_id']."' or topartner_id='".$GLOBALS['workgroup']['administrator_id']."')");
-            //     $res[id]=$res[id]*1;
-            //     if ($res[id]>0) {
+            //     $res['id']= (int) $res['id'];
+            //     if ($res['id']>0) {
             //         $allowed=1;
             //     }
             // }
         }
-        //if($GLOBALS[access]['main_admin'])$allowed=1;
-        if (($GLOBALS[access]['main_admin'])&&($allowed==0)&&($id>0)) {
+        //if($GLOBALS['access']['main_admin'])$allowed=1;
+        if (($GLOBALS['access']['main_admin'])&&($allowed==0)&&($id>0)) {
             echo $this->html->message("NOT ALLOWED $what for not admins<hr>$reason", 'warn', 'orange');
             $allowed=1;
         }
@@ -2677,7 +2677,8 @@ class Data
     function get_rate_local($currid = 0, $date = '')
     {
         $date=$this->dates->F_date($date, 1);
-        $chk=$currid*1;
+        // $chk= (int) $currid;
+        $chk = is_numeric($currid) ? (int) $currid : 0;
         if (($chk==0)&&($currid!='')) {
             $currid=$this->db->GetVal("select id from listitems where lower(name)=lower('$currid') and list_id=6");
         }
@@ -2778,8 +2779,8 @@ class Data
         <body>
         <h2>$year</h2>
         <table><tr>";
-        if($GLOBALS[calendar][data][monthes]){
-            $monthes=explode(',',$GLOBALS[calendar][data][monthes]);
+        if($GLOBALS['calendar']['data']['monthes']){
+            $monthes=explode(',',$GLOBALS['calendar']['data']['monthes']);
         }
         for ($month=1; $month<=12; $month++) {
             if(!$monthes){
@@ -2816,29 +2817,29 @@ class Data
         $start="01.".sprintf("%02s", $month).".$year";
         $end=$this->dates->F_dateadd_month($start, 1);
 
-        if($GLOBALS[calendar][data][events]){
-            $partner_id=$GLOBALS[calendar][data][events];
+        if($GLOBALS['calendar']['data']['events']){
+            $partner_id=$GLOBALS['calendar']['data']['events'];
             if($partner_id>0)$sql_event="and ((refid=$partner_id and reference='partners') or (partnerid=$partner_id))";
             $sql="select * from events where datefrom>='$start' and datefrom<='$end' and type!=1335 $sql_event";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
             while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
                 $descr="";
-                $partner_name=$this->get_name($row[reference],$row[refid]);
+                $partner_name=$this->get_name($row['reference'],$row['refid']);
                 $descr.="<b>$partner_name</b><br>";
-                $type_name=$this->get_name('listitems',$row[type]);
+                $type_name=$this->get_name('listitems',$row['type']);
                 $descr.="$type_name<hr>";
 
-                if($row[partnerid]>0){
-                    $partner_name=$this->get_name('partners',$row[partnerid]);
+                if($row['partnerid']>0){
+                    $partner_name=$this->get_name('partners',$row['partnerid']);
                     $descr.="ref:$partner_name<br>";
                 }
-                if($row[qty]>0)$descr.=$row[qty]."<br>";
-                if($row[amount]>0)$descr.=$row[amount]."<br>";
-                if($row[text1]!='')$descr.=$row[text1]."<br>";
-                if($row[text2]!='')$descr.=$row[text2]."<br>";
-                if($row[text3]!='')$descr.=$row[text3]."<br>";
+                if($row['qty']>0)$descr.=$row['qty']."<br>";
+                if($row['amount']>0)$descr.=$row['amount']."<br>";
+                if($row['text1']!='')$descr.=$row['text1']."<br>";
+                if($row['text2']!='')$descr.=$row['text2']."<br>";
+                if($row['text3']!='')$descr.=$row['text3']."<br>";
 
-                $event = $calendar->event()->condition('timestamp', strtotime($row[datefrom]))->title($row[name])->output("<a href='?act=details&what=events&id=$row[id]' class='label label-info' onMouseover=\"showhint('$descr', this, event, '200px');\">Event: $row[name]</a>");
+                $event = $calendar->event()->condition('timestamp', strtotime($row['datefrom']))->title($row['name'])->output("<a href='?act=details&what=events&id=$row[id]' class='label label-info' onMouseover=\"showhint('$descr', this, event, '200px');\">Event: $row[name]</a>");
                 $calendar->attach($event);
             }
 
@@ -2846,67 +2847,67 @@ class Data
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
             while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
                 $descr="";
-                $partner_name=$this->get_name($row[reference],$row[refid]);
+                $partner_name=$this->get_name($row['reference'],$row['refid']);
                 $descr.="<b>$partner_name</b><br>";
-                $type_name=$this->get_name('listitems',$row[type]);
+                $type_name=$this->get_name('listitems',$row['type']);
                 $descr.="$type_name<hr>";
 
-                if($row[partnerid]>0){
-                    $partner_name=$this->get_name('partners',$row[partnerid]);
+                if($row['partnerid']>0){
+                    $partner_name=$this->get_name('partners',$row['partnerid']);
                     $descr.="ref:$partner_name<br>";
                 }
-                if($row[qty]>0)$descr.=$row[qty]."<br>";
-                if($row[amount]>0)$descr.=$row[amount]."<br>";
-                if($row[text1]!='')$descr.=$row[text1]."<br>";
-                if($row[text2]!='')$descr.=$row[text2]."<br>";
-                if($row[text3]!='')$descr.=$row[text3]."<br>";
-                $event = $calendar->event()->condition('timestamp', strtotime($row[dateto]))->title($row[name])->output("<a href='?act=details&what=events&id=$row[id]' class='label label-info' onMouseover=\"showhint('$descr', this, event, '200px');\">EventEnd: $row[name]</a>");
+                if($row['qty']>0)$descr.=$row['qty']."<br>";
+                if($row['amount']>0)$descr.=$row['amount']."<br>";
+                if($row['text1']!='')$descr.=$row['text1']."<br>";
+                if($row['text2']!='')$descr.=$row['text2']."<br>";
+                if($row['text3']!='')$descr.=$row['text3']."<br>";
+                $event = $calendar->event()->condition('timestamp', strtotime($row['dateto']))->title($row['name'])->output("<a href='?act=details&what=events&id=$row[id]' class='label label-info' onMouseover=\"showhint('$descr', this, event, '200px');\">EventEnd: $row[name]</a>");
                 $calendar->attach($event);
             }
         }
 
-        if($GLOBALS[calendar][data][transactions]){
-            $partner_id=$GLOBALS[calendar][data][accounting_transactions];
+        if($GLOBALS['calendar']['data']['transactions']){
+            $partner_id=$GLOBALS['calendar']['data']['accounting_transactions'];
             if($partner_id>0)$sql_po="and (sender=$partner_id or receiver=$partner_id)";
             $sql="select * from transactions where valuedate>='$start' and valuedate<='$end' and active='t' $sql_po";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
             while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-                $row[amount_eur]=round($this->convert_currency($row[amount_usd], 'USD', 'EUR',$row[valuedate]),2);
-                $from=$this->get_name('partners',$row[sender]);
-                $to=$this->get_name('partners',$row[receiver]);
+                $row['amount_eur']=round($this->convert_currency($row['amount_usd'], 'USD', 'EUR',$row['valuedate']),2);
+                $from=$this->get_name('partners',$row['sender']);
+                $to=$this->get_name('partners',$row['receiver']);
                 $class='';
-                if($row[receiver]==$partner_id)$class='success';
-                if($row[sender]==$partner_id)$class='important';
+                if($row['receiver']==$partner_id)$class='success';
+                if($row['sender']==$partner_id)$class='important';
                 $descr="From:<b>$from</b><br>To:<b>$to</b><hr>$row[bankdescr]";
-                $event = $calendar->event()->condition('timestamp', strtotime($row[valuedate]))->title($row[samount])->output("<a href='?act=details&what=transactions&id=$row[id]' class='label label-$class' onMouseover=\"showhint('$descr', this, event, '200px');\">PO: € $row[amount_eur]</a>");
+                $event = $calendar->event()->condition('timestamp', strtotime($row['valuedate']))->title($row['samount'])->output("<a href='?act=details&what=transactions&id=$row[id]' class='label label-$class' onMouseover=\"showhint('$descr', this, event, '200px');\">PO: € $row[amount_eur]</a>");
                 $calendar->attach($event);
             }
         }
 
-        if($GLOBALS[calendar][data][account_transactions]){
+        if($GLOBALS['calendar']['data']['account_transactions']){
             $sql="select * from account_transactions where value_date>='$start' and value_date<='$end'";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
             while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
                 $descr="$row[descr]";
-                $class=($row[amount]>0)?"success":"important";
-                $event = $calendar->event()->condition('timestamp', strtotime($row[value_date]))->title($row[amount_eur])->output("<a href='?act=details&what=account_transactions&id=$row[id]' class='label label-$class' onMouseover=\"showhint('$descr', this, event, '200px');\">Bank: € $row[amount_eur]</a>");
+                $class=($row['amount']>0)?"success":"important";
+                $event = $calendar->event()->condition('timestamp', strtotime($row['value_date']))->title($row['amount_eur'])->output("<a href='?act=details&what=account_transactions&id=$row[id]' class='label label-$class' onMouseover=\"showhint('$descr', this, event, '200px');\">Bank: € $row[amount_eur]</a>");
                 $calendar->attach($event);
             }
         }
 
-        if($GLOBALS[calendar][data][cash_transactions]){
+        if($GLOBALS['calendar']['data']['cash_transactions']){
             $sql="select * from cashtransactions where date>='$start' and date<='$end'";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
             while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
                 $descr="$row[descr]";
-                $class=($row[amount]>0)?"success":"important";
-                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($row[amount])->output("<a href='?act=details&what=cash_transactions&id=$row[id]' class='label label-$class' onMouseover=\"showhint('$descr', this, event, '200px');\">Cash: € $row[amount]</a>");
+                $class=($row['amount']>0)?"success":"important";
+                $event = $calendar->event()->condition('timestamp', strtotime($row['date']))->title($row['amount'])->output("<a href='?act=details&what=cash_transactions&id=$row[id]' class='label label-$class' onMouseover=\"showhint('$descr', this, event, '200px');\">Cash: € $row[amount]</a>");
                 $calendar->attach($event);
             }
         }
 
-        if($GLOBALS[calendar][data][accounting_transactions]){
-            $partner_id=$GLOBALS[calendar][data][accounting_transactions];
+        if($GLOBALS['calendar']['data']['accounting_transactions']){
+            $partner_id=$GLOBALS['calendar']['data']['accounting_transactions'];
             if($partner_id>0)$sql_acc="and partnerid=$partner_id";
             $sql="select * from a_transactions where date>='$start' and date<='$end' $sql_acc";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
@@ -2916,68 +2917,68 @@ class Data
                 $sql="SELECT * from a_translines where a_transactionid=$row[id] order by line";
                 if (!($cur2 = pg_query($sql))) {$this->html->SQL_error($sql);}
                 while ($row2 = pg_fetch_array($cur2,NULL,PGSQL_ASSOC)){
-                    $a_name=$this->get_name('a_accounts',$row2[a_accountid]);
-                    if($row2[dr]>0){
+                    $a_name=$this->get_name('a_accounts',$row2['a_accountid']);
+                    if($row2['dr']>0){
                         $descr.="$a_name DR: $row2[dr]<br>";
-                        $amount+=$row2[dr];
+                        $amount+=$row2['dr'];
                     }else{
                         $descr.="$a_name CR: $row2[cr]<br>";
                     }
                 }
                 $descr.="<hr>$row[descr]";
-                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($amount)->output("<a href='?act=details&what=a_transactions&id=$row[id]' class='label' onMouseover=\"showhint('$descr', this, event, '200px');\">Acc: € $amount</a>");
+                $event = $calendar->event()->condition('timestamp', strtotime($row['date']))->title($amount)->output("<a href='?act=details&what=a_transactions&id=$row[id]' class='label' onMouseover=\"showhint('$descr', this, event, '200px');\">Acc: € $amount</a>");
                 $calendar->attach($event);
             }
         }
 
-        if($GLOBALS[calendar][data][invoices]){
+        if($GLOBALS['calendar']['data']['invoices']){
             $sql="select * from invoices where type_id=2601 and date>='$start' and date<='$end'";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
             while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-                $from=$this->get_name('partners',$row[frompartner_id]);
-                $to=$this->get_name('partners',$row[topartner_id]);
+                $from=$this->get_name('partners',$row['frompartner_id']);
+                $to=$this->get_name('partners',$row['topartner_id']);
                 $descr="<b>$row[name]</b><br>Date due:$row[due_date]<br>From:$from<br>To:$to";
-                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($row[amount_eur])->output("<a href='?act=details&what=invoices&id=$row[id]' class='label label-success' onMouseover=\"showhint('$descr', this, event, '200px');\">Sale: € $row[amount_eur]</a>");
+                $event = $calendar->event()->condition('timestamp', strtotime($row['date']))->title($row['amount_eur'])->output("<a href='?act=details&what=invoices&id=$row[id]' class='label label-success' onMouseover=\"showhint('$descr', this, event, '200px');\">Sale: € $row[amount_eur]</a>");
                 $calendar->attach($event);
             }
         }
 
-        if($GLOBALS[calendar][data][inwardinvoices]){
+        if($GLOBALS['calendar']['data']['inwardinvoices']){
             $sql="select * from documents where type=1602 and datefrom>='$start' and datefrom<='$end'";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
             while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
                 $from=$this->get_name('partners',$this->db->getval("SELECT ref_id FROM docs2obj WHERE ref_table='partners' and doc_id=$row[id] and type_id=5744"));
                 $to=$this->get_name('partners',$this->db->getval("SELECT ref_id FROM docs2obj WHERE ref_table='partners' and doc_id=$row[id] and type_id in (5735, 5740)"));
                 $descr="<b>$row[name]</b><br>Date due:$row[due_date]<br>From:$from<br>To:$to<hr>$row[descr]";
-                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($row[amount_eur])->output("<a href='?act=details&what=documents&id=$row[id]' class='label label-important' onMouseover=\"showhint('$descr', this, event, '200px');\">Purchase: € $row[amount_eur]</a>");
+                $event = $calendar->event()->condition('timestamp', strtotime($row['date']))->title($row['amount_eur'])->output("<a href='?act=details&what=documents&id=$row[id]' class='label label-important' onMouseover=\"showhint('$descr', this, event, '200px');\">Purchase: € $row[amount_eur]</a>");
                 $calendar->attach($event);
             }
         }
 
-        if($GLOBALS[calendar][data][receipts]){
+        if($GLOBALS['calendar']['data']['receipts']){
             $sql="select * from documents where type=1623 and datefrom>='$start' and datefrom<='$end'";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
             while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-                $amount=($row[amount_eur]>0)?$row[amount_eur]:$row[amount];
+                $amount=($row['amount_eur']>0)?$row['amount_eur']:$row['amount'];
                 $from=$this->get_name('partners',$this->db->getval("SELECT ref_id FROM docs2obj WHERE ref_table='partners' and doc_id=$row[id] and type_id=5744"));
                 $to=$this->get_name('partners',$this->db->getval("SELECT ref_id FROM docs2obj WHERE ref_table='partners' and doc_id=$row[id] and type_id in (5735, 5740)"));
                 $descr="<b>$row[name]</b><br>Date due:$row[due_date]<br>From:$from<br>To:$to<hr>$row[descr]";
-                $event = $calendar->event()->condition('timestamp', strtotime($row[date]))->title($row[amount_eur])->output("<a href='?act=details&what=documents&id=$row[id]' class='label label-important' onMouseover=\"showhint('$descr', this, event, '200px');\">Receipt: € $amount</a>");
+                $event = $calendar->event()->condition('timestamp', strtotime($row['date']))->title($row['amount_eur'])->output("<a href='?act=details&what=documents&id=$row[id]' class='label label-important' onMouseover=\"showhint('$descr', this, event, '200px');\">Receipt: € $amount</a>");
                 $calendar->attach($event);
             }
         }
 
 
 
-        if($GLOBALS[calendar][data][schedules]){
-            $partner_id=$GLOBALS[calendar][data][schedules];
+        if($GLOBALS['calendar']['data']['schedules']){
+            $partner_id=$GLOBALS['calendar']['data']['schedules'];
             if($partner_id>0)$sql_sched="and refid=$partner_id";
             $sql="select * from schedules where nextdate>='$start' and nextdate<='$end' $sql_sched";
             if (!($cur = pg_query($sql))) {$this->html->SQL_error($sql);}
             while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-                $obj_name=$this->get_name($row[tablename],$row[refid]);
+                $obj_name=$this->get_name($row['tablename'],$row['refid']);
                 $descr="<b>$obj_name</b><hr>$row[descr]";
-                $event = $calendar->event()->condition('timestamp', strtotime($row[nextdate]))->title($row[id])->output("<a href='?act=edit&what=schedules&id=$row[id]' class='label label-warning' onMouseover=\"showhint('$descr', this, event, '200px');\">Schedule: $row[name]</a>");
+                $event = $calendar->event()->condition('timestamp', strtotime($row['nextdate']))->title($row['id'])->output("<a href='?act=edit&what=schedules&id=$row[id]' class='label label-warning' onMouseover=\"showhint('$descr', this, event, '200px');\">Schedule: $row[name]</a>");
                 $calendar->attach($event);
             }
         }
@@ -3104,7 +3105,7 @@ class Data
         $isnotified='';
         $sql = "SELECT * FROM useralerts WHERE refid=$id and tablename='$what' and userid=$uid and wasread='0'";
         $res2=$this->db->GetRow($sql);
-        if ($uid==$res2[userid]) {
+        if ($uid==$res2['userid']) {
             $sql = "SELECT id FROM useralerts WHERE refid=$id and tablename='$what' and userid=$uid and wasread='0' and confirm='1'";
             $count=$this->db->GetVal($sql)*1;
             $dummy=$this->db->GetVal("update useralerts set readdate=now(), readtime=now(), wasread='1' where refid=$id and tablename='$what' and userid=$uid and wasread='0' and confirm='0'");
@@ -3134,13 +3135,13 @@ class Data
         if ($whattag=='partners') {
             $whattag='p';
         }
-        if (($GLOBALS['access']['edit_'.$what])&&($_POST[noedit]!=1)) {
+        if (($GLOBALS['access']['edit_'.$what])&&($_POST['noedit']!=1)) {
             $edit=":: <a href='?act=edit&table=$what&id=$id'><img src='".ASSETS_URI."/assets/img/custom/edit.png'> ".\util::l('Edit')." </a>";
         }
-        if (($GLOBALS['access']['edit_'.$what])&&($_POST[noedit]!=1)&&($GLOBALS[access][main_admin])) {
+        if (($GLOBALS['access']['edit_'.$what])&&($_POST['noedit']!=1)&&($GLOBALS['access']['main_admin'])) {
             $edit.=":: <a href='?act=edit&table=$what&raw_data=1&id=$id'><img src='".ASSETS_URI."/assets/img/custom/edit.png'> ".\util::l('Raw Edit')." </a>";
         }
-        if (($GLOBALS['access']['edit_'.$what])&&($_POST[nodelete]!=1)) {
+        if (($GLOBALS['access']['edit_'.$what])&&($_POST['nodelete']!=1)) {
             $del_btn.= ":: <i class='icon-trash withpointer' onclick=\"confirmation('?csrf=$GLOBALS[csrf]&act=delete&what=$what&id=$id','$text')\" onMouseOver=\"this.className='icon-trash icon-white withpointer black'\" onMouseOut=\"this.className='icon-trash withpointer'\"></i> ".\util::l('Delete');
         }
         $qr="<a href='?act=pdf&what=pdf_qr&acttag=d&whattag=$whattag&id=$id'><i class='icon-qrcode withpointer'></i> QR</a>";
@@ -3247,11 +3248,11 @@ class Data
         //echo "$type<br>";
         $sql="select * from events where refid='$refid' and reference='$reference' and type='$type' and datefrom<='$date' and complete='1' and active='1' order by datefrom desc limit 1";
         $res=$this->db->GetRow($sql);
-        if ($res[listitem_id]>0) {
-            $res[listitem]=$this->get_row('listitems', $res[listitem_id]);
+        if ($res['listitem_id']>0) {
+            $res['listitem']=$this->get_row('listitems', $res['listitem_id']);
         }
-        if ($res[partner_id]>0) {
-            $res[partner]=$this->get_row('partners', $res[partner_id]);
+        if ($res['partner_id']>0) {
+            $res['partner']=$this->get_row('partners', $res['partner_id']);
         }
         return $res;
     }
@@ -3343,54 +3344,54 @@ class Data
                 $this->html->SQL_error($sql);
             }
             while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-                $nextdate=$row[nextdate];
-                $qty=$row[qty]-1;
+                $nextdate=$row['nextdate'];
+                $qty=$row['qty']-1;
                 if ($qty==0) {
-                    $row[active]='f';
+                    $row['active']='f';
                 } else {
-                    if (($row[interval]*1)==0) {
-                        $row[interval]=1;
+                    if (($row['interval']*1)==0) {
+                        $row['interval']=1;
                     }
-                    if ($row[type]==3000) {
-                        $nextdate=$this->dates->F_dateadd($nextdate, $row[interval]);
+                    if ($row['type']==3000) {
+                        $nextdate=$this->dates->F_dateadd($nextdate, $row['interval']);
                     }
-                    if ($row[type]==3001) {
+                    if ($row['type']==3001) {
                         $nextdate=$this->dates->F_dateadd($nextdate, 1);
                     }
-                    if ($row[type]==3002) {
+                    if ($row['type']==3002) {
                         $nextdate=$this->dates->F_dateadd($nextdate, 7);
                     }
-                    if ($row[type]==3003) {
+                    if ($row['type']==3003) {
                         $nextdate=$this->dates->F_dateadd($nextdate, $this->dates->F_daysinmonth($nextdate));
                     }
-                    if ($row[type]==3006) {
+                    if ($row['type']==3006) {
                         $nextdate=$this->dates->F_dateadd($nextdate, $this->dates->F_daysinyear($nextdate));
                     }
-                    if ($row[type]==3004) {
+                    if ($row['type']==3004) {
                         for ($x=1; $x<=3; $x++) {
                             $nextdate=$this->dates->F_dateadd($nextdate, $this->dates->F_daysinmonth($nextdate));
                         }
                     }
-                    if ($row[type]==3005) {
+                    if ($row['type']==3005) {
                         for ($x=1; $x<=6; $x++) {
                             $nextdate=$this->dates->F_dateadd($nextdate, $this->dates->F_daysinmonth($nextdate));
                         }
                     }
                 }
-                if($this->field_exists($row[tablename], 'name'))$reference=$this->db->GetVal("SELECT name from $row[tablename] where id=$row[refid]; -- from scheduler");
+                if($this->field_exists($row['tablename'], 'name'))$reference=$this->db->GetVal("SELECT name from $row[tablename] where id=$row[refid]; -- from scheduler");
                 $type=$this->db->GetVal("SELECT name from listitems where id=$row[type]");
                 $user=$this->db->GetVal("SELECT username from users where id=$row[userid]");
                 //////////////-->echo "$row[name]($row[nextdate]-$row[interval]-$nextdate)$row[type]($row[usersinvolved])<br>";
                 $this->db->GetVal("update schedules set prevdate='$row[nextdate]', nextdate='$nextdate', qty=$qty, active='$row[active]' where id=$row[id]");
                 //$row[usersinvolved]=str_ireplace(" ","",$row[usersinvolved]);
-                $users=explode(",", $row[usersinvolved]);
+                $users=explode(",", $row['usersinvolved']);
                 //print_r ($users);
                 $startdate=$this->dates->F_date("", 1);
                 $checkdate=$startdate;
                 $enddate=$this->dates->F_dateadd($startdate, 2);
                 $parties="";
-                if ($row[tablename]=='partners') {
-                    $parties=$row[refid];
+                if ($row['tablename']=='partners') {
+                    $parties=$row['refid'];
                 }
                 foreach ($users as $userid) {
                     $userid=$userid*1;
@@ -3401,16 +3402,16 @@ class Data
                         $dummy=$this->db->GetVal($sql);
                         //echo "{$uname}<br>";
                         //echo "From:$row[userid] TO:$userid<br>";
-                        if ($row[send_sms]=='t') {
+                        if ($row['send_sms']=='t') {
                             //send SMS
-                            $text="Remainder:".$row[name]." ".$row[descr];
+                            $text="Remainder:".$row['name']." ".$row['descr'];
                             $mobile=$this->db->GetVal("select mobile from users where id=$userid");
                             if ($mobile!='') {
                                 $this->comm->sendsms($mobile, $text);
                             }
                             //exit;
                         }
-                        if ($row[send_mail]=='t') {
+                        if ($row['send_mail']=='t') {
                             //send Mail
                             $to=$this->db->GetVal("select email from users where id=$userid");
                             $from=$this->db->GetVal("select email from users where id=$row[userid]");
@@ -3423,16 +3424,16 @@ class Data
                             }
                             //exit;
                         }
-                        if ($row[makeintorders]=='t') {
+                        if ($row['makeintorders']=='t') {
                             //make Inernal order
                             $this->make_document(1658, $startdate, $checkdate, $enddate, "$row[userid]", $userid, $parties, 0, "$row[name] $row[descr]");
                             //exit;
                         }
-                        if (($row[makerequests]=='t')&&($row[tablename]=='partners')) {
+                        if (($row['makerequests']=='t')&&($row['tablename']=='partners')) {
                             //make Client Request
                             $now=$this->dates->F_date("", 1);
                             $means=4205;
-                            $partnerid=$row[refid];
+                            $partnerid=$row['refid'];
                             $clientid=$this->db->GetVal("select clientid from clients2partners where partnerid=$partnerid order by clientid desc limit 1")*1;
                             $jur=$this->db->GetVal("select jur from partners where id=$partnerid")*1;
                             $topartnerid=$jur==3500?1438:1125;
@@ -3478,7 +3479,7 @@ class Data
     }
     function chk_updates()
     {
-        if(!$GLOBALS[access][main_admin])return;
+        if(!$GLOBALS['access']['main_admin'])return;
         $message='';
         $update_version=$this->readconfig('update_version')*1+1;
         $update_version_fm=sprintf('%04d', $update_version);
@@ -3491,7 +3492,7 @@ class Data
 
         $param='daily';
         $chkdate=$this->readconfig('daily');
-        $days=$this->dates->F_datediff($chkdate, $GLOBALS[today]);
+        $days=$this->dates->F_datediff($chkdate, $GLOBALS['today']);
         $message='';
         if ($days>=0) {
             $link="?act=tools&what=daily";
@@ -3523,10 +3524,10 @@ class Data
 
     function ECB_rates()
     {
-        //$date=$GLOBALS[today];
+        //$date=$GLOBALS['today'];
         $rates = $this->comm->getResultFromECB('USD');
-        $date=$rates[date];
-        foreach ($rates[rates] as $curr => $rate) {
+        $date=$rates['date'];
+        foreach ($rates['rates'] as $curr => $rate) {
             $currid=$this->db->GetVal("select id from listitems where list_id=6 and lower(name)=lower('$curr')")*1;
             $count=$this->db->GetVal("select rate from rates where currency=$currid and date='$date'")*1;
             //echo $this->html->pre_display($rate,"rate $i $date ($currid) $count");
@@ -3675,7 +3676,7 @@ class Data
         $rows=pg_num_rows($cur);
         while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             $i++;
-            $this->gen_fast_menu($row[id]);
+            $this->gen_fast_menu($row['id']);
             //$this->livestatus(str_replace("\"","'",$this->html->draw_progress($i/$rows*100)));
             //$res.="GID:$row[id] - $row[name]<br>";
             //$res.="Checking credentials....<br>";//$this->livestatus("");
@@ -3712,7 +3713,7 @@ class Data
     function vacations($id, $year)
     {
         $res=$this->db->GetRow("select * from employees where id=$id");
-        $days=$this->dates->F_datediff($res[employdate], "31.12.$year");
+        $days=$this->dates->F_datediff($res['employdate'], "31.12.$year");
         if ($days>365) {
             $days=365;
         }
@@ -3720,7 +3721,7 @@ class Data
             $days=0;
         }
         $days=round(24*$days/365);
-        if ($res[type]==3103) {
+        if ($res['type']==3103) {
             $days=0;
         }
         return $days;
@@ -3743,17 +3744,17 @@ class Data
             $this->html->SQL_error($sql);
         }
         while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-            if ($this->dates->F_datediff($row[fromdate], "01.01.$year")>0) {
-                $row[fromdate]="01.01.$year";
+            if ($this->dates->F_datediff($row['fromdate'], "01.01.$year")>0) {
+                $row['fromdate']="01.01.$year";
             }
-            if ($this->dates->F_datediff("31.12.$year", $row[todate])>0) {
-                $row[todate]="31.12.$year";
+            if ($this->dates->F_datediff("31.12.$year", $row['todate'])>0) {
+                $row['todate']="31.12.$year";
             }
 
-            $wdays=$this->dates->get_working_days($row[fromdate], $row[todate]);
-            $wdays2=$this->dates->F_datediff($row[fromdate], $row[todate])+1;
+            $wdays=$this->dates->get_working_days($row['fromdate'], $row['todate']);
+            $wdays2=$this->dates->F_datediff($row['fromdate'], $row['todate'])+1;
             $days=$days+$wdays;
-            //$out.= "From:$row[fromdate] To:$row[todate] ($wdays/$wdays2)<br>";
+            //$out.= "From:$row['fromdate'] To:$row['todate'] ($wdays/$wdays2)<br>";
         }
         return $days;
     }
@@ -3766,20 +3767,20 @@ class Data
             $volume=$this->html->readRQn('value');
             $date=$this->dates->F_date($this->html->readRQ('date'), 1);
             //$res=make_load($lot_id,$date,$volume);
-            return $res[volume];
+            return $res['volume'];
         }
         if ($obj=='planned_resources') {
             $p_res_id=$this->html->readRQn('p_res_id');
             $volume=$this->html->readRQn('value');
             $this->db->GetVal("update planned_resources set volume=$volume where id=$p_res_id");
             $res=$volume;
-            return $res[volume];
+            return $res['volume'];
         }
     }
     function shoppingcart()
     {
         global $cart;
-        //echo $GLOBALS[cart]; exit;
+        //echo $GLOBALS['cart']; exit;
         $scart=$this->showCart();
         $output='
             <div id="" class="alert alert-info">
@@ -3885,13 +3886,13 @@ class Data
             'type'=>$type,
             'userid'=>$uid,
             'usersinvolved'=>$usersinvolved,
-            'date'=>$GLOBALS[today],
+            'date'=>$GLOBALS['today'],
             'refid'=>$refid,
             'tablename'=>$tablename,
             'active'=>1,
             'confidential'=>0,
             'nextdate'=>$nextdate,
-            'prevdate'=>$GLOBALS[today],
+            'prevdate'=>$GLOBALS['today'],
             'interval'=>$interval,
             'descr'=>$descr,
             'addinfo'=>$addinfo,
@@ -3910,7 +3911,7 @@ class Data
     {
         //$list_id=$this->db->getval("SELECT id from lists where lower(alias)=lower('currency')");
         if ($date=='') {
-            $date=$GLOBALS[today];
+            $date=$GLOBALS['today'];
         }
         if (!is_numeric($from)) {
             $from=$this->get_list_id('currency', $from);  //$this->db->GetVal("select id from listitems where list_id=$list_id and lower(alias)=lower('$from')");
@@ -3926,7 +3927,7 @@ class Data
     function convert_currency_local($amount = 100, $from = 602, $to = 601, $date='')
     {
         if ($date=='') {
-            $date=$GLOBALS[today];
+            $date=$GLOBALS['today'];
         }
         if (!is_numeric($from)) {
             $from=$this->db->GetVal("select id from listitems where list_id=6 and lower(alias)=lower('$from')");
@@ -3963,7 +3964,7 @@ class Data
                     $this->html->SQL_error($sql);
                 }
                 while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
-                    array_push($userids, $row[userid]);
+                    array_push($userids, $row['userid']);
                     //$out.= "GUID:$row[userid]<br>";
                 }
             }
@@ -4036,10 +4037,10 @@ class Data
         }
         while ($row = pg_fetch_array($cur,NULL,PGSQL_ASSOC)) {
             //$post=$this->getrow('posts',$post_id);
-            $row[date]=substr($row[date], 0, 19);
-            $row[user]=$this->username($row[user_id]);
+            $row['date']=substr($row['date'], 0, 19);
+            $row['user']=$this->username($row['user_id']);
             $res.=$this->html->post($row);
-            $res=$this->post('posts', $row[id], $res);
+            $res=$this->post('posts', $row['id'], $res);
         }
         if ($rows>0) {
             $res.="</div>";
@@ -4061,12 +4062,12 @@ class Data
             $i++;
 
 
-            $name=$this->utils->scramble($row[name]);
+            $name=$this->utils->scramble($row['name']);
             echo "";
             echo "Processing $i of $rows ($name)<br>";
             $this->db->GetVal("update partners set name='$name' where id=$row[id]");
             $vals=array('name'=>$name);
-            $this->db->update_db('partners', $row[id], $vals);
+            $this->db->update_db('partners', $row['id'], $vals);
         }
     }
     function long_query()
@@ -4278,7 +4279,7 @@ class Data
         }
 
 
-        $sql_source = $data[sql_source];
+        $sql_source = $data['sql_source'];
         $table=explode('from ', $sql_source);
         $table=explode(' ', $table[1]);
         $table=$table[0];
@@ -4292,7 +4293,7 @@ class Data
         while ($row = pg_fetch_array($cur_source, null, PGSQL_ASSOC)) {
             //echo $this->html->pre_display($row,'');
             $new_id=$this->db->insert_db($table, $row);
-            //if(($table=='rates_local')&&($row[id]>80))echo $this->html->pre_display($row,"Old ID:$row[id], new ID:$new_id");
+            //if(($table=='rates_local')&&($row['id']>80))echo $this->html->pre_display($row,"Old ID:$row[id], new ID:$new_id");
         }
     }
 
@@ -4302,21 +4303,21 @@ class Data
         $api=$this->db->getrow("SELECT * from apis where user_id=$user_id limit 1");
         if ($api[id]>0) {
             if ($funcs!='') {
-                $this->db->update_db('apis', $api[id], ['functions'=>$funcs]);
+                $this->db->update_db('apis', $api['id'], ['functions'=>$funcs]);
             }
         } else {
-            //$api[key]=md5(uniqid(time()));
-            $api[key]=implode('-', str_split(substr(strtolower(md5(microtime().rand(1000, 9999))), 0, 30), 6));
+            //$api['key']=md5(uniqid(time()));
+            $api['key']=implode('-', str_split(substr(strtolower(md5(microtime().rand(1000, 9999))), 0, 30), 6));
 
             $vals=[
                 'user_id'=>$user_id,
-                'key'=>$api[key],
+                'key'=>$api['key'],
                 'functions'=>$funcs,
-                'exp_date'=>$this->dates->F_dateadd_year($GLOBALS[today], 1)
+                'exp_date'=>$this->dates->F_dateadd_year($GLOBALS['today'], 1)
             ];
-            $api[id]=$this->db->insert_db('apis', $vals);
+            $api['id']=$this->db->insert_db('apis', $vals);
         }
-        return $api[key];
+        return $api['key'];
     }
 
     function edit_row($table = '', $id = 0, $row = [])

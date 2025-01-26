@@ -207,6 +207,10 @@ class Db
      */
     private function Fetch($res, $row_no = null, $offset = null)
     {
+        if (!$res) {
+            return [];
+        }
+
         if (is_numeric($row_no)) {
             $limit = 1;
         } else {
@@ -222,14 +226,17 @@ class Db
         $this->FetchFields($res);
 
         $i = 0;
-        $this->result = array();
+        $this->result = [];
         while ($rs = @pg_fetch_array($res, $row_no, $c_output) and $limit > $i) {
-            $this->result[$i] = ($offset?$rs[$offset]:$rs);
+            $this->result[$i] = ($offset ? $rs[$offset] : $rs);
             $i++;
         }
-        @pg_free_result($this->conn);
+
+        @pg_free_result($res); // Ensure we're freeing the correct resource
+
         return $this->result;
     }
+
 
     /**
      * closes mysql connection
@@ -248,7 +255,11 @@ class Db
     {
         $connection_status = @pg_connection_status($this->conn);
         $last_error = @pg_last_error($this->conn);
-        $result_error = @pg_result_error($this->conn);
+        if ($this->query_result) {
+            $result_error = @pg_result_error($this->query_result); // ✅ Correct: Pass query result
+        } else {
+            $result_error = ''; // ✅ Handle case where there is no valid query result
+        }
         $last_notice = @pg_last_notice($this->conn);
 
         $_errors = array();
@@ -267,10 +278,10 @@ class Db
         }
 
         if (count($_errors) > 0) {
-            $GLOBALS[db_errors_count]++;
+            $GLOBALS['db_errors_count']++;
             //$this->errStr .= '<div style="border:1px solid black; margin:4px; padding:4px; background-color:#FFDEAD;"><b>Query:</b> '.$this->last_query . '<br />'.implode('<br />', $_errors)."</div>";
-            $GLOBALS[db_last_error]=implode('<br />', $_errors);
-            if ($_REQUEST[act]=='api') {
+            $GLOBALS['db_last_error']=implode('<br />', $_errors);
+            if ($_REQUEST['act']=='api') {
                 foreach ($_errors as $_error) {
                     $lines=explode("\n", $_error);
                     $api_errors[]=$lines;
@@ -281,7 +292,7 @@ class Db
             }
             $this->errStr .= $err_string;
             //$this->errStr .="<pre>".print_r($GLOBALS)."</pre>";
-            $GLOBALS[no_refresh]=1;
+            $GLOBALS['no_refresh']=1;
         }
     }
 
@@ -871,7 +882,7 @@ class Db
             mkdir($log_folder, 0777, true);
         }
         $log_filename=$log_folder.'log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
-        $log  = date("d.m.y G:i").' - '.$_SERVER['REMOTE_ADDR'].' - '.$GLOBALS[username].' - '.$data.PHP_EOL;
+        $log  = date("d.m.y G:i").' - '.$_SERVER['REMOTE_ADDR'].' - '.$GLOBALS['username'].' - '.$data.PHP_EOL;
         if(file_put_contents($log_filename, $log, FILE_APPEND)){
             return true;
         }else{

@@ -26,6 +26,7 @@ class Html
 
     function tablehead($what = '', $qry = '', $order = '', $addbutton = '', $fields = [], $sort = '', $tips = [], $class = 'table-notfull')
     {
+        $jsheaders=[];
         $last=count($fields)+1;
         foreach ($fields as $key => $field) {
             if (($this->utils->contains('date', strtolower($field)))||
@@ -47,7 +48,7 @@ class Html
         if ($what!='') {
             $nosort_first_last=",headers: { 0: { sorter: false}, $last: {sorter: false} $jsheaders }";
         }
-        if ($GLOBALS[force_table_full]>0) {
+        if ($GLOBALS['force_table_full']>0) {
             $class="";
         }
         $id=$what;
@@ -107,14 +108,14 @@ class Html
             $r++;
         }
         $out.="</tbody>";
-        if (!$GLOBALS[force_table_nofooter]) {
+        if (!$GLOBALS['force_table_nofooter']) {
             $out.="<tfoot>
              <tr>
                 <th>$totalrecs</th>";
         }
         foreach ($totals as $total) {
             if ($j<=$y) {
-                if (($j==1)&&($opt[title]!='')) {
+                if (($j==1)&&($opt['title']!='')) {
                     $out.="<th>$opt[title]</th>";
                 } elseif ($total!="") {
                     $out.="<th class='n'>".$this->money($total)."</th>";
@@ -246,8 +247,8 @@ class Html
     {
         //$title=\util::l($title);
         $result='';
-        if($GLOBALS[offline_mode]){
-            $GLOBALS[offline_messages][]=strip_tags("$type: $title");
+        if($GLOBALS['offline_mode']){
+            $GLOBALS['offline_messages'][]=strip_tags("$type: $title");
             return strip_tags("$type: $title");;
         }else{
             if ($type=='foldered') {
@@ -622,156 +623,156 @@ class Html
         $this->message('started normalize');
         //Rewrite route for back compatibility
         if (($this->readRQ('act')=='print')&&(substr($this->readRQ('what'), 0, 4)=='pdf_')) {
-            $_GET[act]='pdf';
+            $_GET['act']='pdf';
         }
         if (($this->readRQ('act')=='print')&&(substr($this->readRQ('what'), 0, 4)=='doc_')) {
-            $_GET[act]='doc';
+            $_GET['act']='doc';
         }
         if (($this->readRQ('act')=='show')&&($this->readRQ('report')!='')) {
-            $_GET[act]='report';
+            $_GET['act']='report';
         }
         if ($this->readRQ('act')=='compare') {
-            $_GET[act]='search';
-            $_GET[what]=$_GET[what].'_compare';
+            $_GET['act']='search';
+            $_GET['what']=$_GET['what'].'_compare';
         }
-        //if($this->readRQ('act')=='compare'){$_GET[act]='search';}
+        //if($this->readRQ('act')=='compare'){$_GET['act']='search';}
         if ($this->readRQ('act')=='filter') {
-            $_GET[act]='search';
+            $_GET['act']='search';
         }
         if ($this->readRQ('act')=='form') {
-            $_GET[act]='add';
+            $_GET['act']='add';
         }
         if ($this->readRQ('what')=='a_translines') {
-           // $_GET[what]='a_transactions';
-           // $_POST[what]='a_transactions';
+           // $_GET['what']='a_transactions';
+           // $_POST['what']='a_transactions';
         }
         if ($this->readRQ('what')=='journal') {
-            $_GET[what]='a_transactions';
-            $_POST[what]='a_transactions';
+            $_GET['what']='a_transactions';
+            $_POST['what']='a_transactions';
         }
 
-        // if(($_POST[act]!='')&&($_GET[act]==''))$_GET[act]=$_POST[act];
-        // if(($_POST[what]!='')&&($_GET[what]==''))$_GET[what]=$_POST[what];
+        // if(($_POST['act']!='')&&($_GET['act']==''))$_GET['act']=$_POST['act'];
+        // if(($_POST['what']!='')&&($_GET['what']==''))$_GET['what']=$_POST['what'];
 
-        // if(($_POST[act]=='')&&($_GET[act]!=''))$_POST[act]=$_GET[act];
-        // if(($_POST[what]=='')&&($_GET[what]!=''))$_POST[what]=$_GET[what];
+        // if(($_POST['act']=='')&&($_GET['act']!=''))$_POST['act']=$_GET['act'];
+        // if(($_POST['what']=='')&&($_GET['what']!=''))$_POST['what']=$_GET['what'];
 
-        $GLOBALS[act]=$this->readRQ('act');
+        $GLOBALS['act']=$this->readRQ('act');
 
-        $GLOBALS[what]=$this->readRQ('what');
-        $GLOBALS[plain]=$this->readRQn('plain');
-        $GLOBALS[no_wrap]=$this->readRQn('no_wrap');
-        if ($GLOBALS[no_wrap]>0) {
-            $_POST[hide_menu]=1;
-            $_POST[noexport]=1;
-            $_POST[nocart]=1;
-            $_POST[hide_footer]=1;
-            $_POST[hide_title]=1;
-            $_POST[notitle]=1;
-        }
-
-        if (in_array($GLOBALS[act], array('append','pdf','doc','graphdata','json','api'))) {
-            $GLOBALS[plain]=1;
-        }
-        if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='invoices:DOWNLOAD')) {
-            $GLOBALS[plain]=1;
-        }
-        if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='invoices:DOWNLOADX')) {
-            $GLOBALS[plain]=1;
-        }
-        if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='docs:DOWNLOADX')) {
-            $GLOBALS[plain]=1;
-        }
-        if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='docs:DOWNLOADZIP')) {
-            $GLOBALS[plain]=1;
-        }
-        if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='docs:DOWNLOADZIPSINGLE')) {
-            $GLOBALS[plain]=1;
-        }
-        if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='processdata')&&($this->readRQ('formaction')=='all:EXPORTZIP')) {
-            $GLOBALS[plain]=1;
-        }
-        if (($GLOBALS[act]=='save')&&($GLOBALS[what]=='shoppingcart')) {
-            $GLOBALS[plain]=1;
+        $GLOBALS['what']=$this->readRQ('what');
+        $GLOBALS['plain']=$this->readRQn('plain');
+        $GLOBALS['no_wrap']=$this->readRQn('no_wrap');
+        if ($GLOBALS['no_wrap']>0) {
+            $_POST['hide_menu']=1;
+            $_POST['noexport']=1;
+            $_POST['nocart']=1;
+            $_POST['hide_footer']=1;
+            $_POST['hide_title']=1;
+            $_POST['notitle']=1;
         }
 
-        if (($GLOBALS[act]=='details')&&($GLOBALS[what]=='uploads')) {
-            $GLOBALS[plain]=1;
+        if (in_array($GLOBALS['act'], array('append','pdf','doc','graphdata','json','api'))) {
+            $GLOBALS['plain']=1;
+        }
+        if (($GLOBALS['act']=='save')&&($GLOBALS['what']=='processdata')&&($this->readRQ('formaction')=='invoices:DOWNLOAD')) {
+            $GLOBALS['plain']=1;
+        }
+        if (($GLOBALS['act']=='save')&&($GLOBALS['what']=='processdata')&&($this->readRQ('formaction')=='invoices:DOWNLOADX')) {
+            $GLOBALS['plain']=1;
+        }
+        if (($GLOBALS['act']=='save')&&($GLOBALS['what']=='processdata')&&($this->readRQ('formaction')=='docs:DOWNLOADX')) {
+            $GLOBALS['plain']=1;
+        }
+        if (($GLOBALS['act']=='save')&&($GLOBALS['what']=='processdata')&&($this->readRQ('formaction')=='docs:DOWNLOADZIP')) {
+            $GLOBALS['plain']=1;
+        }
+        if (($GLOBALS['act']=='save')&&($GLOBALS['what']=='processdata')&&($this->readRQ('formaction')=='docs:DOWNLOADZIPSINGLE')) {
+            $GLOBALS['plain']=1;
+        }
+        if (($GLOBALS['act']=='save')&&($GLOBALS['what']=='processdata')&&($this->readRQ('formaction')=='all:EXPORTZIP')) {
+            $GLOBALS['plain']=1;
+        }
+        if (($GLOBALS['act']=='save')&&($GLOBALS['what']=='shoppingcart')) {
+            $GLOBALS['plain']=1;
+        }
+
+        if (($GLOBALS['act']=='details')&&($GLOBALS['what']=='uploads')) {
+            $GLOBALS['plain']=1;
         }
         if ($this->readRQ('nowrap')!='') {
-            $GLOBALS[plain]=1;
+            $GLOBALS['plain']=1;
         }
 
-        if ((in_array($GLOBALS[act], array('show','details','report','r','v','d')))&&($GLOBALS[plain]=='')&&(!in_array($GLOBALS[what], array('groupaccess')))) {
-            // $GLOBALS[return_to_act]=$GLOBALS[act];
-            // $GLOBALS[return_to]=$GLOBALS[what];
-            // $GLOBALS[return_to_id]=$this->readRQ('id');
+        if ((in_array($GLOBALS['act'], array('show','details','report','r','v','d')))&&($GLOBALS['plain']=='')&&(!in_array($GLOBALS['what'], array('groupaccess')))) {
+            // $GLOBALS['return_to_act']=$GLOBALS['act'];
+            // $GLOBALS['return_to']=$GLOBALS['what'];
+            // $GLOBALS['return_to_id']=$this->readRQ('id');
             $this->set_reflink();
         }
-        if ((in_array($GLOBALS[act], array('save')))&&($GLOBALS[plain]=='')&&(!in_array($GLOBALS[what], array('groupaccess'))&&($this->readRQ('back_to_url')!=''))) {
+        if ((in_array($GLOBALS['act'], array('save')))&&($GLOBALS['plain']=='')&&(!in_array($GLOBALS['what'], array('groupaccess'))&&($this->readRQ('back_to_url')!=''))) {
             $this->set_reflink($this->readRQ('back_to_url'));
         }
 
-        $GLOBALS[raw_data]=$GLOBALS[plain]>0;
-        if ($GLOBALS[what]=='') {
-            $GLOBALS[what]=$this->readRQ('table');
+        $GLOBALS['raw_data']=$GLOBALS['plain']>0;
+        if ($GLOBALS['what']=='') {
+            $GLOBALS['what']=$this->readRQ('table');
         }
 
-        $GLOBALS[request]=array_unique(array_merge($_GET, $_POST, $_REQUEST));
-        $GLOBALS[request_txt]=strip_tags(json_encode($GLOBALS[request]));
-        if (strlen($GLOBALS[request_txt])>500) {
-            $GLOBALS[request_txt]="Huge data";
+        $GLOBALS['request']=array_unique(array_merge($_GET, $_POST, $_REQUEST));
+        $GLOBALS['request_txt']=strip_tags(json_encode($GLOBALS['request']));
+        if (strlen($GLOBALS['request_txt'])>500) {
+            $GLOBALS['request_txt']="Huge data";
         }
-        //ksort($GLOBALS[request]);
+        //ksort($GLOBALS['request']);
 
-        $GLOBALS[cart] = $_SESSION['cart'];
+        $GLOBALS['cart'] = $_SESSION['cart'];
 
-        if ($GLOBALS[act]=='d') {
-            $GLOBALS[act]='details';
-            $_POST[act]=$GLOBALS[act];
-            $_GET[act]=$GLOBALS[act];
+        if ($GLOBALS['act']=='d') {
+            $GLOBALS['act']='details';
+            $_POST['act']=$GLOBALS['act'];
+            $_GET['act']=$GLOBALS['act'];
         }
-        if ($GLOBALS[act]=='v') {
-            $GLOBALS[act]='show';
-            $_POST[act]=$GLOBALS[act];
-            $_GET[act]=$GLOBALS[act];
+        if ($GLOBALS['act']=='v') {
+            $GLOBALS['act']='show';
+            $_POST['act']=$GLOBALS['act'];
+            $_GET['act']=$GLOBALS['act'];
         }
-        if ($GLOBALS[act]=='r') {
-            $GLOBALS[act]='report';
-            $_POST[act]=$GLOBALS[act];
-            $_GET[act]=$GLOBALS[act];
+        if ($GLOBALS['act']=='r') {
+            $GLOBALS['act']='report';
+            $_POST['act']=$GLOBALS['act'];
+            $_GET['act']=$GLOBALS['act'];
         }
-        if ($GLOBALS[act]=='s') {
-            $GLOBALS[act]='save';
-            $_POST[act]=$GLOBALS[act];
-            $_GET[act]=$GLOBALS[act];
+        if ($GLOBALS['act']=='s') {
+            $GLOBALS['act']='save';
+            $_POST['act']=$GLOBALS['act'];
+            $_GET['act']=$GLOBALS['act'];
         }
-        if ($GLOBALS[act]=='a') {
-            $GLOBALS[act]='api';
-            $_POST[act]=$GLOBALS[act];
-            $_GET[act]=$GLOBALS[act];
+        if ($GLOBALS['act']=='a') {
+            $GLOBALS['act']='api';
+            $_POST['act']=$GLOBALS['act'];
+            $_GET['act']=$GLOBALS['act'];
         }
 
 
-        if ($GLOBALS[what]=='d') {
-            $GLOBALS[what]='documents';
-            $_POST[what]=$GLOBALS[what];
-            $_GET[what]=$GLOBALS[what];
+        if ($GLOBALS['what']=='d') {
+            $GLOBALS['what']='documents';
+            $_POST['what']=$GLOBALS['what'];
+            $_GET['what']=$GLOBALS['what'];
         }
-        if ($GLOBALS[what]=='i') {
-            $GLOBALS[what]='invoices';
-            $_POST[what]=$GLOBALS[what];
-            $_GET[what]=$GLOBALS[what];
+        if ($GLOBALS['what']=='i') {
+            $GLOBALS['what']='invoices';
+            $_POST['what']=$GLOBALS['what'];
+            $_GET['what']=$GLOBALS['what'];
         }
-        if ($GLOBALS[what]=='p') {
-            $GLOBALS[what]='partners';
-            $_POST[what]=$GLOBALS[what];
-            $_GET[what]=$GLOBALS[what];
+        if ($GLOBALS['what']=='p') {
+            $GLOBALS['what']='partners';
+            $_POST['what']=$GLOBALS['what'];
+            $_GET['what']=$GLOBALS['what'];
         }
-        if ($GLOBALS[what]=='c') {
-            $GLOBALS[what]='consent';
-            $_POST[what]=$GLOBALS[what];
-            $_GET[what]=$GLOBALS[what];
+        if ($GLOBALS['what']=='c') {
+            $GLOBALS['what']='consent';
+            $_POST['what']=$GLOBALS['what'];
+            $_GET['what']=$GLOBALS['what'];
         }
 
         //$this->message('ended normalize');
@@ -787,7 +788,7 @@ class Html
         $msg=trim($msg);
         if($msg!=''){
             $this->utils->log("ERROR: $msg");
-            if($GLOBALS[offline_mode]){
+            if($GLOBALS['offline_mode']){
                 $this->message($msg, 'ERROR');
             }else{
                 $message=$this->message($msg, 'ERROR', 'alert-error');
@@ -801,8 +802,8 @@ class Html
     }
     function warn($msg = '')
     {
-        if($GLOBALS[offline_mode]){
-            $GLOBALS[offline_messages][]=strip_tags("WARN: $msg");
+        if($GLOBALS['offline_mode']){
+            $GLOBALS['offline_messages'][]=strip_tags("WARN: $msg");
         }else{
             echo $this->message($msg, '', 'alert-error');
         }
@@ -811,9 +812,9 @@ class Html
 
     function message($msg = '', $title = '', $class = 'alert-info')
     {
-        if($GLOBALS[offline_mode]){
+        if($GLOBALS['offline_mode']){
             if($title=='')$title=$class;
-            $GLOBALS[offline_messages][]=strip_tags("$title: $msg");
+            $GLOBALS['offline_messages'][]=strip_tags("$title: $msg");
         }else{
             if ($this->utils->contains('alert-', $class)>0) {
                 $class="alert $class";
@@ -827,8 +828,8 @@ class Html
 
     function shout($html = '')
     {
-        if($GLOBALS[offline_mode]){
-            $GLOBALS[offline_messages][]=strip_tags($html);
+        if($GLOBALS['offline_mode']){
+            $GLOBALS['offline_messages'][]=strip_tags($html);
         }else{
             echo $html;
             ob_flush();
@@ -837,7 +838,7 @@ class Html
         return true;
     }
     function dd($in=[],$exit=0){
-        if($GLOBALS[offline_mode]){
+        if($GLOBALS['offline_mode']){
             $out=json_encode(['debug'=>$in]);
         }else{
             $out=$this->pre_display($in,'Debug');
@@ -847,11 +848,11 @@ class Html
     }
     function card($data=['title'=>'Orders Received', 'icon'=>'cart-plus', 'value'=>486,'title2'=>'Completed Orders','value2'=>351, 'color'=>'blue']){
         $card='<div class="span3">
-            <div class="card bg-c-'.$data[color].' order-card">
+            <div class="card bg-c-'.$data['color'].' order-card">
                 <div class="card-block">
-                    <h4 class="">'.$data[title].'</h4>
-                    <h2 class="text-right  text-end"><i class="fa fa-'.$data[icon].' f-left"></i><span>'.$data[value].'</span></h2>
-                    <p class="">'.$data[title2].'<span class="f-right">'.$data[value2].'</span></p>
+                    <h4 class="">'.$data['title'].'</h4>
+                    <h2 class="text-right  text-end"><i class="fa fa-'.$data['icon'].' f-left"></i><span>'.$data['value'].'</span></h2>
+                    <p class="">'.$data['title2'].'<span class="f-right">'.$data['value2'].'</span></p>
                 </div>
             </div>
         </div>';
@@ -859,7 +860,7 @@ class Html
     }
     function pre_display($text = '', $title = '', $class = '', $code = 0)
     {
-        if ($_REQUEST[act]=='api') {
+        if ($_REQUEST['act']=='api') {
             if ($title=='') {
                 $title='output';
             }
@@ -897,9 +898,9 @@ class Html
     }
     function set_reflink($address = '')
     {
-        //if($address==''){$reflink='?'.$_SERVER[QUERY_STRING];}else{$reflink=$address;}//orgqry
+        //if($address==''){$reflink='?'.$_SERVER['QUERY_STRING'];}else{$reflink=$address;}//orgqry
         if ($address=='') {
-            $reflink='?'.$GLOBALS[orgqry];
+            $reflink='?'.$GLOBALS['orgqry'];
         } else {
             $reflink=$address;
         }//orgqry
@@ -1005,10 +1006,11 @@ class Html
                 }
             }
         } else {
-            $ico_file=ROOT_DIR."/public/assets/ico/".APP_NAME."/favicon.ico";
+
+            $ico_file="/public/assets/ico/".APP_NAME."/favicon.ico";
             $ico_file=(file_exists($ico_file))?APP_URI."/assets/ico/".APP_NAME."/favicon.ico":ASSETS_URI."/assets/ico/favicon.ico";
 
-            if (file_exists(ROOT_DIR.'www/assets/css/fw.css')) {
+            if (file_exists('www/assets/css/fw.css')) {
                 $fw_css=APP_URI.'/fw.css';
             } else {
                 $fw_css=ASSETS_URI.'/assets/css/fw.css';
@@ -1050,7 +1052,7 @@ class Html
                 }
             }
         } else {
-            if($GLOBALS[gid]>1){
+            if($GLOBALS['gid']>1){
             $toastr_options="
                         'closeButton': true,
                         'debug': false,
@@ -1072,24 +1074,24 @@ class Html
             // Enable pusher logging - don't include this in production
                 // Pusher.logToConsole = true;
 
-                var pusher = new Pusher('".getenv(PUSHER_KEY)."', {
+                var pusher = new Pusher('".getenv('PUSHER_KEY')."', {
                     cluster: 'eu'
                 });
 
-                var channel = pusher.subscribe('".$GLOBALS[domain]."-channel-all');
-                channel.bind('".$GLOBALS[domain]."-event', function(data) {
+                var channel = pusher.subscribe('".$GLOBALS['domain']."-channel-all');
+                channel.bind('".$GLOBALS['domain']."-event', function(data) {
                     // alert(JSON.stringify(data));
                     toastr.info(data['message'],data['title'],{ $toastr_options });
                 });
 
-                var channel = pusher.subscribe('".$GLOBALS[domain]."-channel-gid-".$GLOBALS[gid]."');
-                channel.bind('".$GLOBALS[domain]."-event', function(data) {
+                var channel = pusher.subscribe('".$GLOBALS['domain']."-channel-gid-".$GLOBALS['gid']."');
+                channel.bind('".$GLOBALS['domain']."-event', function(data) {
                    // alert(JSON.stringify(data));
                     toastr.info(data['message'],data['title'],{ $toastr_options });
                 });
 
-                var channel = pusher.subscribe('".$GLOBALS[domain]."-channel-uid-".$GLOBALS[uid]."');
-                channel.bind('".$GLOBALS[domain]."-event', function(data) {
+                var channel = pusher.subscribe('".$GLOBALS['domain']."-channel-uid-".$GLOBALS['uid']."');
+                channel.bind('".$GLOBALS['domain']."-event', function(data) {
                    // alert(JSON.stringify(data));
                     toastr.info(data['message'],data['title'],{ $toastr_options });
                 });
@@ -1160,7 +1162,7 @@ class Html
             echo $content['scripts'];
             echo "\n\t</body>\n</html>";
         } else {
-            if (!$GLOBALS[settings][hide_footer_info]) {
+            if (!$GLOBALS['settings']['hide_footer_info']) {
                 $git_file = APP_DIR.DS.'.git';
                 if (file_exists($git_file)) {
                     $tz = 'Europe/Nicosia';
@@ -1168,7 +1170,7 @@ class Html
                     $modified= " - ". date("Y.m.d H:i:s", filemtime($git_file));
                 }
                 $hostname = gethostname();
-                $content['footer']="<a href='#top'>⟰</a> | Ver.: <font color='#aa0000'><b>$GLOBALS[app_version]</b></font> $modified | prj:$GLOBALS[project] | app:".APP_NAME." | db:".$GLOBALS['DB']['DB_NAME']." | dm:".$GLOBALS['DB']['DB_DOMAIN']." | cid:".CLIENT_ID." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | PID:$GLOBALS[project] | IP:".$GLOBALS[_SERVER][SERVER_ADDR]." | UGID: $GLOBALS[uid]@$GLOBALS[gid] | H:$hostname | $GLOBALS[status] | <b>$GLOBALS[copyright]</b>";
+                $content['footer']="<a href='#top'>⟰</a> | Ver.: <b>$GLOBALS[app_version]</b> $modified | PHP : <font color='#aa0000'><b>".phpversion()."</b></font> | prj:$GLOBALS[project] | app:".APP_NAME." | db:".$GLOBALS['DB']['DB_NAME']." | dm:".$GLOBALS['DB']['DB_DOMAIN']." | cid:".CLIENT_ID." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | PID:$GLOBALS[project] | IP:".$GLOBALS['_SERVER']['SERVER_ADDR']." | UGID: $GLOBALS[uid]@$GLOBALS[gid] | H:$hostname | $GLOBALS[status] | <b>$GLOBALS[copyright]</b>";
             }
             //$content['footer'].= $this->pre_display($GLOBALS,"result");
             //unset($content['footer']);
@@ -1176,7 +1178,7 @@ class Html
                 $content['info']['debug']=$this->collapse($this->rq_display(), 'Debug info', false);
             }
 
-            if ($GLOBALS[fileupload]==1) {
+            if ($GLOBALS['fileupload']==1) {
                 $content['scripts']='
                     <!-- The Templates plugin is included to render the upload/download listings -->
                     <script src="'.ASSETS_URI.'/assets/js/ffupload/js/tmpl.min.js"></script>
@@ -1267,9 +1269,9 @@ class Html
     public function putLogin($content = array())
     {
         $hostname = gethostname();
-        $info="ip:".$GLOBALS[ip]." | db:".$GLOBALS['DB']['DB_NAME']." | dm:".$GLOBALS['DB']['DB_DOMAIN']." | app:".APP_NAME. " | H:$hostname";
+        $info="ip:".$GLOBALS['ip']." | db:".$GLOBALS['DB']['DB_NAME']." | dm:".$GLOBALS['DB']['DB_DOMAIN']." | app:".APP_NAME. " | H:$hostname";
 
-        if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&((getenv('MFA_AUTH')||($GLOBALS[settings][use_mfa])))) {
+        if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR'])))&&((getenv('MFA_AUTH')||($GLOBALS['settings']['use_mfa'])))) {
         //if(1==1){
             $content['html'].='<label> </label>
             <div class="input-prepend">
@@ -1394,7 +1396,7 @@ class Html
     }
     function form_submit($text = 'Submit', $value = 'save', $what = '')
     {
-        $GLOBALS[tabindex]++;
+        $GLOBALS['tabindex']++;
         $btn_id="btn_save_$what";
         $text=\util::l($text);
         $res="<button type='submit' class='btn btn-primary' name='act' value='$value'  tabindex='$GLOBALS[tabindex]'>$text</button>";
@@ -1402,8 +1404,8 @@ class Html
 
         $res="<div class='form-actions'>
         <button type='submit' class='btn btn-primary' id='$btn_id' tabindex='$GLOBALS[tabindex]'>$text</button>";
-        $GLOBALS[tabindex]++;
-        if ($GLOBALS[cancel_button]) {
+        $GLOBALS['tabindex']++;
+        if ($GLOBALS['cancel_button']) {
             $res.=" <button type='reset' class='btn' onClick='$GLOBALS[cancel_button]'  tabindex='$GLOBALS[tabindex]'>".\util::l('Cancel')."</button>
     </div>";
         } else {
@@ -1495,7 +1497,7 @@ class Html
     }
     public function form_confirmations()
     {
-        $GLOBALS[tabindex]++;
+        $GLOBALS['tabindex']++;
         $noduplicate=$this->readRQn('noduplicate');
         $id=$this->readRQn('id');
         if ($this->readRQn('backtoedit')>0) {
@@ -1507,13 +1509,13 @@ class Html
         if ($this->readRQn('backtodetails')>0) {
             $backtodetails_sel='checked';
         }
-        if ($GLOBALS[backtodetails]>0) {
+        if ($GLOBALS['backtodetails']>0) {
             $backtodetails_sel='checked';
         }
         $backtoedit_btn="<label><input type='checkbox' name='backtoedit' value='1' $backtoedit_sel tabindex='$GLOBALS[tabindex]'/> ".\util::l('Edit this record after save')."</label>";
-        $GLOBALS[tabindex]++;
+        $GLOBALS['tabindex']++;
         $backtodetails_btn="<label><input type='checkbox' name='backtodetails' value='1' $backtodetails_sel tabindex='$GLOBALS[tabindex]'/> ".\util::l('Show details of the record after save')."</label>";
-        $GLOBALS[tabindex]++;
+        $GLOBALS['tabindex']++;
         if (($id>0)&&($noduplicate==0)) {
             if ($this->readRQ('duplicate')>0) {
                 $duplicate_sel='checked';
@@ -1530,7 +1532,7 @@ class Html
         if($this->utils->contains('disabled', $class))$disabled='disabled';
         if($this->utils->contains('readonly', $class))$disabled='readonly';
 
-        $GLOBALS[tabindex]++;
+        $GLOBALS['tabindex']++;
         if ($label=='') {
             //$label=$name;
             $label=$name;
@@ -1563,7 +1565,7 @@ class Html
     function form_password($name = '', $value = '', $label = '', $placeholder = '', $minlength = 0, $properties, $class = '')
     {
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
-        $GLOBALS[tabindex]++;
+        $GLOBALS['tabindex']++;
         if ($label=='') {
             $label=$name;
         }
@@ -1592,7 +1594,7 @@ class Html
     function form_date($name = '', $value = '', $label = '', $placeholder = '', $minlength = 0, $class = '')
     {
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
-        $GLOBALS[tabindex]++;
+        $GLOBALS['tabindex']++;
         if ($placeholder=='') {
             $placeholder='DD.MM.YYYY';
         }
@@ -1617,7 +1619,7 @@ class Html
     function form_textarea($name = '', $value = '', $label = '', $placeholder = '', $minlength = 0, $properties = '', $class = '')
     {
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
-        $GLOBALS[tabindex]++;
+        $GLOBALS['tabindex']++;
         if ($label=='') {
             $label=$name;
         }
@@ -1643,7 +1645,7 @@ class Html
     function form_chekbox($name = '', $value = '', $label = '', $simple = 0, $hangout=0)
     {
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
-        $GLOBALS[tabindex]++;
+        $GLOBALS['tabindex']++;
         if ($label=='') {
             $label=$name;
         }
@@ -1669,8 +1671,8 @@ class Html
     function form_chekboxFC($name = '', $value = '', $label = '', $negative = 0, $class = '')
     {
         $disabled=($this->utils->contains('disabled', $class))?"disabled":"";
-        $GLOBALS[tabindex]++;
-        $id=$GLOBALS[tabindex];
+        $GLOBALS['tabindex']++;
+        $id=$GLOBALS['tabindex'];
         if ($label=='') {
             $label=$name;
         }
@@ -1901,8 +1903,8 @@ class Html
         $txt = "<div class='scroll_checkboxes well'>\n";
         $txt .= "<input type='hidden' name='boxlistname' value='$lname' class='checkbox'>\n";
         while ($line = pg_fetch_array($cur)) {
-            $id =   $line[0];
-            $name=$line[1];
+            $id =   $line['0'];
+            $name=$line['1'];
             $sel = '';
             if (($id == $sell)&&($sell<>'')) {
                 $sel = 'SELECTED';
@@ -1921,9 +1923,9 @@ class Html
         $out.="<div class='btn-group' data-toggle='buttons'>";
         if (!($cur = pg_query($sql))) {echo "<div class='error'>".pg_last_error()."<br><b>".$sql."</b></div>" ;}
         while ($line = pg_fetch_array($cur)) {
-            $id =   $line[0];
-            $name=$line[1];
-            $style=$line[2];
+            $id =   $line['0'];
+            $name=$line['1'];
+            $style=$line['2'];
             
         //foreach($vals as $value){
             $color="";
@@ -1940,7 +1942,7 @@ class Html
 
     function htlist($lname = '', $sql = '', $sell = '', $all = '', $opts = '', $def = '', $class = '')
     {
-        $GLOBALS[tabindex]++;
+        $GLOBALS['tabindex']++;
         $sel='';
         if (!($cur = pg_query($sql))) {
             echo "<div class='error'>".pg_last_error()."<br><b>".$sql."</b></div>" ;
@@ -1953,9 +1955,9 @@ class Html
             // $txt = "$txt<OPTION SELECTED VALUE='$sell'>$all</OPTION>\n";
         }
         while ($line = pg_fetch_array($cur)) {
-            $id =   $line[0];
-            $name=$line[1];
-            $style=$line[2];
+            $id =   $line['0'];
+            $name=$line['1'];
+            $style=$line['2'];
             $sel = '';
             if (($id == $sell)&&($sell<>'')) {
                 $sel = 'SELECTED';
@@ -2101,37 +2103,37 @@ class Html
     }
     public function putErorMessage()
     {
-        if ($GLOBALS[error_message]!='') {
+        if ($GLOBALS['error_message']!='') {
             echo "<div class='error red alert alert-error'>ERROR:<br>$GLOBALS[error_message]</div>";
         }
-        if ($_POST[error_message]!='') {
+        if ($_POST['error_message']!='') {
             echo "<div class='error red alert alert-error'>ERROR:<br>$_POST[error_message]</div>";
         }
-        if ($_GET[error_message]!='') {
+        if ($_GET['error_message']!='') {
             echo "<div class='error red alert alert-error'>ERROR:<br>$_GET[error_message]</div>";
         }
     }
     public function putInfoMessage()
     {
-        if ($GLOBALS[info_message]!='') {
+        if ($GLOBALS['info_message']!='') {
             echo "<div class='well'>$GLOBALS[info_message]</div>";
         }
-        if ($_POST[info_message]!='') {
+        if ($_POST['info_message']!='') {
             echo "<div class='well'>$_POST[info_message]</div>";
         }
-        if ($_GET[info_message]!='') {
+        if ($_GET['info_message']!='') {
             echo "<div class='well'>$_GET[info_message]</div>";
         }
     }
     public function putDebugMessage()
     {
-        if ($GLOBALS[debug_message]!='') {
+        if ($GLOBALS['debug_message']!='') {
             echo "<div class='well'>$GLOBALS[debug_message]</div>";
         }
-        if ($_POST[debug_message]!='') {
+        if ($_POST['debug_message']!='') {
             echo "<div class='well'>$_POST[debug_message]</div>";
         }
-        if ($_GET[debug_message]!='') {
+        if ($_GET['debug_message']!='') {
             echo "<div class='well'>$_GET[debug_message]</div>";
         }
     }
@@ -2139,12 +2141,12 @@ class Html
     public function modal($data = [])
     {
         $modal_id='modal_'.uniqid();
-        if ($data[action]!='') {
+        if ($data['action']!='') {
             $form_start="<form method='POST' action='$data[action]' class='' id='$modal_id' name='save-$modal_id'>\n";
             $form_end="</form>";
             $ok_btn="<button type='submit' class='btn btn-primary'>Submit</button>";
         }
-        foreach ($data[fields] as $field) {
+        foreach ($data['fields'] as $field) {
             $ins="";
             if ($field=='date') {
                 $ins=$this->form_date('date', '', 'Date', '', 0, 'span12');
@@ -2173,10 +2175,10 @@ class Html
             if ($ins=='') {
                 $ins=$this->form_text($field, "", ucfirst($field), '', 0, 'span12');
             }
-            $data[html].=$ins;
+            $data['html'].=$ins;
         }
-        foreach ($data[hidden] as $field_name => $field_value) {
-            $data[html].=$this->form_hidden($field_name, $field_value);
+        foreach ($data['hidden'] as $field_name => $field_value) {
+            $data['html'].=$this->form_hidden($field_name, $field_value);
         }
         if ($data['class']=='') {
             $data['class']='btn-micro';
@@ -2206,25 +2208,25 @@ class Html
       </div>
       $form_end
     </div>";
-        return [btn=>$btn,modal=>$modal];
+        return ['btn'=>$btn,'modal'=>$modal];
     }
     public function putTopBar($menu = '', $userinfo = '', $other = '')
     {
             global $gid, $access;
-            $access[report_searchresults]=1;
-        if (($access[report_searchresults])&&($menu!='')&&($GLOBALS['settings']['no_search']=='')) {
+            $access['report_searchresults']=1;
+        if (($access['report_searchresults'])&&($menu!='')&&($GLOBALS['settings']['no_search']=='')) {
             $search="<form class='navbar-search' action='?act=report&what=searchresults' method='post'>
                 <input type='text' autocomplete='off' class='search-query' placeholder='Search' name='text'>
                 </form>";
         }
-        if ($access[main_print]) {
+        if ($access['main_print']) {
             $print.="<a href='?$GLOBALS[query]&print=1' class='icon-print icon-white' style='margin-top:10px;' target=''></a>";
         }
-        if (($GLOBALS[topbar][login]>0)&&($gid>0)&&($GLOBALS['settings']['app_loogo']=='')) {
+        if (($GLOBALS['topbar']['login']>0)&&($gid>0)&&($GLOBALS['settings']['app_loogo']=='')) {
             $print.="<a href='?' class='icon-home icon-white' style='margin-top:10px;' target=''></a>";
         }
 
-        if (($GLOBALS[topbar][login]>0)&&($gid<1)) {
+        if (($GLOBALS['topbar']['login']>0)&&($gid<1)) {
             $userinfo.="<span><a href='?act=welcome' style='margin-top:0px;' target=''><li class='icon-user icon-white'></li><span style='color:#fff;'> Login</span></a></span>";
         }
 
@@ -2392,8 +2394,8 @@ class Html
     function refreshpage($where = '', $time = 0, $message = '')
     {
         global $refreshtime,$reflink;
-        if(($_GET[act]=='api')||($_POST[act]=='api')) return json_encode(['refresh'=>strip_tags($message)]);
-        if ($GLOBALS[no_refresh]!=1) {
+        if(($_GET['act']=='api')||($_POST['act']=='api')) return json_encode(['refresh'=>strip_tags($message)]);
+        if ($GLOBALS['no_refresh']!=1) {
             if ($time>0) {
                 $refreshtime=$time;
             }
@@ -2539,7 +2541,7 @@ class Html
         $tbl.=$this->tablehead('', '', '', '', ['#','date','uid','username','ip','category'], 'autosort');
 
         foreach ($array as $key => $value) {
-            $d=$this->array_nested_display($value[change], "now_chnges");
+            $d=$this->array_nested_display($value['change'], "now_chnges");
 
             $d=str_ireplace("'", "\'", $d);
             $d=str_ireplace("\n", "", $d);
@@ -2601,7 +2603,7 @@ class Html
         $tbl.="<table class='table table-morecondensed table-notfull'>";
         foreach ($array as $key => $val) {
             $tokens=explode('_', $key);
-            $wiki_page=strtolower($tokens[0]);
+            $wiki_page=strtolower($tokens['0']);
             $name="<a href='?act=report&what=doku&dokupage=$wiki_prefix$wiki_page' target='_blank'>$key</a>";
             $tbl.="<tr><td>$name </td><td> $val</td></tr>";
 
@@ -2688,7 +2690,7 @@ class Html
         $out.= "</table>";
         $out.=$this->form_submit('Save');
         $out.=$this->form_end();
-        $result[out]=$out;
+        $result['out']=$out;
         return $result;
     }
     function array_nested_form($array = [], $table = '', $field = '', $id = 0, $parent = '', $js = '')
@@ -2706,8 +2708,8 @@ class Html
             $domain_js=str_ireplace('->', '-', $domain);
             if (is_array($value)) {
                 $res=$this->array_nested_form($value, $table, $field, $id, $domain, $js1);
-                $out.=$res[out];
-                $js1.=$res[js];
+                $out.=$res['out'];
+                $js1.=$res['js'];
             } else {
                 if ($inline_edit>0) {
                     $submitdata=array(
@@ -2728,8 +2730,8 @@ class Html
             $out.= "</td></tr>";
         }
         $out.= "</table>";
-            $result[out]=$out;
-            $result[js]=$js1;
+            $result['out']=$out;
+            $result['js']=$js1;
 
         //$out="<table class='table table-bordered table-morecondensed table-notfull' ><tr><td class='n'>Test</td></tr></table>";
         return $result;
@@ -2817,23 +2819,23 @@ class Html
 
     function post($post = [])
     {
-        $name=$this->tag($post[name], 'b', '');
+        $name=$this->tag($post['name'], 'b', '');
         //$name=$this->tag($name,'div','span3');
         $user=$this->tag("by $post[user]", 'span', 'd');
-        $date=$this->tag($post[date], 'span', '');
+        $date=$this->tag($post['date'], 'span', '');
 
         $rows=array($name,$user,$date);
         $title=$this->row($rows, 'middle');
 
         //$post_body.=$this->tag($title,'span','');
-        $post_body.=$this->tag($post[text], 'pre', 'span12 message');
+        $post_body.=$this->tag($post['text'], 'pre', 'span12 message');
         $out.=$this->tag($post_body, 'div', 'container');
-        //$post[user_id]=1;
+        //$post['user_id']=1;
         $button=$this->link_button('Reply', "?act=add&what=posts&ref_table=posts&ref_id=$post[id]", 'info');
-        if ($post[user_id]==$GLOBALS[uid]) {
+        if ($post['user_id']==$GLOBALS['uid']) {
             $dell=$this->link_button('Delete', "?csrf=$GLOBALS[csrf]&act=delete&what=posts&id=$post[id]", 'danger', 'Are you sure?');
         }
-        if ($post[user_id]==$GLOBALS[uid]) {
+        if ($post['user_id']==$GLOBALS['uid']) {
             $edit=$this->link_button('Edit', "?act=edit&what=posts&id=$post[id]", 'defalult');
         }
         $out="<div class='reply'>
@@ -2972,7 +2974,7 @@ class Html
         $mail_text.="<hr>";
         $mail_text.="<b>Time:</b>".date('Y-m-d H:i:s',time()).'<hr>';
         $mail_text.="<b>APP:</b>".$GLOBALS['app_name'].'<hr>';
-        $mail_text.="<b>IP:</b>".$GLOBALS['ip'].' -> '.$_SERVER[SERVER_ADDR].'<hr>';
+        $mail_text.="<b>IP:</b>".$GLOBALS['ip'].' -> '.$_SERVER['SERVER_ADDR'].'<hr>';
         $mail_text.="<b>User:</b>".$GLOBALS['username'].'<hr>';
 
         $mail_text.=$this->pre_display($_GET, 'GET').'<hr>';
@@ -2985,9 +2987,9 @@ class Html
     public function sendmail_html($to, $from, $subject, $message)
     {
         if ($from=='') {
-            // $from_user=$this->data->get_row('users',$GLOBALS[uid]);
-            // $from_username="$from_user[firstname] $from_user[surname]";
-            // $from=$from_user[email];
+            // $from_user=$this->data->get_row('users',$GLOBALS['uid']);
+            // $from_username="$from_user['firstname'] $from_user['surname']";
+            // $from=$from_user['email'];
             // $from_username="IS";
             // $from="info@example.com";
         }
@@ -2995,8 +2997,8 @@ class Html
         $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
         $headers  .= "From: $from\r\n";
             //options to send to cc+bcc
-            //$headers .= "Cc: [email]maa@p-i-s.cXom[/email]\r\n";
-            //$headers .= "Bcc: [email]email@maaking.cXom[/email]\r\n";
+            //$headers .= "Cc: ['email']maa@p-i-s.cXom[/email]\r\n";
+            //$headers .= "Bcc: ['email']email@maaking.cXom[/email]\r\n";
         $color="#DCEEFC";
         if ($this->utils->contains('sql', strtolower($subject))) {
             $color="#FF8585";
@@ -3418,10 +3420,10 @@ class Html
             }
             $sqry=$_SERVER["QUERY_STRING"].$formdata;
             $sqry=explode("&page=", $sqry);
-            $sqry=$sqry[0];
+            $sqry=$sqry['0'];
             $qry=explode("&page=", $qry);
-            $qry=$qry[0];
-        //$navpage[5]="[".$navpage[5]."]";
+            $qry=$qry['0'];
+        //$navpage['5']="[".$navpage['5']."]";
             $nav.="<div class='pagination pagination-condensed'>
         <ul>
           <li><a href='?$qry&page=0' TITLE='First Page' class='t'>First</a></li>
@@ -3462,11 +3464,11 @@ class Html
             }
             $sqry=$_SERVER["QUERY_STRING"].$formdata;
             $sqry=explode("&page=", $sqry);
-            $sqry=$sqry[0];
+            $sqry=$sqry['0'];
             $qry=explode("&page=", $qry);
-            $qry=$qry[0];
+            $qry=$qry['0'];
             $allqry=$this->utils->replaceValue($qry, 'bbf', 0);
-        //$navpage[5]="[".$navpage[5]."]";
+        //$navpage['5']="[".$navpage['5']."]";
         //$nav="<span onclick='ajaxFunction(\"Client Requests.act_\",\"?act=show&what=partners&page=0&plain=1\");' onmouseover=\"this.style.cursor='pointer';\" TITLE='First Page' class='t'>Test</span>";
             $nav.="<div class='pagination pagination-condensed'>
             <ul>
@@ -3510,7 +3512,7 @@ class Html
             $edit= "<a href='".$this->link(array('act'=>'edit','what'=>$what,'id'=>$id))."'><i class='icon-pencil icon-white withpointer edit-icon'></i></a>";
         }
         if (($access['edit_'.$what])&&($d)) {
-            $delete= "<i class='icon-trash icon-white withpointer edit-icon' onclick=\"confirmation('".$this->link(array('csrf'=>$GLOBALS[csrf],'act'=>'delete','what'=>$what,'id'=>$id))."','$warn')\"></i>";
+            $delete= "<i class='icon-trash icon-white withpointer edit-icon' onclick=\"confirmation('".$this->link(array('csrf'=>$GLOBALS['csrf'],'act'=>'delete','what'=>$what,'id'=>$id))."','$warn')\"></i>";
         }
         $responce= "<td></td>\n";
 
@@ -3530,7 +3532,7 @@ class Html
         $i=($this->utils->contains('i', $act));
 
         //echo "$e";
-        //<td id='$what:$row[id]' class='cart-selectable' reference='$what'>$row[id]</td>
+        //<td id='$what:$row['id']' class='cart-selectable' reference='$what'>$row['id']</td>
         if (($access['view_'.$what])&&($s)) {
             $select= "<span id='$what:$id' class='cart-selectable' reference='$what'><i class='icon-ok-circle icon-white withpointer edit-icon'></i></span>";
         }
@@ -3547,7 +3549,7 @@ class Html
             $insert= "<a href='".$this->link(['act'=>'add','what'=>$what]+$query_i)."'><i class='icon-plus icon-white withpointer edit-icon'></i></a>";
         }
         if (($access['edit_'.$what])&&($d)) {
-            $delete= "<i class='icon-trash icon-white withpointer edit-icon' onclick=\"confirmation('".$this->link(['csrf'=>$GLOBALS[csrf],'act'=>'delete','what'=>$what,'id'=>$id])."','$warn')\"></i>";
+            $delete= "<i class='icon-trash icon-white withpointer edit-icon' onclick=\"confirmation('".$this->link(['csrf'=>$GLOBALS['csrf'],'act'=>'delete','what'=>$what,'id'=>$id])."','$warn')\"></i>";
         }
         $responce= "<td></td>\n";
 
@@ -3563,16 +3565,16 @@ class Html
     function HT_editicons2($table = '', $id = 0, $print = '')
     {
 
-        if (($GLOBALS[edit_icons]=='normal')||($GLOBALS[edit_icons]=='')) {
+        if (($GLOBALS['edit_icons']=='normal')||($GLOBALS['edit_icons']=='')) {
             return $this->HT_editiconsShow($table, $id, $print);
         }
-        if ($GLOBALS[edit_icons]=='hidden') {
+        if ($GLOBALS['edit_icons']=='hidden') {
             return $this->HT_editiconsHide($table, $id, $print);
         }
-        if ($GLOBALS[edit_icons]=='normal2') {
+        if ($GLOBALS['edit_icons']=='normal2') {
             return $this->HT_editiconsShowE($table, $id, $print);
         }
-        if ($GLOBALS[edit_icons]=='hidden2') {
+        if ($GLOBALS['edit_icons']=='hidden2') {
             return $this->HT_editiconsHideE($table, $id, $print);
         }
     }
@@ -3598,7 +3600,7 @@ class Html
             $responce.= "<a href='".$this->link(array('act'=>'edit','what'=>$table,'id'=>$id))."'><i class='icon-pencil withpointer' onMouseOver=\"this.className='icon-pencil icon-white withpointer black'\" onMouseOut=\"this.className='icon-pencil withpointer'\"></i></a>";
         }
         if ($access['edit_'.$table]) {
-            $responce.= "<i class='icon-trash withpointer' onclick=\"confirmation('".$this->link(array('csrf'=>$GLOBALS[csrf],'act'=>'delete','what'=>$table,'id'=>$id))."','$text')\" onMouseOver=\"this.className='icon-trash icon-white withpointer black'\" onMouseOut=\"this.className='icon-trash withpointer'\"></i>";
+            $responce.= "<i class='icon-trash withpointer' onclick=\"confirmation('".$this->link(array('csrf'=>$GLOBALS['csrf'],'act'=>'delete','what'=>$table,'id'=>$id))."','$text')\" onMouseOver=\"this.className='icon-trash icon-white withpointer black'\" onMouseOut=\"this.className='icon-trash withpointer'\"></i>";
         }
             $responce.= "</div>
             </div></td>\n";
@@ -3626,7 +3628,7 @@ class Html
             $responce.= "<a href='".$this->link(array('act'=>'edit','what'=>$table,'id'=>$id))."'><i class='icon-pencil withpointer'></i></a>";
         }
         if ($access['edit_'.$table]) {
-            $responce.= "<i class='icon-trash withpointer' onclick=\"confirmation('".$this->link(array('csrf'=>$GLOBALS[csrf],'act'=>'delete','what'=>$table,'id'=>$id))."','$text')\"></i>";
+            $responce.= "<i class='icon-trash withpointer' onclick=\"confirmation('".$this->link(array('csrf'=>$GLOBALS['csrf'],'act'=>'delete','what'=>$table,'id'=>$id))."','$text')\"></i>";
         }
             $responce.= "</div>
             </div></td>\n";
@@ -3652,7 +3654,7 @@ class Html
             $responce.= "<a href='".$this->link(array('act'=>'edit','what'=>$table,'id'=>$id))."'><i class='icon-pencil withpointer' onMouseOver=\"this.className='icon-pencil icon-white withpointer black'\" onMouseOut=\"this.className='icon-pencil withpointer'\"></i></a>";
         }
         if ($access['edit_'.$table]) {
-            $responce.= "<i class='icon-trash withpointer' onclick=\"confirmation('".$this->link(array('csrf'=>$GLOBALS[csrf],'act'=>'delete','what'=>$table,'id'=>$id))."','$text')\" onMouseOver=\"this.className='icon-trash icon-white withpointer black'\" onMouseOut=\"this.className='icon-trash withpointer'\"></i>";
+            $responce.= "<i class='icon-trash withpointer' onclick=\"confirmation('".$this->link(array('csrf'=>$GLOBALS['csrf'],'act'=>'delete','what'=>$table,'id'=>$id))."','$text')\" onMouseOver=\"this.className='icon-trash icon-white withpointer black'\" onMouseOut=\"this.className='icon-trash withpointer'\"></i>";
         }
             $responce.= "</td>\n";
             return $responce;
@@ -3678,7 +3680,7 @@ class Html
             $edit= "<a href='".$this->link(array('act'=>'edit','what'=>$table,'id'=>$id))."'><i class='icon-pencil withpointer'></i></a>";
         }
         if (($access['edit_'.$table])&&(!$nodelete)) {
-            $delete= "<i class='icon-trash withpointer' onclick=\"confirmation('".$this->link(array('csrf'=>$GLOBALS[csrf],'act'=>'delete','what'=>$table,'id'=>$id))."','$text')\"></i>";
+            $delete= "<i class='icon-trash withpointer' onclick=\"confirmation('".$this->link(array('csrf'=>$GLOBALS['csrf'],'act'=>'delete','what'=>$table,'id'=>$id))."','$text')\"></i>";
         }
         $responce= "<td>$view $edit $delete</td>\n";
         return $responce;
@@ -3749,16 +3751,16 @@ class Html
             }
             $out.= "<tr class='$class bold'>";
             $out.= "<td>$i</td>";
-            //$out.= $this->edit_rec($what,$row[id],'ved',$i);
-            //$out.= "<td id='$what:$row[id]' class='cart-selectable' reference='$what'>$row[id]</td>";
-            //$out.= "<td onMouseover=\"showhint('$row[descr]', this, event, '400px');\">$row[name]</td>";
+            //$out.= $this->edit_rec($what,$row['id'],'ved',$i);
+            //$out.= "<td id='$what:$row['id']' class='cart-selectable' reference='$what'>$row['id']</td>";
+            //$out.= "<td onMouseover=\"showhint('$row['descr']', this, event, '400px');\">$row['name']</td>";
             $out.= "<td><i class='icon-folder-open'></i></td>";
             $out.= "<td>$f</td>";
 
             $out.= "<td>$filesize</td>";
             $link= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('$row[name]', this, event, '200px');\"><i class='icon-eye-open'></i></a>";
             $out.= "<td> </td>";
-            //$out.=$this->HT_editicons($what, $row[id]);
+            //$out.=$this->HT_editicons($what, $row['id']);
             $out.= "</tr>";
         }
         foreach ($files as $f) {
@@ -3783,9 +3785,9 @@ class Html
             $out.= "<tr class='$class'>";
             $out.= "<td>$i</td>";
             $out.= "<td><i class='icon-file'></i></td>";
-            //$out.= $this->edit_rec($what,$row[id],'ved',$i);
-            //$out.= "<td id='$what:$row[id]' class='cart-selectable' reference='$what'>$row[id]</td>";
-            //$out.= "<td onMouseover=\"showhint('$row[descr]', this, event, '400px');\">$row[name]</td>";
+            //$out.= $this->edit_rec($what,$row['id'],'ved',$i);
+            //$out.= "<td id='$what:$row['id']' class='cart-selectable' reference='$what'>$row['id']</td>";
+            //$out.= "<td onMouseover=\"showhint('$row['descr']', this, event, '400px');\">$row['name']</td>";
             $out.= "<td>$f</td>";
             $out.= "<td class='n'>$filesize</td>";
             $edit= "";
@@ -3801,7 +3803,7 @@ class Html
             $send= "<a href='?act=details&what=file_content&where=$where&plain=1&filename=$f' onMouseover=\"showhint('Send', this, event, '50');\"><i class='icon-envelope'></i></a>";
             $send=$this->confirm_with_comment("<i class='icon-envelope'></i>", "?act=details&what=file_content&where=$where&plain=1&filename=$f", 'nano', 'Enter email address');
             $out.= "<td>$view $send $download $edit</td>";
-            //$out.=$this->HT_editicons($what, $row[id]);
+            //$out.=$this->HT_editicons($what, $row['id']);
             $out.= "</tr>";
         }
         $out.=$this->tablefoot($i, $totals, $totalrecs);
