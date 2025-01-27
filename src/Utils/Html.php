@@ -1170,7 +1170,7 @@ class Html
                     $modified= " - ". date("Y.m.d H:i:s", filemtime($git_file));
                 }
                 $hostname = gethostname();
-                $content['footer']="<a href='#top'>⟰</a> | Ver.: <b>$GLOBALS[app_version]</b> $modified | PHP : <font color='#aa0000'><b>".phpversion()."</b></font> | prj:$GLOBALS[project] | app:".APP_NAME." | db:".$GLOBALS['DB']['DB_NAME']." | dm:".$GLOBALS['DB']['DB_DOMAIN']." | cid:".CLIENT_ID." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | PID:$GLOBALS[project] | IP:".$GLOBALS['_SERVER']['SERVER_ADDR']." | UGID: $GLOBALS[uid]@$GLOBALS[gid] | H:$hostname | $GLOBALS[status] | <b>$GLOBALS[copyright]</b>";
+                $content['footer']="<a href='#top'>⟰</a> | Ver.: <b>$GLOBALS[app_version]</b> $modified | PHP : <b>".phpversion()."</b> | prj:$GLOBALS[project] | app:".APP_NAME." | db:".$GLOBALS['DB']['DB_NAME']." | dm:".$GLOBALS['DB']['DB_DOMAIN']." | cid:".CLIENT_ID." | Runtime: $runtime | Mem:".(memory_get_peak_usage(1)/(1024*1024))." Mb | PID:$GLOBALS[project] | IP:".$GLOBALS['_SERVER']['SERVER_ADDR']." | UGID: $GLOBALS[uid]@$GLOBALS[gid] | H:$hostname | $GLOBALS[status] | <b>$GLOBALS[copyright]</b>";
             }
             //$content['footer'].= $this->pre_display($GLOBALS,"result");
             //unset($content['footer']);
