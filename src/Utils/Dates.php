@@ -947,7 +947,7 @@ class Dates
     }
     public function F_dateadd_year($date = '', $val = 1, $ignore_weekends = 0)
     {
-        $date=(mktime(0, 0, 0, substr($date, 3, 2), (substr($date, 0, 2)), substr($date, 6, 4)));
+        $date=(mktime(0, 0, 0, (int) substr($date, 3, 2), (int) (substr($date, 0, 2)), (int) substr($date, 6, 4)));
         if ($val<0) {
             $sign='';
         } else {

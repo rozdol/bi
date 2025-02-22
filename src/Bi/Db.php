@@ -1,4 +1,5 @@
 <?php
+
 namespace Rozdol\Db;
 
 class Db
@@ -27,42 +28,41 @@ class Db
             if (!$this->conn) {
                 $this->conn = @pg_connect("host=$host port=$port dbname=template1 user=$login password=$pass");
                 if (!$this->conn) {
-                    die("No $dbname or any default database at host://$host:$port"."<br>host=$host port=$port dbname=$dbname user=$login password=$pass");
+                    die("No $dbname or any default database at host://$host:$port" . "<br>host=$host port=$port dbname=$dbname user=$login password=$pass");
                 }
             }
 
 
-            $dbsfile=$GLOBALS['settings']['dbsfile'];
-            $use_dbs=$GLOBALS['settings']['use_dbs'];
-            if($use_dbs){
-                $allow=0;
+            $dbsfile = $GLOBALS['settings']['dbsfile'];
+            $use_dbs = $GLOBALS['settings']['use_dbs'];
+            if ($use_dbs) {
+                $allow = 0;
                 if (!file_exists($dbsfile) || !is_readable($dbsfile)) {
                     die("dbsfile missing or unreadable");
                 }
                 if (($handle = fopen($dbsfile, 'r')) !== false) {
                     while (($row = fgetcsv($handle, 1000, ';')) !== false) {
                         //echo "R:$row[0]<br>";
-                        if($dbname==trim($row[0])) $allow++;
+                        if ($dbname == trim($row[0])) $allow++;
                     }
                 }
-                if($allow==0){
+                if ($allow == 0) {
                     die("DB $dbname not allowed");
                 }
-
             }
             echo "Setting up database $dbname ...<br>";
-            $sql="CREATE DATABASE $dbname
+            $sql = "CREATE DATABASE $dbname
   WITH OWNER = $login
        ENCODING = 'UTF8'
        LC_COLLATE = 'en_US.UTF-8'
        LC_CTYPE = 'en_US.UTF-8'
        CONNECTION LIMIT = -1;";
 
-            $default_conn = @pg_connect("host=".$GLOBALS['DB']['DB_SERVER']."
-                             port=".$GLOBALS['DB']['DB_PORT']."
+            $default_conn = @pg_connect("host=" . $GLOBALS['DB']['DB_SERVER'] . "
+                             port=" . $GLOBALS['DB']['DB_PORT'] . "
                              dbname='postgres'
-                             user=".$GLOBALS['DB']['DB_USER']."
-                             password=".$GLOBALS['DB']['DB_PASS']);
+                             user=" . $GLOBALS['DB']['DB_USER'] . "
+                             password=" . $GLOBALS['DB']['DB_PASS']);
             if ((!$default_conn)) {
                 die("SQL:Can not create $dbname database. SQL1:<br><pre>$sql</pre>");
             }
@@ -71,7 +71,7 @@ class Db
                 die("SQL:Can not create $dbname database. SQL2:<br><pre>$sql</pre>");
             }
 
-                    $result = @pg_query($conn, $sql);
+            $result = @pg_query($conn, $sql);
             if (!$result) {
                 die("SQL:Can not create $dbname database. SQL3:<br><pre>$sql</pre>");
             }
@@ -100,9 +100,7 @@ class Db
      *
      * @param string $err_string
      */
-    function WriteError($err_string)
-    {
-    }
+    function WriteError($err_string) {}
 
     /* ===================== PRIVATE PART ======================= */
 
@@ -120,7 +118,7 @@ class Db
         $this->data[] = array();
 
         if (isset($_data[0]) and is_array($_data[0])) {
-            for ($i=0; $i<count($_data); $i++) {
+            for ($i = 0; $i < count($_data); $i++) {
                 foreach ($this->fields as $field) {
                     if (isset($_data[$i][$field]) and !$this->IsFieldLocked($field)) {
                         $this->data[$i][$field] = $this->Escape($_data[$i][$field]);
@@ -187,9 +185,9 @@ class Db
     private function FetchFields($res)
     {
         if (!$this->debug_on) {
-            return ;
+            return;
         }
-        $i=0;
+        $i = 0;
         $this->col_info = array();
         while ($i < @pg_num_fields($res)) {
             $this->col_info[$i]->name = @pg_field_name($res, $i);
@@ -265,34 +263,34 @@ class Db
         $_errors = array();
 
         if ($connection_status) {
-            $_errors[] = ($connection_status?$connection_status:'');
+            $_errors[] = ($connection_status ? $connection_status : '');
         }
         if ($last_error) {
-            $_errors[] = ($last_error?$last_error:'');
+            $_errors[] = ($last_error ? $last_error : '');
         }
         if ($result_error) {
-            $_errors[] = ($result_error?$result_error:'');
+            $_errors[] = ($result_error ? $result_error : '');
         }
         if ($last_notice) {
-            $_errors[] = ($last_notice?$last_notice:'');
+            $_errors[] = ($last_notice ? $last_notice : '');
         }
 
         if (count($_errors) > 0) {
             $GLOBALS['db_errors_count']++;
             //$this->errStr .= '<div style="border:1px solid black; margin:4px; padding:4px; background-color:#FFDEAD;"><b>Query:</b> '.$this->last_query . '<br />'.implode('<br />', $_errors)."</div>";
-            $GLOBALS['db_last_error']=implode('<br />', $_errors);
-            if ($_REQUEST['act']=='api') {
+            $GLOBALS['db_last_error'] = implode('<br />', $_errors);
+            if ($_REQUEST['act'] == 'api') {
                 foreach ($_errors as $_error) {
-                    $lines=explode("\n", $_error);
-                    $api_errors[]=$lines;
+                    $lines = explode("\n", $_error);
+                    $api_errors[] = $lines;
                 }
-                $err_string=json_encode(['error'=>'DB_error','errors'=>$api_errors]);//exit;
+                $err_string = json_encode(['error' => 'DB_error', 'errors' => $api_errors]); //exit;
             } else {
-                $err_string='<div class="alert alert-error"><h2>DB Error</h2><b>Query:</b> '.$this->last_query . '<br /><pre class="red">'.implode('<br />', $_errors)."</pre></div>";
+                $err_string = '<div class="alert alert-error"><h2>DB Error</h2><b>Query:</b> ' . $this->last_query . '<br /><pre class="red">' . implode('<br />', $_errors) . "</pre></div>";
             }
             $this->errStr .= $err_string;
             //$this->errStr .="<pre>".print_r($GLOBALS)."</pre>";
-            $GLOBALS['no_refresh']=1;
+            $GLOBALS['no_refresh'] = 1;
         }
     }
 
@@ -312,38 +310,38 @@ class Db
 
         if (is_numeric($offset)) {
             $z = 2;
-            $report.= '<td nowrap align="left" valign="top"><font size="1" color="555599">'.$this->col_info[$offset]->type.' '.$this->col_info[$offset]->size.'</font><br><font size=2><b>'.$this->col_info[$offset]->name.'</b></font></td>';
+            $report .= '<td nowrap align="left" valign="top"><font size="1" color="555599">' . $this->col_info[$offset]->type . ' ' . $this->col_info[$offset]->size . '</font><br><font size=2><b>' . $this->col_info[$offset]->name . '</b></font></td>';
         } else {
             $z = count($this->col_info);
-            for ($i=0; $i < $z; $i++) {
-                $report.= '<td nowrap align="left" valign="top"><font size="1" color="555599">'.$this->col_info[$i]->type.' '.$this->col_info[$i]->size.'</font><br><font size=2><b>'.$this->col_info[$i]->name.'</b></font></td>';
+            for ($i = 0; $i < $z; $i++) {
+                $report .= '<td nowrap align="left" valign="top"><font size="1" color="555599">' . $this->col_info[$i]->type . ' ' . $this->col_info[$i]->size . '</font><br><font size=2><b>' . $this->col_info[$i]->name . '</b></font></td>';
             }
         }
 
         $report .= "</tr>";
 
         if (is_array($this->result) and count($this->result) > 0) {
-            $i=0;
+            $i = 0;
             foreach ($this->result as $one_row) {
                 $i++;
-                $report.= '<tr bgcolor="ffffff"><td style="background-color:#eeeeee" nowrap align="middle"><font size="2" color="555599">'.$i.'</font></td>';
+                $report .= '<tr bgcolor="ffffff"><td style="background-color:#eeeeee" nowrap align="middle"><font size="2" color="555599">' . $i . '</font></td>';
 
                 if (is_array($one_row)) {
                     foreach ($one_row as $item) {
-                        $report.= '<td nowrap style="background-color:#ffffff"><font size="2">'.htmlspecialchars($item).'</font></td>';
+                        $report .= '<td nowrap style="background-color:#ffffff"><font size="2">' . htmlspecialchars($item) . '</font></td>';
                     }
                 } else {
-                    $report.= '<td nowrap style="background-color:#ffffff"><font size="2">'.htmlspecialchars($one_row).'</font></td>';
+                    $report .= '<td nowrap style="background-color:#ffffff"><font size="2">' . htmlspecialchars($one_row) . '</font></td>';
                 }
 
 
-                $report.= "</tr>";
+                $report .= "</tr>";
             }
         } else {
-            $report.= '<tr bgcolor="ffffff"><td colspan="'.($z+1).'"><font size=2>No Results</font></td></tr>';
+            $report .= '<tr bgcolor="ffffff"><td colspan="' . ($z + 1) . '"><font size=2>No Results</font></td></tr>';
         }
 
-        $report.= "</table>";
+        $report .= "</table>";
         $this->printOutStr .= $report;
     }
 
@@ -357,10 +355,10 @@ class Db
             return;
         }
 
-        $this->printOutStr .= "<div class=\"alert alert-info\"><b>Query:</b> " .nl2br($this->last_query) . "<br />
-        <b>Rows affected:</b> " .$this->GetAffRows() . "<br />
-        <b>Num rows:</b> " .$this->GetNumRows() . "<br />".
-        ($this->GetLastID()?"<b>Last INSERT ID:</b> " .$this->GetLastID() . "<br />":"")."</div>";
+        $this->printOutStr .= "<div class=\"alert alert-info\"><b>Query:</b> " . nl2br($this->last_query) . "<br />
+        <b>Rows affected:</b> " . $this->GetAffRows() . "<br />
+        <b>Num rows:</b> " . $this->GetNumRows() . "<br />" .
+            ($this->GetLastID() ? "<b>Last INSERT ID:</b> " . $this->GetLastID() . "<br />" : "") . "</div>";
     }
 
     /**
@@ -429,7 +427,7 @@ class Db
     final function Query($qry)
     {
         $GLOBALS['qry_count']++;
-        $GLOBALS['qry'].=$GLOBALS['qry_count'].':'.$qry."\n";
+        $GLOBALS['qry'] .= $GLOBALS['qry_count'] . ':' . $qry . "\n";
 
         $this->last_query = $qry;
 
@@ -481,7 +479,7 @@ class Db
         if (count($regs) > 1) {
             $table_name = $regs[1];
             $res = @pg_query($this->conn, "SELECT * FROM $table_name WHERE 1 != 1");
-            $query_for_id = "SELECT CURRVAL('{$table_name}_".@pg_field_name($res, $offset)."_{$seq_suffix}'::regclass)";
+            $query_for_id = "SELECT CURRVAL('{$table_name}_" . @pg_field_name($res, $offset) . "_{$seq_suffix}'::regclass)";
             $result_for_id = @pg_query($this->conn, $query_for_id);
 
             $last_id = @pg_fetch_array($result_for_id, 0, PGSQL_NUM);
@@ -576,7 +574,7 @@ class Db
     }
     final function GetVal($qry, $row_no = 0, $offset = 0, $debug = 0)
     {
-        if ($debug>0) {
+        if ($debug > 0) {
             echo "$qry<br>";
         }
         if ($this->lock_sel_data) {
@@ -607,7 +605,7 @@ class Db
         $this->SetObjData($table, $fields, $data);
         $query = '';
 
-        for ($i=0; $i<count($this->data); $i++) {
+        for ($i = 0; $i < count($this->data); $i++) {
             if (!is_array($this->data[$i])) {
                 continue;
             }
@@ -615,7 +613,7 @@ class Db
             $insert_values = array_values($this->data[$i]);
 
             if (count($insert_fields) == count($insert_values) and count($insert_fields) > 0) {
-                $query .= "INSERT INTO $this->table (".implode(',', $insert_fields).") VALUES ('".implode("','", $insert_values)."');\n";
+                $query .= "INSERT INTO $this->table (" . implode(',', $insert_fields) . ") VALUES ('" . implode("','", $insert_values) . "');\n";
             }
         }
 
@@ -653,7 +651,7 @@ class Db
         }
 
         if (count($set_part) > 0) {
-            $query .= "UPDATE $this->table SET ".implode(', ', $set_part)." WHERE $where_part;";
+            $query .= "UPDATE $this->table SET " . implode(', ', $set_part) . " WHERE $where_part;";
         }
 
         unset($this->data);
@@ -679,7 +677,7 @@ class Db
             return 0;
         }
 
-        $query = "DELETE FROM $table WHERE ".$where_part;
+        $query = "DELETE FROM $table WHERE " . $where_part;
 
         return $this->Query($query);
     }
@@ -734,7 +732,7 @@ class Db
             if ($rv != '' and $item != '') {
                 $rv .= $separator;
             }
-            $rv .= $item ;
+            $rv .= $item;
         }
         return $rv;
     }
@@ -757,9 +755,9 @@ class Db
         if ($count_items > 1) {
             return " IN ('$comma_separated_items') ";
         } elseif ($count_items == 1) {
-            return " = '$comma_separated_items' " ;
+            return " = '$comma_separated_items' ";
         } else {
-            return ' IS NULL ' ;
+            return ' IS NULL ';
         }
     }
 
@@ -783,79 +781,79 @@ class Db
         } elseif ($count_items == 1) {
             return " != '$comma_separated_items' ";
         } else {
-            return ' IS NOT NULL ' ;
+            return ' IS NOT NULL ';
         }
     }
 
     private function array_sql_ins($array1)
     {
-        $res="";
-        $delim=", ";
+        $res = "";
+        $delim = ", ";
         foreach ($array1 as $key1 => $value1) {
             //echo "$key1 => $value1<br>";
-            $value2=pg_escape_string($value1);
-            $value2=str_ireplace("''''", "''", $value2);
-            if ($value2=='null') {
-                $vars.="$key1$delim";
-                $vals.="null$delim";
+            $value2 = pg_escape_string($value1);
+            $value2 = str_ireplace("''''", "''", $value2);
+            if ($value2 == 'null') {
+                $vars .= "$key1$delim";
+                $vals .= "null$delim";
             } else {
-                $vars.="$key1$delim";
-                $vals.="'$value2'$delim";
+                $vars .= "$key1$delim";
+                $vals .= "'$value2'$delim";
             }
 
-              //foreach ($value1 as $key => $value) {echo "$key => $value<br>";$res.="$value$delim"; }
+            //foreach ($value1 as $key => $value) {echo "$key => $value<br>";$res.="$value$delim"; }
         }
 
-        $dellen=strlen($delim)*-1;
-        $vars=substr($vars, 0, $dellen);
-        $vals=substr($vals, 0, $dellen);
-        $res="($vars) VALUES ($vals)";
+        $dellen = strlen($delim) * -1;
+        $vars = substr($vars, 0, $dellen);
+        $vals = substr($vals, 0, $dellen);
+        $res = "($vars) VALUES ($vals)";
         return $res;
     }
     private function array_sql_upd($array1)
     {
-        $res="";
-        $delim=", ";
+        $res = "";
+        $delim = ", ";
         foreach ($array1 as $key1 => $value1) {
             //echo "$key1 => $value1<br>";
-            $value2=pg_escape_string($value1);
-            $value2=str_ireplace("''''", "''", $value2);
-            if ($value2=='null') {
-                $vars.="$key1=null$delim";
+            $value2 = pg_escape_string($value1);
+            $value2 = str_ireplace("''''", "''", $value2);
+            if ($value2 == 'null') {
+                $vars .= "$key1=null$delim";
             } else {
-                $vars.="$key1='{$value2}'$delim";
+                $vars .= "$key1='{$value2}'$delim";
             }
             //$vars.="$key1='{$value2}'$delim";
-              //foreach ($value1 as $key => $value) {echo "$key => $value<br>";$res.="$value$delim"; }
+            //foreach ($value1 as $key => $value) {echo "$key => $value<br>";$res.="$value$delim"; }
         }
 
-        $dellen=strlen($delim)*-1;
-        $vars=substr($vars, 0, $dellen);
-        $res="$vars";
+        $dellen = strlen($delim) * -1;
+        $vars = substr($vars, 0, $dellen);
+        $res = "$vars";
         return $res;
     }
 
     public function insert_db($table = '', $vals = [], $noid = '')
     {
-        $vars=$this->array_sql_ins($vals);
-        $sql="INSERT INTO $table $vars;";
-        $err=$this->GetVal($sql);
-        if ($err!='') {
+        $vars = $this->array_sql_ins($vals);
+        $sql = "INSERT INTO $table $vars;";
+        $err = $this->GetVal($sql);
+        if ($err != '') {
             $this->log("DB_ERROR_INS:$err");
             echo $err;
             exit;
         }
-        if ($noid=='') {
-            $id=($this->GetVal("select max(id) from $table")*1);
+        if ($noid == '') {
+            $id = ($this->GetVal("select max(id) from $table") * 1);
         }
         return $id;
     }
     public function update_db($table = '', $id = 0, $vals = [])
     {
-        $vars=$this->array_sql_upd($vals);
-        $sql="update $table set $vars where id='$id';";
-        $err=$this->GetVal($sql);
-        if ($err!='') {
+        $vars = $this->array_sql_upd($vals);
+        $sql = "update $table set $vars where id='$id';";
+        $err = $this->GetVal($sql);
+        if ($err != '') {
             $this->log("DB_ERROR_UPD:$err");
             echo $err;
             exit;
@@ -864,9 +862,9 @@ class Db
     }
     public function delete_db($table, $id)
     {
-        $sql="delete from $table where id='$id';";
-        $err=$this->GetVal($sql);
-        if ($err!='') {
+        $sql = "delete from $table where id='$id';";
+        $err = $this->GetVal($sql);
+        if ($err != '') {
             $this->log("DB_ERROR_DEL:$err");
             echo $err;
             exit;
@@ -877,18 +875,16 @@ class Db
     public function log($data = '')
     {
         $log_folder = LOGS_DIR;
-        if (!file_exists($log_folder))
-        {
+        if (!file_exists($log_folder)) {
             mkdir($log_folder, 0777, true);
         }
-        $log_filename=$log_folder.'log_'.APP_NAME.'_'.DB_NAME.'_'.date("d.m.y").'.log';
-        $log  = date("d.m.y G:i").' - '.$_SERVER['REMOTE_ADDR'].' - '.$GLOBALS['username'].' - '.$data.PHP_EOL;
-        if(file_put_contents($log_filename, $log, FILE_APPEND)){
+        $log_filename = $log_folder . 'log_' . APP_NAME . '_' . DB_NAME . '_' . date("d.m.y") . '.log';
+        $log  = date("d.m.y G:i") . ' - ' . $_SERVER['REMOTE_ADDR'] . ' - ' . $GLOBALS['username'] . ' - ' . $data . PHP_EOL;
+        if (file_put_contents($log_filename, $log, FILE_APPEND)) {
             return true;
-        }else{
+        } else {
             return "ERROR:Can not write to $log_filename";
         }
-
     }
 
 

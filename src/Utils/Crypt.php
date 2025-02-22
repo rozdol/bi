@@ -168,7 +168,7 @@ class Crypt
                     //$this->data->DB_log("HACK on CSRF. ($act)");
                     echo "No permission for this action [$act].<br>csrf token not valid.";
                     exit;
-                    return flase;
+                    return false;
                 }
             } else {
                 return true;
