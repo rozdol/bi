@@ -1281,7 +1281,39 @@ class Data
         return $link;
     }
 
-    function editalize($table, $id, $chars = 0)
+    function editalize($table, $id, $chars = 0, $noname = '', $fileld = 'name')
+    {
+
+        //$chars=10;
+        settype($id, "integer");
+        //if($chars==0)$sql="select name from $table where id=$id";
+        //if($chars>0)$sql="select substr(name,1,$chars)||'...' ||substr(name,char_length(name)-5,6) from $table where id=$id";
+        $field = ($this->field_exists($table, $fileld)) ? $fileld : 'id';
+        $sql = "select $field from $table where id=$id; --editalize";
+        if ($noname == '') {
+            $name = $this->db->GetVal($sql);
+        } else {
+            $name = $noname;
+        }
+        if ($chars > 0) {
+            $chars = $chars * 7;
+            $name = $this->utf8->utf8_cutByPixel($name, $chars, false);
+        }
+        if ($name == '') {
+            $name = "--";
+        }
+
+        if ($id != 0) {
+            $link = "<a href='" . $this->html->link(array('act' => 'edit', 'what' => $table, 'id' => $id)) . "'>$name</a>";
+        } else {
+            $link = $name;
+        }
+        //if(($GLOBALS['stealth']==1)&&($table=='partners'))$link=$name;
+        //if(($id==0))$link='';
+        return $link;
+    }
+
+    function editalize_old($table, $id, $chars = 0)
     {
 
         //$chars=10;
@@ -1468,6 +1500,9 @@ class Data
             if ($i <= $max) {
                 if ($detalize == 1) {
                     $tmp[] = $this->detalize($table, $id, 10);
+                }elseif ($detalize == -1) {
+                    // $tmp[] = $this->detalize($table, $id, 10);
+                    $tmp[] = $this->editalize($table, $id, 10);
                 } else {
                     $tmp[] = $this->get_name($table, $id);
                 }
