@@ -1165,11 +1165,13 @@ class Utils
 
     public function parseFromXML($htmlStr)
     {
-        $xmlStr = str_replace('&lt;', '<', $htmlStr);
-        $xmlStr = str_replace('&gt;', '>', $xmlStr);
-        $xmlStr = str_replace('&quot;', '"', $xmlStr);
-        $xmlStr = str_replace('&#39;', "'", $xmlStr);
-        $xmlStr = str_replace('&amp;', "&", $xmlStr);
+        if (is_string($htmlStr)){
+            $xmlStr = str_replace('&lt;', '<', $htmlStr);
+            $xmlStr = str_replace('&gt;', '>', $xmlStr);
+            $xmlStr = str_replace('&quot;', '"', $xmlStr);
+            $xmlStr = str_replace('&#39;', "'", $xmlStr);
+            $xmlStr = str_replace('&amp;', "&", $xmlStr);
+        }
         return $xmlStr;
     }
     public function include_poject($project = 'is', $action = 'show:partners')

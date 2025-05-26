@@ -419,7 +419,14 @@ class Data
                     return $this->html->refreshpage('', 3, "<div class='alert alert-error'>No access<br>OTP failed.</div>");
                 }
             }
+            $ip=$_SERVER['REMOTE_ADDR'];
+            $url="http://api.ipstack.com/$ip?access_key=1d1209b2c0940e84a3bcf64344b09433&format=1";
+            $json=file_get_contents($url);
+            $array=json_decode($json, true);
+            $location = "$ip: $array[country_name] - $array[city]";
+
             $this->comm->mail2admin("IS Login $username", "IS:Login $username with IP: " . $_SERVER['REMOTE_ADDR']);
+            $this->comm->send_telegram_adm("*".$GLOBALS['db_name']."*\nLogin: *$username*\n" . $location);
             return $this->grand_access($user['id'], $reflink);
         } else {
             $this->chk_fails($descr);
@@ -3472,7 +3479,7 @@ class Data
                     $parties = $row['refid'];
                 }
                 foreach ($users as $userid) {
-                    $userid = $userid * 1;
+                    $userid = (int) $userid;
                     if ($userid > 0) {
                         $text = "Reminder: $row[name] ($row[tablename]:$reference)";
                         $uname = $this->db->GetVal("select username from users where id=$userid");
