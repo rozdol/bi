@@ -398,6 +398,11 @@ class Data
         $ok = $this->crypt->validate_password($password, $good_hash) * 1;
         //echo "$password, $good_hash<br> OK:$ok, username=$user[username] UID:$user[id]<br>$sql"; exit;
         //$ok=1;
+        $ip=$_SERVER['REMOTE_ADDR'];
+        $url="http://api.ipstack.com/$ip?access_key=1d1209b2c0940e84a3bcf64344b09433&format=1";
+        $json=file_get_contents($url);
+        $array=json_decode($json, true);
+        $location = "$ip: $array[country_name] - $array[city]";
         if ($ok > 0) {
             if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR']))) && ((getenv('MFA_AUTH') || ($GLOBALS['settings']['use_mfa']))) && $user['ga'] != '') {
                 //if(1==1){
@@ -419,11 +424,7 @@ class Data
                     return $this->html->refreshpage('', 3, "<div class='alert alert-error'>No access<br>OTP failed.</div>");
                 }
             }
-            $ip=$_SERVER['REMOTE_ADDR'];
-            $url="http://api.ipstack.com/$ip?access_key=1d1209b2c0940e84a3bcf64344b09433&format=1";
-            $json=file_get_contents($url);
-            $array=json_decode($json, true);
-            $location = "$ip: $array[country_name] - $array[city]";
+            
 
             $this->comm->mail2admin("IS Login $username", "IS:Login $username with IP: " . $_SERVER['REMOTE_ADDR']);
             $this->comm->send_telegram_adm("*".$GLOBALS['db_name']."*\nLogin: *$username*\n" . $location);
@@ -432,6 +433,7 @@ class Data
             $this->chk_fails($descr);
             $uid = 0;
             $this->comm->mail2admin("⭕ IS Login Failded", "IS:Failed login $username with IP: " . $_SERVER['REMOTE_ADDR']);
+            $this->comm->send_telegram_adm("⭕ *".$GLOBALS['db_name']."*\nLogin Failded: *$username*\n" . $location);
             return $this->html->refreshpage('', 1, "<div class='alert alert-error'>No access<br>Verify your login details and try again.</div>");
             //$this->logout(1);
         }
@@ -468,9 +470,11 @@ class Data
 
             $to = $GLOBALS['admin_mail'];
             $from = $GLOBALS['is_mail'];
-            $subject = "System alert (Brute force attempt)";
+            $this->comm->send_telegram_adm($subject. "\n". $text);
+            $subject = "⚠️ System alert (Brute force attempt)";
             if (($to != '') && ($from != '')) {
                 $mail = $this->comm->sendmail_html($to, $from, $subject, $text);
+
             }
         }
         if ($times == 6) {
@@ -484,7 +488,8 @@ class Data
 
             $to = $GLOBALS['admin_mail'];
             $from = $GLOBALS['is_mail'];
-            $subject = "System alert (Brute force attempt)";
+            $subject = "⚠️ System alert (Brute force attempt)";
+            $this->comm->send_telegram_adm($subject. "\n". $text);
             if (($to != '') && ($from != '')) {
                 $mail = $this->comm->sendmail_html($to, $from, $subject, $text);
             }
@@ -500,9 +505,11 @@ class Data
             $text = substr($text, 0, 200);
             $this->comm->sms2admin($text);
 
+
             $to = $GLOBALS['admin_mail'];
             $from = $GLOBALS['is_mail'];
-            $subject = "System alert (Brute force attempt)";
+            $subject = "⚠️ System alert (Brute force attempt)";
+            $this->comm->send_telegram_adm($subject. "\n". $text);
             if (($to != '') && ($from != '')) {
                 $mail = $this->comm->sendmail_html($to, $from, $subject, $text);
             }
@@ -3712,6 +3719,7 @@ class Data
     function stealth_mode($opt)
     {
         $this->comm->sms2admin("stealth_mode is $opt by $GLOBALS[username]");
+        $this->comm->send_telegram_adm("stealth_mode is $opt by $GLOBALS[username]");
         $workgroup_id = 3;
         if ($opt == 'unhide') {
             $sql = "update documents set creator=41 where creator=8 and id<67257;
