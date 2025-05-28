@@ -912,47 +912,67 @@ class Comm
     public function send_telegram($message){
         $bot_token = $GLOBALS[settings][BOT_TOKEN];
         $chat_id =   $GLOBALS[settings][BOT_CHATID];
-        if ($chat_id=='' and $bot_token==''){
-            return "Error sending message: No BOT_TOKEN and BOT_CHATID is set";
+        if ($chat_id=='' or $bot_token==''){
+            return "Error sending message: No BOT_TOKEN or BOT_CHATID is set";
         }
-        $url = "https://api.telegram.org/bot" . $bot_token . "/sendMessage?chat_id=" . $chat_id . "&parse_mode=markdown&text=" . urlencode($message);
-         
+        $url = "https://api.telegram.org/bot$bot_token/sendMessage";
+
+        $data = [
+            'chat_id' => $chat_id,
+            'parse_mode' => 'markdown',
+            'text' => $message
+        ];
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
         $data = curl_exec($ch);
         curl_close($ch);
-         
+
         $json_data = json_decode($data, true);
-         
+                 
         if ($json_data["ok"]) {
-            return "SENT";
+            // echo $this->html->pre_display($json_data,"json_data");
+            return "SENT: $message";
         } else {
             return "Error sending message: " . $json_data["error_code"] . " - " . $json_data["description"];
         }
     }
     public function send_telegram_adm($message){
-        $bot_token = '5333350668:AAHjBQ3rDo0zLc99-qDs13pDj7Zs1sypQ30';
-        $chat_id =   '-1002634446048';
-        $url = "https://api.telegram.org/bot" . $bot_token . "/sendMessage?chat_id=" . $chat_id . "&parse_mode=markdown&text=" . urlencode($message);
-         
+        $bot_token = $GLOBALS[settings][BOT_TOKEN];
+        $chat_id =   $GLOBALS[settings][BOT_ADM_CHATID];
+
+        if ($chat_id=='' or $bot_token==''){
+            return "Error sending message: No BOT_TOKEN or BOT_ADM_CHATID is set";
+        }
+        $url = "https://api.telegram.org/bot$bot_token/sendMessage";
+
+        $data = [
+            'chat_id' => $chat_id,
+            'parse_mode' => 'markdown',
+            'text' => $message
+        ];
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
         $data = curl_exec($ch);
         curl_close($ch);
-         
+
         $json_data = json_decode($data, true);
-         
+                 
         if ($json_data["ok"]) {
             // echo $this->html->pre_display($json_data,"json_data");
-            return "SENT";
+            return "SENT_ADM: $message";
         } else {
-            return "Error sending message: " . $json_data["error_code"] . " - " . $json_data["description"];
+
+            return "Error sending message: " . $json_data["error_code"] . " - " . $json_data["description"] . " - " . $data ;
         }
     }
     public function mail2admin($subject, $msg)
