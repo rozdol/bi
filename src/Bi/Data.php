@@ -399,10 +399,16 @@ class Data
         //echo "$password, $good_hash<br> OK:$ok, username=$user[username] UID:$user[id]<br>$sql"; exit;
         //$ok=1;
         $ip=$_SERVER['REMOTE_ADDR'];
-        $url="http://api.ipstack.com/$ip?access_key=1d1209b2c0940e84a3bcf64344b09433&format=1";
-        $json=file_get_contents($url);
-        $array=json_decode($json, true);
-        $location = "$ip: $array[country_name] - $array[city]";
+        $access_key=$this->readconfig('IPSTACK_API_KEY');
+        if (($access_key!='')&&($ip!='127.0.0.1')&&(substr($ip,0,7)!='192.168'){
+            $url="http://api.ipstack.com/$ip?access_key=$access_key&format=1";
+            $json=file_get_contents($url);
+            $array=json_decode($json, true);
+            $location = "$ip: $array[country_name] - $array[city]";
+        }else{
+            $location = "$ip";
+        }
+        
         if ($ok > 0) {
             if ((!($this->utils->is_IP_local($_SERVER['REMOTE_ADDR']))) && ((getenv('MFA_AUTH') || ($GLOBALS['settings']['use_mfa']))) && $user['ga'] != '') {
                 //if(1==1){
