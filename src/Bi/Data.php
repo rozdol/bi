@@ -400,7 +400,7 @@ class Data
         //$ok=1;
         $ip=$_SERVER['REMOTE_ADDR'];
         $access_key=$this->readconfig('IPSTACK_API_KEY');
-        if (($access_key!='')&&($ip!='127.0.0.1')&&(substr($ip,0,7)!='192.168'){
+        if (($access_key!='')&&($ip!='127.0.0.1')&&(substr($ip,0,7)!='192.168')){
             $url="http://api.ipstack.com/$ip?access_key=$access_key&format=1";
             $json=file_get_contents($url);
             $array=json_decode($json, true);
